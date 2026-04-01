@@ -1,20 +1,707 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.4">
-  <style type="text/css">
-    body {background-color: #0d0e12}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #eef2f7; -webkit-text-stroke: #eef2f7; min-height: 17.0px}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #8291a9; -webkit-text-stroke: #8291a9; min-height: 16.0px}
-    span.s1 {font-kerning: none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Directorio Escolar</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#1a1f2e;--bg3:#222840;--bg4:#2d3452;
+  --amber:#f59e0b;--amber2:#fbbf24;--amber3:#fcd34d;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --border:#2d3452;--danger:#ef4444;--success:#10b981;
+  --radius:10px;--radius2:14px;
+}
+html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden}
+
+/* LOADING */
+#loading-overlay{
+  position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+.spinner{width:42px;height:42px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text2)}
+
+/* LOGIN */
+#login-screen{
+  display:none;align-items:center;justify-content:center;min-height:100vh;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(245,158,11,.09) 0%,transparent 60%),
+                   radial-gradient(ellipse at 80% 20%,rgba(59,130,246,.07) 0%,transparent 50%);
+}
+#login-screen.show{display:flex}
+.login-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:22px;
+  padding:44px 40px;width:100%;max-width:420px;
+  box-shadow:0 30px 70px rgba(0,0,0,.55);
+}
+.login-logo{text-align:center;margin-bottom:34px}
+.login-logo .icon{font-size:54px;display:block;margin-bottom:12px}
+.login-logo h1{font-family:'Nunito',sans-serif;font-size:24px;font-weight:800;color:var(--amber2)}
+.login-logo p{font-size:12px;color:var(--text3);margin-top:5px}
+.google-btn{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  width:100%;padding:14px 20px;background:#fff;color:#1f1f1f;
+  border:none;border-radius:12px;font-size:15px;font-weight:700;
+  font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+}
+.google-btn:hover{background:#f1f1f1;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.google-btn:active{transform:translateY(0)}
+.google-btn img{width:22px;height:22px}
+.login-info{
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
+  border-radius:10px;padding:12px 16px;font-size:12px;color:var(--text2);
+  text-align:center;line-height:1.7;margin-top:22px;
+}
+.login-info strong{color:var(--amber2)}
+#login-error{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  border-radius:8px;padding:10px 14px;font-size:12px;color:#fca5a5;
+  margin-top:14px;display:none;text-align:center;
+}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+#main-layout{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+#sidebar{width:262px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+#sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border)}
+#sidebar-header h1{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--amber2)}
+#user-info{display:flex;align-items:center;gap:8px;margin-top:8px}
+#user-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--amber);object-fit:cover;display:none}
+#user-avatar-placeholder{width:28px;height:28px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#1a1000;flex-shrink:0;font-family:'Nunito',sans-serif}
+#user-name{font-size:11px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#search-box{margin:10px;position:relative}
+#search-box input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px 7px 28px;color:var(--text);font-size:12px;outline:none;font-family:inherit}
+#search-box input:focus{border-color:var(--amber)}
+#search-box .si{position:absolute;left:9px;top:8px;font-size:12px;color:var(--text3)}
+#grades-list{flex:1;overflow-y:auto;padding:6px}
+.grade-item{margin-bottom:3px}
+.grade-header{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;border-radius:var(--radius);transition:background .15s;user-select:none}
+.grade-header:hover{background:var(--bg3)}
+.grade-header.active{background:var(--bg4)}
+.grade-icon{font-size:16px;width:20px;text-align:center}
+.grade-name{flex:1;font-size:13px;font-weight:600;font-family:'Nunito',sans-serif}
+.grade-arrow{font-size:9px;color:var(--text3);transition:transform .2s}
+.grade-arrow.open{transform:rotate(90deg)}
+.groups-list{padding-left:16px;overflow:hidden;max-height:0;transition:max-height .3s ease}
+.groups-list.open{max-height:600px}
+.group-item{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border-radius:8px;transition:background .15s;margin-bottom:2px}
+.group-item:hover{background:var(--bg3)}
+.group-item.active{background:var(--amber);color:#1a1000}
+.group-item.active .group-count{color:#7a4a00;background:rgba(0,0,0,.15)}
+.group-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.group-item.active .group-dot{background:#7a4a00}
+.group-name{flex:1;font-size:12px;font-weight:600}
+.group-count{font-size:10px;color:var(--text3);background:var(--bg3);padding:1px 7px;border-radius:10px}
+.add-group-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all .15s;border:none;background:none;width:100%;margin-bottom:4px;font-family:inherit}
+.add-group-btn:hover{color:var(--amber);background:var(--bg3)}
+#sidebar-footer{padding:10px;border-top:1px solid var(--border)}
+.footer-row{display:flex;gap:6px;margin-bottom:6px}
+.footer-btn{flex:1;padding:7px 4px;font-size:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.footer-btn:hover{border-color:var(--amber);color:var(--amber)}
+.logout-btn{width:100%;padding:8px;font-size:11px;border-radius:8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#fca5a5;cursor:pointer;transition:all .15s;font-family:inherit}
+.logout-btn:hover{background:rgba(239,68,68,.18);border-color:var(--danger)}
+
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-shrink:0}
+#breadcrumb{font-size:12px;color:var(--text3)}
+#breadcrumb span{color:var(--amber2);font-weight:700}
+.btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--amber);color:#1a1000}
+.btn-primary:hover{background:var(--amber2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.view-toggle{display:flex;gap:4px}
+.vt-btn{padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;font-size:12px;transition:all .15s}
+.vt-btn.active{background:var(--amber);color:#1a1000;border-color:var(--amber)}
+#content{flex:1;overflow-y:auto;padding:20px}
+
+/* WELCOME */
+#welcome-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;text-align:center}
+#welcome-screen h2{font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;color:var(--amber2)}
+#welcome-screen p{color:var(--text2);max-width:340px;line-height:1.6;font-size:13px}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.stat-card .num{font-size:24px;font-weight:800;color:var(--amber2);font-family:'Nunito',sans-serif}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* CLASSES */
+.classes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.class-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .2s}
+.class-card:hover{border-color:var(--amber);transform:translateY(-2px)}
+.class-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.class-card h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;line-height:1.3}
+.class-card-meta{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.badge-blue{background:rgba(59,130,246,.15);color:#93c5fd}
+.badge-green{background:rgba(16,185,129,.15);color:#6ee7b7}
+.badge-amber{background:rgba(245,158,11,.15);color:#fcd34d}
+.badge-pink{background:rgba(236,72,153,.15);color:#f9a8d4}
+.badge-gray{background:rgba(100,116,139,.15);color:#94a3b8}
+.class-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+.class-card-footer{display:flex;align-items:center;justify-content:space-between}
+.resource-count{font-size:11px;color:var(--text3)}
+.card-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.class-card:hover .card-actions{opacity:1}
+.icon-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.icon-btn:hover{border-color:var(--amber);color:var(--amber)}
+.icon-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+.list-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;margin-bottom:6px}
+.list-item:hover{border-color:var(--amber)}
+
+/* CLASS DETAIL */
+.class-view-header{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;margin-bottom:16px}
+.class-view-header h2{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
+.class-view-header p{font-size:13px;color:var(--text2)}
+.resources-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:10px}
+.resource-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.resource-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.res-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;margin-top:2px}
+.res-info{flex:1;min-width:0}
+.res-title{font-size:13px;font-weight:600;font-family:'Nunito',sans-serif}
+.res-desc{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
+.res-link{font-size:11px;color:var(--amber);text-decoration:none;display:block;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-link:hover{color:var(--amber2)}
+.res-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.resource-item:hover .res-actions{opacity:1}
+.html-preview{background:#fff;border:1px solid var(--border);border-radius:8px;margin-top:10px;overflow:hidden}
+.html-preview iframe{width:100%;height:220px;border:none}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-state .ei{font-size:36px;margin-bottom:10px}
+.empty-state p{font-size:13px;margin-top:6px}
+
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center}
+#modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:26px;width:90%;max-width:500px;max-height:88vh;overflow-y:auto}
+.modal h2{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;margin-bottom:18px;color:var(--amber2)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--amber)}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-group select option{background:var(--bg3)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"></span><br></p>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Verificando sesión...</div>
+</div>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="icon">🏫</span>
+      <h1>Mi Directorio Escolar</h1>
+      <p>GI School · Tecnología · PYP</p>
+    </div>
+    <button class="google-btn" id="google-signin-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Iniciar sesión con Google
+    </button>
+    <div class="login-info">
+      Solo la cuenta <strong>franksanlo@gmail.com</strong><br>tiene acceso a esta aplicación.
+    </div>
+    <div id="login-error">Acceso denegado. Solo el docente autorizado puede ingresar.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="main-layout">
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <h1>📚 Mi Directorio Escolar</h1>
+        <div id="user-info">
+          <div id="user-avatar-placeholder">F</div>
+          <img id="user-avatar" src="" alt="">
+          <span id="user-name">Francisco Javier</span>
+        </div>
+      </div>
+      <div id="search-box">
+        <span class="si">🔍</span>
+        <input type="text" id="search-input" placeholder="Buscar clase o grupo...">
+      </div>
+      <div id="grades-list"></div>
+      <div id="sidebar-footer">
+        <div class="footer-row">
+          <button class="footer-btn" onclick="exportData()">⬇ Exportar</button>
+          <button class="footer-btn" onclick="document.getElementById('import-file').click()">⬆ Importar</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+        <button class="logout-btn" id="logout-btn">↩ Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="topbar">
+        <div id="breadcrumb">Mi Directorio Escolar</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="view-toggle">
+            <button class="vt-btn active" id="vt-grid" onclick="setView('grid')">⊞</button>
+            <button class="vt-btn" id="vt-list" onclick="setView('list')">☰</button>
+          </div>
+          <button class="btn btn-primary" id="add-class-btn" onclick="openClassModal()" style="display:none">+ Nueva Clase</button>
+        </div>
+      </div>
+      <div id="content">
+        <div id="welcome-screen">
+          <div style="font-size:52px">🏫</div>
+          <h2>¡Bienvenido, Francisco Javier!</h2>
+          <p>Selecciona un grupo del menú lateral para gestionar tus clases y recursos.</p>
+        </div>
+        <div id="group-content" style="display:none">
+          <div class="stat-row" id="stat-row"></div>
+          <div id="grid-view"><div class="classes-grid" id="classes-grid"></div></div>
+          <div id="list-view" style="display:none"><div id="classes-list-view"></div></div>
+        </div>
+        <div id="class-detail" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <h2 id="modal-title">Modal</h2>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="modalSaveHandler()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const AUTHORIZED_EMAIL = "franksanlo@gmail.com";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCsHA5yATtVbAFAxEtHwP0E491p_eWpuvE",
+  authDomain: "mi-directorio-escolar.firebaseapp.com",
+  projectId: "mi-directorio-escolar",
+  storageBucket: "mi-directorio-escolar.firebasestorage.app",
+  messagingSenderId: "946739239308",
+  appId: "1:946739239308:web:f1fe014d74baa1f6e11ea9"
+});
+
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({login_hint: AUTHORIZED_EMAIL});
+
+document.getElementById('google-signin-btn').addEventListener('click', async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    if(result.user.email !== AUTHORIZED_EMAIL){
+      await signOut(auth);
+      document.getElementById('login-error').style.display = 'block';
+    }
+  } catch(e) {
+    if(e.code !== 'auth/popup-closed-by-user'){
+      console.error(e);
+    }
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  if(confirm('¿Cerrar sesión?')) await signOut(auth);
+});
+
+onAuthStateChanged(auth, user => {
+  document.getElementById('loading-overlay').style.display = 'none';
+  if(user && user.email === AUTHORIZED_EMAIL){
+    document.getElementById('login-screen').classList.remove('show');
+    document.getElementById('app').classList.add('show');
+    // Foto y nombre
+    const name = user.displayName || 'Francisco Javier';
+    document.getElementById('user-name').textContent = name;
+    if(user.photoURL){
+      document.getElementById('user-avatar').src = user.photoURL;
+      document.getElementById('user-avatar').style.display = 'block';
+      document.getElementById('user-avatar-placeholder').style.display = 'none';
+    } else {
+      document.getElementById('user-avatar-placeholder').textContent = name[0].toUpperCase();
+    }
+    if(typeof loadState === 'function'){ loadState(); renderSidebar(); }
+  } else {
+    document.getElementById('app').classList.remove('show');
+    document.getElementById('login-screen').classList.add('show');
+    if(user) document.getElementById('login-error').style.display='block';
+  }
+});
+</script>
+
+<script>
+const GRADE_ICONS=['📗','📘','📙','📕','📓','📔'];
+const GRADE_NAMES=['PRIMERO','SEGUNDO','TERCERO','CUARTO','QUINTO','SEXTO'];
+const RES_TYPES={
+  presentacion:{icon:'📊',label:'Presentación',badge:'badge-blue'},
+  actividad:{icon:'✏️',label:'Actividad',badge:'badge-green'},
+  plan:{icon:'📋',label:'Plan de clase',badge:'badge-amber'},
+  html:{icon:'🌐',label:'HTML interactivo',badge:'badge-pink'},
+  link:{icon:'🔗',label:'Enlace externo',badge:'badge-gray'}
+};
+
+let state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
+let expandedGrades={};
+let currentSaveHandler=null;
+
+function loadState(){
+  const s=localStorage.getItem('mi-directorio-v3');
+  if(s){try{state=JSON.parse(s);}catch(e){initDemo();}}else{initDemo();}
+  if(!state.view)state.view='grid';
+  expandedGrades={};
+}
+function saveState(){localStorage.setItem('mi-directorio-v3',JSON.stringify(state));}
+function uid(){return 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);}
+
+function initDemo(){
+  state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
+  for(let i=0;i<6;i++){
+    const gid='grade-'+(i+1);
+    state.grades[gid]={id:gid,name:GRADE_NAMES[i],number:i+1,groups:{}};
+    ['A','B'].forEach(l=>{
+      const grpId='grp-'+gid+'-'+l;
+      state.grades[gid].groups[grpId]={id:grpId,name:(i+1)+'°'+l,classes:{}};
+    });
+  }
+  const demo=state.grades['grade-1'].groups['grp-grade-1-A'];
+  const c1=uid();
+  demo.classes[c1]={id:c1,title:'Introducción a la Tecnología',desc:'Exploración de dispositivos digitales y su uso cotidiano.',date:'2026-02-10',resources:{}};
+  const r1=uid();demo.classes[c1].resources[r1]={id:r1,type:'presentacion',title:'¿Qué es la tecnología?',desc:'Diapositivas de introducción.',url:'https://docs.google.com'};
+  const r2=uid();demo.classes[c1].resources[r2]={id:r2,type:'actividad',title:'Dibuja tu dispositivo favorito',desc:'Los estudiantes dibujan y describen su dispositivo favorito.',url:''};
+  const c2=uid();
+  demo.classes[c2]={id:c2,title:'Dispositivos de Entrada y Salida',desc:'Clasificación de periféricos según su función.',date:'2026-02-17',resources:{}};
+  const r3=uid();demo.classes[c2].resources[r3]={id:r3,type:'plan',title:'Plan de clase — Periféricos',desc:'Planeación con apertura, desarrollo y cierre.',url:''};
+  saveState();
+}
+
+function renderSidebar(){
+  const list=document.getElementById('grades-list');
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  list.innerHTML='';
+  Object.values(state.grades).forEach((grade,gi)=>{
+    const isExp=expandedGrades[grade.id];
+    const groupsHtml=Object.values(grade.groups).map(grp=>{
+      if(q&&!grp.name.toLowerCase().includes(q)&&!Object.values(grp.classes).some(c=>c.title.toLowerCase().includes(q)))return'';
+      const cnt=Object.keys(grp.classes).length;
+      return`<div class="group-item${state.currentGroup===grp.id?' active':''}" onclick="selectGroup('${grade.id}','${grp.id}')">
+        <span class="group-dot"></span><span class="group-name">${grp.name}</span>
+        <span class="group-count">${cnt}</span></div>`;
+    }).join('');
+    const div=document.createElement('div');div.className='grade-item';
+    div.innerHTML=`<div class="grade-header${state.currentGrade===grade.id?' active':''}" onclick="toggleGrade('${grade.id}')">
+      <span class="grade-icon">${GRADE_ICONS[gi]}</span>
+      <span class="grade-name">${grade.name}</span>
+      <span class="grade-arrow${isExp?' open':''}">▶</span></div>
+      <div class="groups-list${isExp?' open':''}">
+        ${groupsHtml}
+        <button class="add-group-btn" onclick="event.stopPropagation();openGroupModal('${grade.id}')">+ Agregar grupo</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleGrade(gid){expandedGrades[gid]=!expandedGrades[gid];state.currentGrade=gid;renderSidebar();}
+
+function selectGroup(gid,grpId){
+  state.currentGrade=gid;state.currentGroup=grpId;state.currentClass=null;
+  expandedGrades[gid]=true;renderSidebar();renderGroupView();
+}
+
+function renderGroupView(){
+  document.getElementById('welcome-screen').style.display='none';
+  document.getElementById('class-detail').style.display='none';
+  document.getElementById('group-content').style.display='block';
+  document.getElementById('add-class-btn').style.display='';
+  state.currentClass=null;
+  const grade=state.grades[state.currentGrade];
+  const grp=grade.groups[state.currentGroup];
+  const classes=Object.values(grp.classes);
+  document.getElementById('breadcrumb').innerHTML=`${GRADE_ICONS[grade.number-1]} <span>${grade.name}</span> › ${grp.name}`;
+  const totalRes=classes.reduce((a,c)=>a+Object.keys(c.resources).length,0);
+  document.getElementById('stat-row').innerHTML=`
+    <div class="stat-card"><div class="num">${classes.length}</div><div class="lbl">Clases</div></div>
+    <div class="stat-card"><div class="num">${totalRes}</div><div class="lbl">Recursos totales</div></div>
+    <div class="stat-card"><div class="num">${classes.filter(c=>Object.keys(c.resources).length>0).length}</div><div class="lbl">Con recursos</div></div>`;
+  if(state.view==='grid')renderGridView(classes);else renderListView(classes);
+}
+
+function renderGridView(classes){
+  document.getElementById('grid-view').style.display='block';
+  document.getElementById('list-view').style.display='none';
+  const grid=document.getElementById('classes-grid');
+  if(!classes.length){grid.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>No hay clases. Usa <strong>+ Nueva Clase</strong>.</p></div>';return;}
+  grid.innerHTML=classes.map(c=>{
+    const res=Object.values(c.resources);
+    const types=[...new Set(res.map(r=>r.type))];
+    const badges=types.length?types.map(t=>`<span class="badge ${RES_TYPES[t]?.badge||'badge-gray'}">${RES_TYPES[t]?.icon} ${RES_TYPES[t]?.label||t}</span>`).join(''):'<span class="badge badge-gray">Sin recursos</span>';
+    return`<div class="class-card" onclick="openClassDetail('${c.id}')">
+      <div class="class-card-header"><h3>${escHtml(c.title)}</h3>
+        <div class="card-actions" onclick="event.stopPropagation()">
+          <button class="icon-btn" onclick="openEditClassModal('${c.id}')">✏️</button>
+          <button class="icon-btn danger" onclick="deleteClass('${c.id}')">🗑</button>
+        </div></div>
+      <div class="class-card-meta">${badges}</div>
+      <div class="class-desc">${escHtml(c.desc||'Sin descripción')}</div>
+      <div class="class-card-footer"><span class="resource-count">${res.length} recurso${res.length!==1?'s':''} · ${c.date||'Sin fecha'}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderListView(classes){
+  document.getElementById('grid-view').style.display='none';
+  document.getElementById('list-view').style.display='block';
+  const lv=document.getElementById('classes-list-view');
+  if(!classes.length){lv.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>No hay clases.</p></div>';return;}
+  lv.innerHTML=classes.map(c=>`<div class="list-item" onclick="openClassDetail('${c.id}')">
+    <span style="font-size:18px">📄</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600;font-family:'Nunito',sans-serif">${escHtml(c.title)}</div>
+    <div style="font-size:11px;color:var(--text2)">${Object.keys(c.resources).length} recursos · ${c.date||'Sin fecha'}</div></div>
+    <div style="display:flex;gap:4px">
+      <button class="icon-btn" onclick="event.stopPropagation();openEditClassModal('${c.id}')">✏️</button>
+      <button class="icon-btn danger" onclick="event.stopPropagation();deleteClass('${c.id}')">🗑</button>
+    </div></div>`).join('');
+}
+
+function setView(v){
+  state.view=v;
+  document.getElementById('vt-grid').className='vt-btn'+(v==='grid'?' active':'');
+  document.getElementById('vt-list').className='vt-btn'+(v==='list'?' active':'');
+  if(state.currentGroup&&!state.currentClass)renderGroupView();
+}
+
+function openClassDetail(clsId){
+  state.currentClass=clsId;
+  const grade=state.grades[state.currentGrade];
+  const grp=grade.groups[state.currentGroup];
+  const cls=grp.classes[clsId];
+  document.getElementById('group-content').style.display='none';
+  document.getElementById('class-detail').style.display='block';
+  document.getElementById('add-class-btn').style.display='none';
+  document.getElementById('breadcrumb').innerHTML=`${GRADE_ICONS[grade.number-1]} <span>${grade.name}</span> › ${grp.name} › ${escHtml(cls.title)}`;
+  renderClassDetail(clsId);
+}
+
+function renderClassDetail(clsId){
+  const cls=state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
+  const resources=Object.values(cls.resources);
+  const byType={};resources.forEach(r=>{if(!byType[r.type])byType[r.type]=[];byType[r.type].push(r);});
+  const sections=Object.entries(byType).map(([type,res])=>`
+    <div style="margin-bottom:22px">
+      <div class="resources-label">${RES_TYPES[type]?.icon||'📄'} ${RES_TYPES[type]?.label||type} (${res.length})</div>
+      <div class="resource-list">${res.map(r=>renderResourceItem(r,clsId)).join('')}</div>
+    </div>`).join('');
+  document.getElementById('class-detail').innerHTML=`
+    <div class="class-view-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div><button class="btn btn-ghost btn-sm" onclick="backToGroup()" style="margin-bottom:10px">← Volver al grupo</button>
+          <h2>${escHtml(cls.title)}</h2>
+          ${cls.desc?`<p style="margin-top:6px">${escHtml(cls.desc)}</p>`:''}
+          ${cls.date?`<p style="font-size:11px;color:var(--text3);margin-top:8px">📅 ${cls.date}</p>`:''}</div>
+        <button class="btn btn-ghost btn-sm" onclick="openEditClassModal('${clsId}')">✏️ Editar</button>
+      </div></div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif">RECURSOS (${resources.length})</div>
+        <button class="btn btn-primary btn-sm" onclick="openResourceModal('${clsId}')">+ Agregar recurso</button>
+      </div>
+      ${resources.length===0?'<div class="empty-state"><div class="ei">📭</div><p>Sin recursos. ¡Agrega el primero!</p></div>':''}
+      ${sections}
+    </div>`;
+}
+
+function renderResourceItem(r,clsId){
+  const info=RES_TYPES[r.type]||{icon:'📄'};
+  const linkHtml=r.url&&r.type!=='html'?`<a class="res-link" href="${r.url}" target="_blank" rel="noopener">${r.url.length>60?r.url.slice(0,60)+'...':r.url}</a>`:'';
+  const iframeHtml=r.type==='html'&&r.url?`<div class="html-preview"><iframe srcdoc="${escAttr(r.url)}" sandbox="allow-scripts allow-same-origin"></iframe></div>`:'';
+  return`<div class="resource-item">
+    <span class="res-icon">${info.icon}</span>
+    <div class="res-info">
+      <div class="res-title">${escHtml(r.title)}</div>
+      ${r.desc?`<div class="res-desc">${escHtml(r.desc)}</div>`:''}
+      ${linkHtml}${iframeHtml}
+    </div>
+    <div class="res-actions">
+      <button class="icon-btn" onclick="openEditResourceModal('${clsId}','${r.id}')">✏️</button>
+      <button class="icon-btn danger" onclick="deleteResource('${clsId}','${r.id}')">🗑</button>
+    </div></div>`;
+}
+
+function backToGroup(){
+  state.currentClass=null;
+  const grade=state.grades[state.currentGrade];
+  const grp=grade.groups[state.currentGroup];
+  document.getElementById('breadcrumb').innerHTML=`${GRADE_ICONS[grade.number-1]} <span>${grade.name}</span> › ${grp.name}`;
+  renderGroupView();
+}
+
+function openModal(title,body,onSave){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  currentSaveHandler=onSave;
+  document.getElementById('modal-overlay').classList.add('show');
+  setTimeout(()=>{const f=document.querySelector('#modal-body input,#modal-body textarea,#modal-body select');if(f)f.focus();},80);
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');currentSaveHandler=null;}
+function modalSaveHandler(){if(currentSaveHandler)currentSaveHandler();}
+function handleOverlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+function openGroupModal(gid){
+  openModal('Nuevo Grupo',`<div class="form-group"><label>Nombre del grupo</label><input id="f-grp-name" placeholder="Ej: 1°C" autofocus></div>`,
+    ()=>{
+      const name=document.getElementById('f-grp-name').value.trim();
+      if(!name){alert('Escribe el nombre.');return;}
+      const id=uid();state.grades[gid].groups[id]={id,name,classes:{}};
+      saveState();closeModal();expandedGrades[gid]=true;renderSidebar();
+    });
+}
+
+function openClassModal(){
+  openModal('Nueva Clase',
+    `<div class="form-group"><label>Título</label><input id="f-cls-title" placeholder="Ej: Introducción a Scratch" autofocus></div>
+     <div class="form-group"><label>Descripción</label><textarea id="f-cls-desc" placeholder="¿Qué se trabajará?"></textarea></div>
+     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date"></div>`,
+    ()=>{
+      const title=document.getElementById('f-cls-title').value.trim();
+      if(!title){alert('El título es obligatorio.');return;}
+      const id=uid();
+      state.grades[state.currentGrade].groups[state.currentGroup].classes[id]={
+        id,title,desc:document.getElementById('f-cls-desc').value,
+        date:document.getElementById('f-cls-date').value,resources:{}
+      };
+      saveState();closeModal();renderGroupView();
+    });
+}
+
+function openEditClassModal(clsId){
+  const cls=state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
+  openModal('Editar Clase',
+    `<div class="form-group"><label>Título</label><input id="f-cls-title" value="${escAttrQ(cls.title)}" autofocus></div>
+     <div class="form-group"><label>Descripción</label><textarea id="f-cls-desc">${escHtml(cls.desc||'')}</textarea></div>
+     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date" value="${cls.date||''}"></div>`,
+    ()=>{
+      const title=document.getElementById('f-cls-title').value.trim();
+      if(!title){alert('El título es obligatorio.');return;}
+      cls.title=title;cls.desc=document.getElementById('f-cls-desc').value;cls.date=document.getElementById('f-cls-date').value;
+      saveState();closeModal();
+      if(state.currentClass===clsId)renderClassDetail(clsId);else renderGroupView();
+    });
+}
+
+function deleteClass(clsId){
+  if(!confirm('¿Eliminar esta clase y todos sus recursos?'))return;
+  delete state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
+  saveState();if(state.currentClass===clsId)state.currentClass=null;renderGroupView();
+}
+
+function openResourceModal(clsId){
+  openModal('Agregar Recurso',
+    `<div class="form-group"><label>Tipo</label>
+      <select id="f-res-type" onchange="updateUrlLabel()">
+        ${Object.entries(RES_TYPES).map(([k,v])=>`<option value="${k}">${v.icon} ${v.label}</option>`).join('')}
+      </select></div>
+     <div class="form-group"><label>Título</label><input id="f-res-title" placeholder="Nombre del recurso" autofocus></div>
+     <div class="form-group"><label>Descripción (opcional)</label><textarea id="f-res-desc" style="min-height:60px"></textarea></div>
+     <div class="form-group"><label id="url-label">URL del recurso</label><textarea id="f-res-url" style="min-height:60px" placeholder="https://..."></textarea></div>`,
+    ()=>{
+      const type=document.getElementById('f-res-type').value;
+      const title=document.getElementById('f-res-title').value.trim();
+      if(!title){alert('El título es obligatorio.');return;}
+      const id=uid();
+      state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId].resources[id]={
+        id,type,title,desc:document.getElementById('f-res-desc').value,url:document.getElementById('f-res-url').value
+      };
+      saveState();closeModal();if(state.currentClass===clsId)renderClassDetail(clsId);
+    });
+  setTimeout(updateUrlLabel,50);
+}
+
+function updateUrlLabel(){
+  const type=document.getElementById('f-res-type')?.value;
+  const lbl=document.getElementById('url-label');
+  if(!lbl)return;
+  lbl.textContent=type==='html'?'Código HTML (pega aquí tu HTML)':type==='link'||type==='presentacion'?'URL del recurso':'URL o referencia (opcional)';
+}
+
+function openEditResourceModal(clsId,resId){
+  const r=state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId].resources[resId];
+  openModal('Editar Recurso',
+    `<div class="form-group"><label>Tipo</label>
+      <select id="f-res-type">${Object.entries(RES_TYPES).map(([k,v])=>`<option value="${k}"${k===r.type?' selected':''}>${v.icon} ${v.label}</option>`).join('')}</select></div>
+     <div class="form-group"><label>Título</label><input id="f-res-title" value="${escAttrQ(r.title)}" autofocus></div>
+     <div class="form-group"><label>Descripción</label><textarea id="f-res-desc" style="min-height:60px">${escHtml(r.desc||'')}</textarea></div>
+     <div class="form-group"><label>URL / Código HTML</label><textarea id="f-res-url" style="min-height:60px">${escHtml(r.url||'')}</textarea></div>`,
+    ()=>{
+      const title=document.getElementById('f-res-title').value.trim();
+      if(!title){alert('El título es obligatorio.');return;}
+      r.type=document.getElementById('f-res-type').value;r.title=title;
+      r.desc=document.getElementById('f-res-desc').value;r.url=document.getElementById('f-res-url').value;
+      saveState();closeModal();if(state.currentClass===clsId)renderClassDetail(clsId);
+    });
+}
+
+function deleteResource(clsId,resId){
+  if(!confirm('¿Eliminar este recurso?'))return;
+  delete state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId].resources[resId];
+  saveState();renderClassDetail(clsId);
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='directorio-escolar-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.grades)throw new Error();
+      state=data;saveState();expandedGrades={};
+      state.currentGrade=null;state.currentGroup=null;state.currentClass=null;
+      renderSidebar();
+      document.getElementById('welcome-screen').style.display='flex';
+      document.getElementById('group-content').style.display='none';
+      document.getElementById('class-detail').style.display='none';
+      document.getElementById('add-class-btn').style.display='none';
+      document.getElementById('breadcrumb').innerHTML='Mi Directorio Escolar';
+      alert('✅ Datos importados.');
+    }catch(err){alert('❌ Archivo inválido.');}
+  };
+  r.readAsText(file);e.target.value='';
+}
+
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function escAttrQ(s){return String(s||'').replace(/"/g,'&quot;');}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  if(e.key==='Enter'&&document.getElementById('modal-overlay').classList.contains('show')){
+    if(document.activeElement?.tagName!=='TEXTAREA')modalSaveHandler();
+  }
+});
+document.getElementById('search-input').addEventListener('input',renderSidebar);
+</script>
 </body>
 </html>
