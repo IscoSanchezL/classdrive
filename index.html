@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,39 +7,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0f1117;--bg2:#1a1f2e;--bg3:#222840;--bg4:#2d3452;--amber:#f59e0b;--amber2:#fbbf24;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:#2d3452;--danger:#ef4444;--radius:10px;--radius2:14px}
-html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden}
+:root{
+  --amber:#f59e0b;--amber2:#fbbf24;--amber3:#fcd34d;
+  --danger:#ef4444;--success:#10b981;--info:#3b82f6;--purple:#8b5cf6;
+  --radius:10px;--radius2:14px;
+}
+[data-theme="dark"]{
+  --bg:#0f1117;--bg2:#1a1f2e;--bg3:#222840;--bg4:#2d3452;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:#2d3452;
+  --card:#1a1f2e;--shadow:rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f1f5f9;--bg2:#ffffff;--bg3:#f8fafc;--bg4:#e2e8f0;
+  --text:#1e293b;--text2:#475569;--text3:#94a3b8;--border:#e2e8f0;
+  --card:#ffffff;--shadow:rgba(0,0,0,.08);
+}
+html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;transition:background .3s,color .3s}
+
+/* LOADING */
 #loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .spinner{width:42px;height:42px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:13px;color:var(--text2)}
-#login-screen{display:none;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse at 20% 50%,rgba(245,158,11,.09) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(59,130,246,.07) 0%,transparent 50%)}
+
+/* LOGIN */
+#login-screen{display:none;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
 #login-screen.show{display:flex}
-.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:22px;padding:44px 40px;width:100%;max-width:420px;box-shadow:0 30px 70px rgba(0,0,0,.55)}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:22px;padding:44px 40px;width:100%;max-width:420px;box-shadow:0 30px 70px var(--shadow)}
 .login-logo{text-align:center;margin-bottom:34px}
 .login-logo .icon{font-size:54px;display:block;margin-bottom:12px}
 .login-logo h1{font-family:'Nunito',sans-serif;font-size:24px;font-weight:800;color:var(--amber2)}
 .login-logo p{font-size:12px;color:var(--text3);margin-top:5px}
-.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;background:#fff;color:#1f1f1f;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;background:#fff;color:#1f1f1f;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 .google-btn:hover{background:#f1f1f1;transform:translateY(-2px)}
 .google-btn img{width:22px;height:22px}
 .login-info{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--text2);text-align:center;line-height:1.7;margin-top:22px}
 .login-info strong{color:var(--amber2)}
 #login-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#fca5a5;margin-top:14px;display:none;text-align:center}
+
+/* APP */
 #app{display:none;height:100vh;flex-direction:column}
 #app.show{display:flex}
 #main-layout{display:flex;flex:1;overflow:hidden}
-#sidebar{width:262px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+
+/* SIDEBAR */
+#sidebar{width:268px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transition:background .3s}
 #sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border)}
-#sidebar-header h1{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--amber2)}
-#user-info{display:flex;align-items:center;gap:8px;margin-top:8px}
-#user-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--amber);object-fit:cover;display:none}
-#user-avatar-placeholder{width:28px;height:28px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#1a1000;flex-shrink:0;font-family:'Nunito',sans-serif}
-#user-name{font-size:11px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-title{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--amber2)}
+#user-info{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px;background:var(--bg3);border-radius:10px;cursor:pointer;transition:background .15s}
+#user-info:hover{background:var(--bg4)}
+#user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid var(--amber);object-fit:cover;display:none}
+#user-avatar-placeholder{width:30px;height:30px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#1a1000;flex-shrink:0;font-family:'Nunito',sans-serif}
+.user-details{flex:1;min-width:0}
+#user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+#user-role{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* NAV TABS */
+.nav-tabs{display:flex;gap:4px;padding:8px;border-bottom:1px solid var(--border)}
+.nav-tab{flex:1;padding:6px 4px;font-size:10px;border-radius:7px;border:none;background:none;color:var(--text3);cursor:pointer;transition:all .15s;font-family:inherit;text-align:center}
+.nav-tab.active{background:var(--amber);color:#1a1000;font-weight:700}
+.nav-tab:hover:not(.active){background:var(--bg3);color:var(--text)}
+
 #search-box{margin:10px;position:relative}
-#search-box input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px 7px 28px;color:var(--text);font-size:12px;outline:none;font-family:inherit}
+#search-box input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px 7px 28px;color:var(--text);font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
 #search-box input:focus{border-color:var(--amber)}
 #search-box .si{position:absolute;left:9px;top:8px;font-size:12px;color:var(--text3)}
+
 #grades-list{flex:1;overflow-y:auto;padding:6px}
 .grade-item{margin-bottom:3px}
 .grade-header{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;border-radius:var(--radius);transition:background .15s;user-select:none}
@@ -50,72 +83,141 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
 .grade-arrow{font-size:9px;color:var(--text3);transition:transform .2s}
 .grade-arrow.open{transform:rotate(90deg)}
 .groups-list{padding-left:16px;overflow:hidden;max-height:0;transition:max-height .3s ease}
-.groups-list.open{max-height:600px}
+.groups-list.open{max-height:800px}
 .group-item{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border-radius:8px;transition:background .15s;margin-bottom:2px}
 .group-item:hover{background:var(--bg3)}
+.group-item:hover .group-actions{opacity:1}
 .group-item.active{background:var(--amber);color:#1a1000}
-.group-item.active .group-count{color:#7a4a00;background:rgba(0,0,0,.15)}
+.group-item.active .group-count,.group-item.active .group-actions button{color:#7a4a00}
 .group-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
 .group-item.active .group-dot{background:#7a4a00}
 .group-name{flex:1;font-size:12px;font-weight:600}
 .group-count{font-size:10px;color:var(--text3);background:var(--bg3);padding:1px 7px;border-radius:10px}
+.group-item.active .group-count{background:rgba(0,0,0,.15)}
+.group-actions{display:flex;gap:2px;opacity:0;transition:opacity .15s}
+.group-actions button{background:none;border:none;cursor:pointer;padding:2px 4px;font-size:11px;color:var(--text3);border-radius:4px}
+.group-actions button:hover{background:rgba(0,0,0,.1)}
 .add-group-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all .15s;border:none;background:none;width:100%;margin-bottom:4px;font-family:inherit}
 .add-group-btn:hover{color:var(--amber);background:var(--bg3)}
+
+/* FAVORITES PANEL */
+#favorites-panel{flex:1;overflow-y:auto;padding:8px;display:none}
+#favorites-panel.show{display:block}
+.fav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:4px;border:1px solid var(--border)}
+.fav-item:hover{border-color:var(--amber);background:var(--bg3)}
+.fav-info{flex:1;min-width:0}
+.fav-title{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fav-meta{font-size:10px;color:var(--text3)}
+
+/* TRASH PANEL */
+#trash-panel{flex:1;overflow-y:auto;padding:8px;display:none}
+#trash-panel.show{display:block}
+.trash-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:6px}
+.trash-item-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.trash-item-meta{font-size:10px;color:var(--text3);margin-bottom:8px}
+.trash-actions{display:flex;gap:6px}
+
 #sidebar-footer{padding:10px;border-top:1px solid var(--border)}
 .footer-row{display:flex;gap:6px;margin-bottom:6px}
 .footer-btn{flex:1;padding:7px 4px;font-size:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
 .footer-btn:hover{border-color:var(--amber);color:var(--amber)}
 .logout-btn{width:100%;padding:8px;font-size:11px;border-radius:8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#fca5a5;cursor:pointer;transition:all .15s;font-family:inherit}
 .logout-btn:hover{background:rgba(239,68,68,.18);border-color:var(--danger)}
+
+/* MAIN */
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#topbar{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-shrink:0}
-#breadcrumb{font-size:12px;color:var(--text3)}
+#topbar{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-shrink:0;gap:12px}
+#breadcrumb{font-size:12px;color:var(--text3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #breadcrumb span{color:var(--amber2);font-weight:700}
+.topbar-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;font-family:inherit}
 .btn-primary{background:var(--amber);color:#1a1000}
 .btn-primary:hover{background:var(--amber2)}
 .btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
 .btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
 .btn-sm{padding:5px 10px;font-size:11px}
-.view-toggle{display:flex;gap:4px}
-.vt-btn{padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;font-size:12px;transition:all .15s}
+.btn-danger{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-success{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+.btn-success:hover{background:var(--success);color:#fff}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.icon-btn:hover{border-color:var(--amber);color:var(--amber)}
+.icon-btn.active{background:var(--amber);color:#1a1000;border-color:var(--amber)}
+.icon-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+.view-toggle{display:flex;gap:3px}
+.vt-btn{padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;font-size:12px;transition:all .15s}
 .vt-btn.active{background:var(--amber);color:#1a1000;border-color:var(--amber)}
+
+/* GLOBAL SEARCH RESULTS */
+#global-search-results{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;margin-bottom:16px}
+#global-search-results h3{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.search-result-item{padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:6px;transition:border-color .15s}
+.search-result-item:hover{border-color:var(--amber)}
+.search-result-title{font-size:13px;font-weight:600;font-family:'Nunito',sans-serif}
+.search-result-meta{font-size:11px;color:var(--text3);margin-top:2px}
+
 #content{flex:1;overflow-y:auto;padding:20px}
 #welcome-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;text-align:center}
 #welcome-screen h2{font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;color:var(--amber2)}
 #welcome-screen p{color:var(--text2);max-width:340px;line-height:1.6;font-size:13px}
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;width:100%;max-width:400px}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;transition:border-color .15s}
+.stat-card:hover{border-color:var(--amber)}
 .stat-card .num{font-size:24px;font-weight:800;color:var(--amber2);font-family:'Nunito',sans-serif}
 .stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* NOTES */
+.quick-notes{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;margin-bottom:16px}
+.quick-notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.quick-notes-header h3{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.quick-notes textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;outline:none;font-family:inherit;resize:vertical;min-height:70px;transition:border-color .2s}
+.quick-notes textarea:focus{border-color:var(--amber)}
+
+/* CLASSES */
 .classes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.class-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .2s}
-.class-card:hover{border-color:var(--amber);transform:translateY(-2px)}
-.class-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.class-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.class-card:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:0 8px 20px var(--shadow)}
+.class-card.is-favorite{border-color:var(--amber2)}
+.fav-star{position:absolute;top:12px;right:12px;font-size:14px;cursor:pointer;opacity:.4;transition:opacity .15s}
+.fav-star:hover,.class-card.is-favorite .fav-star{opacity:1}
+.class-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;padding-right:24px}
 .class-card h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;line-height:1.3}
-.class-card-meta{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.class-card-meta{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
 .badge-blue{background:rgba(59,130,246,.15);color:#93c5fd}
 .badge-green{background:rgba(16,185,129,.15);color:#6ee7b7}
 .badge-amber{background:rgba(245,158,11,.15);color:#fcd34d}
 .badge-pink{background:rgba(236,72,153,.15);color:#f9a8d4}
 .badge-gray{background:rgba(100,116,139,.15);color:#94a3b8}
-.class-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+.badge-purple{background:rgba(139,92,246,.15);color:#c4b5fd}
+.badge-tag{background:rgba(59,130,246,.1);color:var(--info);border:1px solid rgba(59,130,246,.2)}
+.class-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.class-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.class-tag{padding:2px 7px;border-radius:10px;font-size:10px;background:rgba(139,92,246,.1);color:#c4b5fd;border:1px solid rgba(139,92,246,.2)}
 .class-card-footer{display:flex;align-items:center;justify-content:space-between}
 .resource-count{font-size:11px;color:var(--text3)}
-.card-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.card-actions{display:flex;gap:3px;opacity:0;transition:opacity .15s}
 .class-card:hover .card-actions{opacity:1}
-.icon-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
-.icon-btn:hover{border-color:var(--amber);color:var(--amber)}
-.icon-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+
+/* PROGRESS BAR */
+.progress-bar{height:3px;background:var(--bg3);border-radius:3px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--amber);border-radius:3px;transition:width .3s}
+
 .list-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;margin-bottom:6px}
 .list-item:hover{border-color:var(--amber)}
+.list-item.is-favorite{border-color:rgba(245,158,11,.4)}
+
+/* CLASS DETAIL */
 .class-view-header{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;margin-bottom:16px}
 .class-view-header h2{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
 .class-view-header p{font-size:13px;color:var(--text2)}
 .resources-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:10px}
 .resource-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.resource-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.resource-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;transition:border-color .15s}
+.resource-item:hover{border-color:var(--bg4)}
 .res-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;margin-top:2px}
 .res-info{flex:1;min-width:0}
 .res-title{font-size:13px;font-weight:600;font-family:'Nunito',sans-serif}
@@ -126,12 +228,25 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
 .resource-item:hover .res-actions{opacity:1}
 .html-preview{background:#fff;border:1px solid var(--border);border-radius:8px;margin-top:10px;overflow:hidden}
 .html-preview iframe{width:100%;height:220px;border:none}
+
+/* TEMPLATES */
+.templates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+.template-card{background:var(--bg3);border:1px dashed var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.template-card:hover{border-color:var(--amber);border-style:solid}
+.template-card .ti{font-size:28px;margin-bottom:8px}
+.template-card h4{font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;margin-bottom:4px}
+.template-card p{font-size:11px;color:var(--text3)}
+
+/* EMPTY STATE */
 .empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
 .empty-state .ei{font-size:36px;margin-bottom:10px}
 .empty-state p{font-size:13px;margin-top:6px}
+
+/* MODAL */
 #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center}
 #modal-overlay.show{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:26px;width:90%;max-width:500px;max-height:88vh;overflow-y:auto}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:26px;width:90%;max-width:520px;max-height:88vh;overflow-y:auto}
+.modal.modal-lg{max-width:680px}
 .modal h2{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;margin-bottom:18px;color:var(--amber2)}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
@@ -140,6 +255,26 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
 .form-group textarea{resize:vertical;min-height:70px}
 .form-group select option{background:var(--bg3)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* SETTINGS PANEL */
+.settings-section{margin-bottom:22px}
+.settings-section h3{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:13px;font-weight:600}
+.setting-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.toggle{width:40px;height:22px;background:var(--bg4);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--amber)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s}
+.toggle.on::after{left:21px}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.color-swatch.active{border-color:var(--text);transform:scale(1.15)}
+.tags-input-area{display:flex;gap:6px;flex-wrap:wrap;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px}
+.tag-chip{display:flex;align-items:center;gap:4px;background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.2);padding:3px 8px;border-radius:20px;font-size:11px}
+.tag-chip button{background:none;border:none;cursor:pointer;color:inherit;font-size:13px;padding:0;line-height:1}
+.tags-input-area input{background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:inherit;min-width:80px}
+
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 </style>
 </head>
@@ -154,7 +289,7 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
   <div class="login-card">
     <div class="login-logo">
       <span class="icon">🏫</span>
-      <h1>Mi Directorio Escolar</h1>
+      <h1 id="login-app-title">Mi Directorio Escolar</h1>
       <p>GI School · Tecnología · PYP</p>
     </div>
     <button class="google-btn" id="google-signin-btn">
@@ -172,46 +307,72 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
   <div id="main-layout">
     <div id="sidebar">
       <div id="sidebar-header">
-        <h1>📚 Mi Directorio Escolar</h1>
-        <div id="user-info">
+        <div class="app-title" id="sidebar-app-title">📚 Mi Directorio Escolar</div>
+        <div id="user-info" onclick="openProfileModal()" title="Editar perfil">
           <div id="user-avatar-placeholder">F</div>
           <img id="user-avatar" src="" alt="">
-          <span id="user-name">Francisco Javier</span>
+          <div class="user-details">
+            <div id="user-name">Francisco Javier</div>
+            <div id="user-role">Docente de Tecnología</div>
+          </div>
+          <span style="font-size:12px;color:var(--text3)">✏️</span>
         </div>
       </div>
+
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('grades')" id="tab-grades">📚 Grados</button>
+        <button class="nav-tab" onclick="switchTab('favorites')" id="tab-favorites">⭐ Favs</button>
+        <button class="nav-tab" onclick="switchTab('trash')" id="tab-trash">🗑 Papelera</button>
+      </div>
+
       <div id="search-box">
         <span class="si">🔍</span>
-        <input type="text" id="search-input" placeholder="Buscar clase o grupo...">
+        <input type="text" id="search-input" placeholder="Buscar en todo...">
       </div>
+
       <div id="grades-list"></div>
+      <div id="favorites-panel"></div>
+      <div id="trash-panel"></div>
+
       <div id="sidebar-footer">
         <div class="footer-row">
           <button class="footer-btn" onclick="exportData()">⬇ Exportar</button>
           <button class="footer-btn" onclick="document.getElementById('import-file').click()">⬆ Importar</button>
           <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+          <button class="footer-btn" onclick="openSettingsModal()">⚙️ Config</button>
         </div>
         <button class="logout-btn" id="logout-btn">↩ Cerrar sesión</button>
       </div>
     </div>
+
     <div id="main">
       <div id="topbar">
         <div id="breadcrumb">Mi Directorio Escolar</div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div class="topbar-right">
           <div class="view-toggle">
-            <button class="vt-btn active" id="vt-grid" onclick="setView('grid')">⊞</button>
-            <button class="vt-btn" id="vt-list" onclick="setView('list')">☰</button>
+            <button class="vt-btn active" id="vt-grid" onclick="setView('grid')" title="Cuadrícula">⊞</button>
+            <button class="vt-btn" id="vt-list" onclick="setView('list')" title="Lista">☰</button>
           </div>
+          <button class="icon-btn" onclick="toggleTheme()" id="theme-btn" title="Cambiar tema">🌙</button>
           <button class="btn btn-primary" id="add-class-btn" onclick="openClassModal()" style="display:none">+ Nueva Clase</button>
         </div>
       </div>
       <div id="content">
         <div id="welcome-screen">
           <div style="font-size:52px">🏫</div>
-          <h2>¡Bienvenido, Francisco Javier!</h2>
+          <h2 id="welcome-title">¡Bienvenido!</h2>
           <p>Selecciona un grupo del menú lateral para gestionar tus clases y recursos.</p>
+          <div class="welcome-stats" id="welcome-stats"></div>
         </div>
         <div id="group-content" style="display:none">
           <div class="stat-row" id="stat-row"></div>
+          <div class="quick-notes" id="quick-notes-box" style="display:none">
+            <div class="quick-notes-header">
+              <h3>📝 Notas rápidas del grupo</h3>
+              <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Guardar</button>
+            </div>
+            <textarea id="notes-textarea" placeholder="Escribe notas, recordatorios o pendientes para este grupo..."></textarea>
+          </div>
           <div id="grid-view"><div class="classes-grid" id="classes-grid"></div></div>
           <div id="list-view" style="display:none"><div id="classes-list-view"></div></div>
         </div>
@@ -222,12 +383,12 @@ html,body{height:100%;font-family:'Fira Sans',system-ui,sans-serif;background:va
 </div>
 
 <div id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal">
+  <div class="modal" id="modal-box">
     <h2 id="modal-title">Modal</h2>
     <div id="modal-body"></div>
-    <div class="modal-actions">
+    <div class="modal-actions" id="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="modalSaveHandler()">Guardar</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="modalSaveHandler()">Guardar</button>
     </div>
   </div>
 </div>
@@ -238,7 +399,6 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRe
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const AUTHORIZED_EMAIL = "franksanlo@gmail.com";
-
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyCsHA5yATtVbAFAxEtHwP0E491p_eWpuvE",
   authDomain: "mi-directorio-escolar.firebaseapp.com",
@@ -247,23 +407,17 @@ const firebaseApp = initializeApp({
   messagingSenderId: "946739239308",
   appId: "1:946739239308:web:f1fe014d74baa1f6e11ea9"
 });
-
 const auth = getAuth(firebaseApp);
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({login_hint: AUTHORIZED_EMAIL, prompt: 'select_account'});
+provider.setCustomParameters({login_hint: AUTHORIZED_EMAIL, prompt:'select_account'});
 
-// Intentar popup primero, si falla usar redirect
 document.getElementById('google-signin-btn').addEventListener('click', async () => {
   try {
     const result = await signInWithPopup(auth, provider);
-    if(result.user.email !== AUTHORIZED_EMAIL){
-      await signOut(auth);
-      document.getElementById('login-error').style.display='block';
-    }
+    if(result.user.email !== AUTHORIZED_EMAIL){ await signOut(auth); document.getElementById('login-error').style.display='block'; }
   } catch(e) {
-    if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user'){
-      // Si popup es bloqueado, usar redirect automáticamente
-      try { await signInWithRedirect(auth, provider); } catch(e2){ console.error(e2); }
+    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'){
+      try{ await signInWithRedirect(auth, provider); }catch(e2){ console.error(e2); }
     }
   }
 });
@@ -272,31 +426,18 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
   if(confirm('¿Cerrar sesión?')) await signOut(auth);
 });
 
-// Verificar resultado de redirect
 getRedirectResult(auth).then(result => {
-  if(result && result.user){
-    if(result.user.email !== AUTHORIZED_EMAIL){
-      signOut(auth);
-      document.getElementById('login-error').style.display='block';
-    }
-  }
+  if(result?.user && result.user.email !== AUTHORIZED_EMAIL){ signOut(auth); document.getElementById('login-error').style.display='block'; }
 }).catch(e => console.error(e));
 
 onAuthStateChanged(auth, user => {
   document.getElementById('loading-overlay').style.display='none';
-  if(user && user.email === AUTHORIZED_EMAIL){
+  if(user && user.email===AUTHORIZED_EMAIL){
     document.getElementById('login-screen').classList.remove('show');
     document.getElementById('app').classList.add('show');
-    const name = user.displayName || 'Francisco Javier';
-    document.getElementById('user-name').textContent = name;
-    if(user.photoURL){
-      document.getElementById('user-avatar').src = user.photoURL;
-      document.getElementById('user-avatar').style.display = 'block';
-      document.getElementById('user-avatar-placeholder').style.display = 'none';
-    } else {
-      document.getElementById('user-avatar-placeholder').textContent = name[0].toUpperCase();
-    }
-    if(typeof loadState === 'function'){ loadState(); renderSidebar(); }
+    const name = user.displayName||'Francisco Javier';
+    window._firebaseUser = user;
+    if(typeof initApp==='function') initApp(user);
   } else {
     document.getElementById('app').classList.remove('show');
     document.getElementById('login-screen').classList.add('show');
@@ -306,6 +447,9 @@ onAuthStateChanged(auth, user => {
 </script>
 
 <script>
+// =============================================
+// CONSTANTES
+// =============================================
 const GRADE_ICONS=['📗','📘','📙','📕','📓','📔'];
 const GRADE_NAMES=['PRIMERO','SEGUNDO','TERCERO','CUARTO','QUINTO','SEXTO'];
 const RES_TYPES={
@@ -313,54 +457,160 @@ const RES_TYPES={
   actividad:{icon:'✏️',label:'Actividad',badge:'badge-green'},
   plan:{icon:'📋',label:'Plan de clase',badge:'badge-amber'},
   html:{icon:'🌐',label:'HTML interactivo',badge:'badge-pink'},
-  link:{icon:'🔗',label:'Enlace externo',badge:'badge-gray'}
+  link:{icon:'🔗',label:'Enlace externo',badge:'badge-gray'},
+  video:{icon:'🎥',label:'Video',badge:'badge-purple'},
+  evaluacion:{icon:'📝',label:'Evaluación',badge:'badge-blue'}
 };
-let state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
+const ACCENT_COLORS=['#f59e0b','#10b981','#3b82f6','#8b5cf6','#ef4444','#ec4899','#14b8a6','#f97316'];
+const CLASS_TEMPLATES=[
+  {icon:'💻',name:'Clase de Coding',desc:'Scratch / Python / HTML',data:{title:'Clase de Coding',desc:'Sesión de programación con actividad práctica.',tags:['Coding','Scratch']}},
+  {icon:'🎨',name:'Creación Digital',desc:'Canva / Book Creator',data:{title:'Creación Digital',desc:'Sesión de creación de contenido digital.',tags:['Creación','Canva']}},
+  {icon:'🤖',name:'Inteligencia Artificial',desc:'IA y tecnología',data:{title:'Introducción a la IA',desc:'Exploración de conceptos de inteligencia artificial adaptados al nivel.',tags:['IA','Futuro']}},
+  {icon:'🔒',name:'Ciudadanía Digital',desc:'Seguridad y ética',data:{title:'Ciudadanía Digital',desc:'Uso responsable y seguro de internet.',tags:['Seguridad','Ética']}},
+  {icon:'🎮',name:'Unplugged',desc:'Sin dispositivos',data:{title:'Actividad Unplugged',desc:'Aprendizaje de conceptos tecnológicos sin computador.',tags:['Unplugged','Desconectado']}},
+  {icon:'📱',name:'Dispositivos',desc:'Hardware y software',data:{title:'Conociendo los Dispositivos',desc:'Exploración de componentes físicos y programas.',tags:['Hardware','Software']}}
+];
+
+// =============================================
+// ESTADO GLOBAL
+// =============================================
+let state={
+  grades:{}, trash:{classes:[],groups:[]},
+  favorites:[],
+  settings:{theme:'dark',accent:'#f59e0b',appTitle:'Mi Directorio Escolar',
+    profileName:'Francisco Javier',profileRole:'Docente de Tecnología',
+    showNotes:true},
+  currentGrade:null,currentGroup:null,currentClass:null,view:'grid'
+};
 let expandedGrades={};
 let currentSaveHandler=null;
+let currentTab='grades';
 
+// =============================================
+// INIT
+// =============================================
+function initApp(user){
+  loadState();
+  applySettings();
+  // Set user info from Google
+  const name = state.settings.profileName || user.displayName || 'Francisco Javier';
+  document.getElementById('user-name').textContent = name;
+  document.getElementById('user-role').textContent = state.settings.profileRole || 'Docente de Tecnología';
+  document.getElementById('welcome-title').textContent = '¡Bienvenido, ' + name.split(' ')[0] + '!';
+  if(user.photoURL){
+    document.getElementById('user-avatar').src=user.photoURL;
+    document.getElementById('user-avatar').style.display='block';
+    document.getElementById('user-avatar-placeholder').style.display='none';
+  } else {
+    document.getElementById('user-avatar-placeholder').textContent=name[0].toUpperCase();
+  }
+  renderSidebar();
+  renderWelcomeStats();
+}
+
+// =============================================
+// PERSISTENCIA
+// =============================================
 function loadState(){
-  const s=localStorage.getItem('mi-directorio-v3');
-  if(s){try{state=JSON.parse(s);}catch(e){initDemo();}}else{initDemo();}
+  const s=localStorage.getItem('mde-v4');
+  if(s){try{const loaded=JSON.parse(s);state={...state,...loaded};if(!state.trash)state.trash={classes:[],groups:[]};if(!state.favorites)state.favorites=[];if(!state.settings)state.settings={};} catch(e){initDemo();}}
+  else{initDemo();}
   if(!state.view)state.view='grid';
   expandedGrades={};
 }
-function saveState(){localStorage.setItem('mi-directorio-v3',JSON.stringify(state));}
-function uid(){return 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);}
+function saveState(){localStorage.setItem('mde-v4',JSON.stringify(state));}
+function uid(){return 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);}
 
 function initDemo(){
-  state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
+  state.grades={};
   for(let i=0;i<6;i++){
     const gid='grade-'+(i+1);
     state.grades[gid]={id:gid,name:GRADE_NAMES[i],number:i+1,groups:{}};
     ['A','B'].forEach(l=>{
       const grpId='grp-'+gid+'-'+l;
-      state.grades[gid].groups[grpId]={id:grpId,name:(i+1)+'°'+l,classes:{}};
+      state.grades[gid].groups[grpId]={id:grpId,name:(i+1)+'°'+l,classes:{},notes:''};
     });
   }
   const demo=state.grades['grade-1'].groups['grp-grade-1-A'];
   const c1=uid();
-  demo.classes[c1]={id:c1,title:'Introducción a la Tecnología',desc:'Exploración de dispositivos digitales y su uso cotidiano.',date:'2026-02-10',resources:{}};
-  const r1=uid();demo.classes[c1].resources[r1]={id:r1,type:'presentacion',title:'¿Qué es la tecnología?',desc:'Diapositivas de introducción.',url:'https://docs.google.com'};
-  const r2=uid();demo.classes[c1].resources[r2]={id:r2,type:'actividad',title:'Dibuja tu dispositivo favorito',desc:'Los estudiantes dibujan y describen su dispositivo favorito.',url:''};
+  demo.classes[c1]={id:c1,title:'Introducción a la Tecnología',desc:'Exploración de dispositivos digitales.',date:'2026-02-10',tags:['Hardware'],resources:{},favorite:false};
+  const r1=uid();demo.classes[c1].resources[r1]={id:r1,type:'presentacion',title:'¿Qué es la tecnología?',desc:'Diapositivas introductorias.',url:'https://docs.google.com'};
+  const r2=uid();demo.classes[c1].resources[r2]={id:r2,type:'actividad',title:'Dibuja tu dispositivo favorito',desc:'Actividad de expresión.',url:''};
   const c2=uid();
-  demo.classes[c2]={id:c2,title:'Dispositivos de Entrada y Salida',desc:'Clasificación de periféricos según su función.',date:'2026-02-17',resources:{}};
-  const r3=uid();demo.classes[c2].resources[r3]={id:r3,type:'plan',title:'Plan de clase — Periféricos',desc:'Planeación con apertura, desarrollo y cierre.',url:''};
+  demo.classes[c2]={id:c2,title:'Dispositivos de Entrada y Salida',desc:'Clasificación de periféricos.',date:'2026-02-17',tags:['Hardware','Software'],resources:{},favorite:true};
+  const r3=uid();demo.classes[c2].resources[r3]={id:r3,type:'plan',title:'Plan de clase — Periféricos',desc:'Apertura, desarrollo y cierre.',url:''};
+  state.favorites=[c2];
   saveState();
 }
 
+// =============================================
+// SETTINGS & THEME
+// =============================================
+function applySettings(){
+  const s=state.settings;
+  document.documentElement.setAttribute('data-theme', s.theme||'dark');
+  document.getElementById('theme-btn').textContent = s.theme==='dark'?'☀️':'🌙';
+  if(s.accent){
+    document.documentElement.style.setProperty('--amber', s.accent);
+    document.documentElement.style.setProperty('--amber2', s.accent);
+  }
+  if(s.appTitle){
+    document.getElementById('sidebar-app-title').textContent='📚 '+(s.appTitle||'Mi Directorio Escolar');
+    document.getElementById('login-app-title').textContent = s.appTitle||'Mi Directorio Escolar';
+    document.title = s.appTitle||'Mi Directorio Escolar';
+  }
+}
+
+function toggleTheme(){
+  state.settings.theme = state.settings.theme==='dark'?'light':'dark';
+  saveState(); applySettings();
+}
+
+// =============================================
+// TABS
+// =============================================
+function switchTab(tab){
+  currentTab=tab;
+  document.getElementById('grades-list').style.display=tab==='grades'?'block':'none';
+  document.getElementById('search-box').style.display=tab==='grades'?'block':'none';
+  const fp=document.getElementById('favorites-panel');
+  const tp=document.getElementById('trash-panel');
+  fp.style.display=tab==='favorites'?'block':'none';
+  tp.style.display=tab==='trash'?'block':'none';
+  ['grades','favorites','trash'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='favorites')renderFavoritesPanel();
+  if(tab==='trash')renderTrashPanel();
+}
+
+// =============================================
+// SIDEBAR
+// =============================================
 function renderSidebar(){
   const list=document.getElementById('grades-list');
   const q=(document.getElementById('search-input')?.value||'').toLowerCase();
   list.innerHTML='';
+
+  // Global search
+  if(q.length>1){
+    renderGlobalSearch(q);
+    return;
+  }
+
   Object.values(state.grades).forEach((grade,gi)=>{
     const isExp=expandedGrades[grade.id];
     const groupsHtml=Object.values(grade.groups).map(grp=>{
-      if(q&&!grp.name.toLowerCase().includes(q)&&!Object.values(grp.classes).some(c=>c.title.toLowerCase().includes(q)))return'';
       const cnt=Object.keys(grp.classes).length;
       return`<div class="group-item${state.currentGroup===grp.id?' active':''}" onclick="selectGroup('${grade.id}','${grp.id}')">
-        <span class="group-dot"></span><span class="group-name">${grp.name}</span>
-        <span class="group-count">${cnt}</span></div>`;
+        <span class="group-dot"></span>
+        <span class="group-name">${grp.name}</span>
+        <span class="group-count">${cnt}</span>
+        <div class="group-actions">
+          <button onclick="event.stopPropagation();openEditGroupModal('${grade.id}','${grp.id}')" title="Editar">✏️</button>
+          <button onclick="event.stopPropagation();deleteGroup('${grade.id}','${grp.id}')" title="Eliminar">🗑</button>
+        </div>
+      </div>`;
     }).join('');
     const div=document.createElement('div');div.className='grade-item';
     div.innerHTML=`<div class="grade-header${state.currentGrade===grade.id?' active':''}" onclick="toggleGrade('${grade.id}')">
@@ -375,12 +625,90 @@ function renderSidebar(){
   });
 }
 
-function toggleGrade(gid){expandedGrades[gid]=!expandedGrades[gid];state.currentGrade=gid;renderSidebar();}
-function selectGroup(gid,grpId){
-  state.currentGrade=gid;state.currentGroup=grpId;state.currentClass=null;
-  expandedGrades[gid]=true;renderSidebar();renderGroupView();
+function renderGlobalSearch(q){
+  const list=document.getElementById('grades-list');
+  const results=[];
+  Object.values(state.grades).forEach((grade,gi)=>{
+    Object.values(grade.groups).forEach(grp=>{
+      Object.values(grp.classes).forEach(cls=>{
+        const match = cls.title.toLowerCase().includes(q)||
+          (cls.desc||'').toLowerCase().includes(q)||
+          (cls.tags||[]).some(t=>t.toLowerCase().includes(q))||
+          Object.values(cls.resources||{}).some(r=>r.title.toLowerCase().includes(q));
+        if(match) results.push({cls,grp,grade,gi});
+      });
+    });
+  });
+  if(!results.length){list.innerHTML='<div class="empty-state" style="padding:20px"><div class="ei">🔍</div><p>Sin resultados para "'+q+'"</p></div>';return;}
+  list.innerHTML=`<div style="padding:8px 6px"><div id="global-search-results"><h3>Resultados (${results.length})</h3>
+    ${results.map(({cls,grp,grade,gi})=>`<div class="search-result-item" onclick="selectGroup('${grade.id}','${grp.id}');setTimeout(()=>openClassDetail('${cls.id}'),100)">
+      <div class="search-result-title">${escHtml(cls.title)}</div>
+      <div class="search-result-meta">${GRADE_ICONS[gi]} ${grade.name} › ${grp.name}</div>
+    </div>`).join('')}
+  </div></div>`;
 }
 
+function renderFavoritesPanel(){
+  const panel=document.getElementById('favorites-panel');
+  const favClasses=[];
+  Object.values(state.grades).forEach((grade,gi)=>{
+    Object.values(grade.groups).forEach(grp=>{
+      Object.values(grp.classes).forEach(cls=>{
+        if(state.favorites.includes(cls.id)) favClasses.push({cls,grp,grade,gi});
+      });
+    });
+  });
+  if(!favClasses.length){panel.innerHTML='<div class="empty-state"><div class="ei">⭐</div><p>No hay clases favoritas aún.</p></div>';return;}
+  panel.innerHTML=favClasses.map(({cls,grp,grade,gi})=>`
+    <div class="fav-item" onclick="selectGroup('${grade.id}','${grp.id}');setTimeout(()=>openClassDetail('${cls.id}'),100)">
+      <span style="font-size:18px">⭐</span>
+      <div class="fav-info">
+        <div class="fav-title">${escHtml(cls.title)}</div>
+        <div class="fav-meta">${GRADE_ICONS[gi]} ${grade.name} › ${grp.name}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderTrashPanel(){
+  const panel=document.getElementById('trash-panel');
+  const items=[...state.trash.classes,...state.trash.groups];
+  if(!items.length){panel.innerHTML='<div class="empty-state"><div class="ei">🗑</div><p>La papelera está vacía.</p></div>';return;}
+  panel.innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="btn btn-danger btn-sm" onclick="emptyTrash()">Vaciar papelera</button>
+    </div>
+    ${state.trash.classes.map(item=>`
+    <div class="trash-item">
+      <div class="trash-item-title">📄 ${escHtml(item.title)}</div>
+      <div class="trash-item-meta">Clase · ${item.gradeName} › ${item.groupName} · ${item.deletedAt||''}</div>
+      <div class="trash-actions">
+        <button class="btn btn-success btn-sm" onclick="restoreClass('${item.id}')">↩ Restaurar</button>
+        <button class="btn btn-danger btn-sm" onclick="permanentDeleteClass('${item.id}')">🗑 Eliminar</button>
+      </div>
+    </div>`).join('')}
+    ${state.trash.groups.map(item=>`
+    <div class="trash-item">
+      <div class="trash-item-title">📁 ${escHtml(item.name)}</div>
+      <div class="trash-item-meta">Grupo · ${item.gradeName} · ${item.deletedAt||''}</div>
+      <div class="trash-actions">
+        <button class="btn btn-success btn-sm" onclick="restoreGroup('${item.id}')">↩ Restaurar</button>
+        <button class="btn btn-danger btn-sm" onclick="permanentDeleteGroup('${item.id}')">🗑 Eliminar</button>
+      </div>
+    </div>`).join('')}`;
+}
+
+function toggleGrade(gid){expandedGrades[gid]=!expandedGrades[gid];state.currentGrade=gid;renderSidebar();}
+
+function selectGroup(gid,grpId){
+  state.currentGrade=gid;state.currentGroup=grpId;state.currentClass=null;
+  expandedGrades[gid]=true;
+  if(currentTab!=='grades') switchTab('grades');
+  renderSidebar();renderGroupView();
+}
+
+// =============================================
+// GROUP VIEW
+// =============================================
 function renderGroupView(){
   document.getElementById('welcome-screen').style.display='none';
   document.getElementById('class-detail').style.display='none';
@@ -392,31 +720,84 @@ function renderGroupView(){
   const classes=Object.values(grp.classes);
   document.getElementById('breadcrumb').innerHTML=`${GRADE_ICONS[grade.number-1]} <span>${grade.name}</span> › ${grp.name}`;
   const totalRes=classes.reduce((a,c)=>a+Object.keys(c.resources).length,0);
+  const favCount=classes.filter(c=>state.favorites.includes(c.id)).length;
   document.getElementById('stat-row').innerHTML=`
     <div class="stat-card"><div class="num">${classes.length}</div><div class="lbl">Clases</div></div>
-    <div class="stat-card"><div class="num">${totalRes}</div><div class="lbl">Recursos totales</div></div>
-    <div class="stat-card"><div class="num">${classes.filter(c=>Object.keys(c.resources).length>0).length}</div><div class="lbl">Con recursos</div></div>`;
+    <div class="stat-card"><div class="num">${totalRes}</div><div class="lbl">Recursos</div></div>
+    <div class="stat-card"><div class="num">${favCount}</div><div class="lbl">Favoritas ⭐</div></div>
+    <div class="stat-card"><div class="num">${classes.length?Math.round(classes.filter(c=>Object.keys(c.resources).length>0).length/classes.length*100):0}%</div><div class="lbl">Con recursos</div></div>`;
+
+  // Quick notes
+  const notesBox=document.getElementById('quick-notes-box');
+  if(state.settings.showNotes!==false){
+    notesBox.style.display='block';
+    document.getElementById('notes-textarea').value=grp.notes||'';
+  } else { notesBox.style.display='none'; }
+
   if(state.view==='grid')renderGridView(classes);else renderListView(classes);
+}
+
+function saveNotes(){
+  const grp=state.grades[state.currentGrade].groups[state.currentGroup];
+  grp.notes=document.getElementById('notes-textarea').value;
+  saveState();
+  document.getElementById('notes-textarea').style.borderColor='var(--success)';
+  setTimeout(()=>document.getElementById('notes-textarea').style.borderColor='',1500);
+}
+
+function renderWelcomeStats(){
+  let totalClasses=0,totalRes=0,totalGroups=0;
+  Object.values(state.grades).forEach(g=>{
+    Object.values(g.groups).forEach(grp=>{
+      totalGroups++;
+      Object.values(grp.classes).forEach(c=>{totalClasses++;totalRes+=Object.keys(c.resources).length;});
+    });
+  });
+  document.getElementById('welcome-stats').innerHTML=`
+    <div class="stat-card"><div class="num">${totalGroups}</div><div class="lbl">Grupos</div></div>
+    <div class="stat-card"><div class="num">${totalClasses}</div><div class="lbl">Clases</div></div>
+    <div class="stat-card"><div class="num">${totalRes}</div><div class="lbl">Recursos</div></div>`;
 }
 
 function renderGridView(classes){
   document.getElementById('grid-view').style.display='block';
   document.getElementById('list-view').style.display='none';
   const grid=document.getElementById('classes-grid');
-  if(!classes.length){grid.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>No hay clases. Usa <strong>+ Nueva Clase</strong>.</p></div>';return;}
+  if(!classes.length){
+    grid.innerHTML=`<div style="grid-column:1/-1">
+      <div style="text-align:center;padding:20px 0 14px;color:var(--text2);font-size:13px">No hay clases aún. ¿Empezar con una plantilla?</div>
+      <div class="templates-grid">${CLASS_TEMPLATES.map(t=>`
+        <div class="template-card" onclick="useTemplate(${JSON.stringify(t.data).replace(/"/g,'&quot;')})">
+          <div class="ti">${t.icon}</div>
+          <h4>${t.name}</h4>
+          <p>${t.desc}</p>
+        </div>`).join('')}
+      </div></div>`;
+    return;
+  }
   grid.innerHTML=classes.map(c=>{
     const res=Object.values(c.resources);
     const types=[...new Set(res.map(r=>r.type))];
+    const isFav=state.favorites.includes(c.id);
     const badges=types.length?types.map(t=>`<span class="badge ${RES_TYPES[t]?.badge||'badge-gray'}">${RES_TYPES[t]?.icon} ${RES_TYPES[t]?.label||t}</span>`).join(''):'<span class="badge badge-gray">Sin recursos</span>';
-    return`<div class="class-card" onclick="openClassDetail('${c.id}')">
-      <div class="class-card-header"><h3>${escHtml(c.title)}</h3>
+    const tagsHtml=(c.tags||[]).map(t=>`<span class="class-tag">${escHtml(t)}</span>`).join('');
+    const pct=res.length?Math.min(res.length*20,100):0;
+    return`<div class="class-card${isFav?' is-favorite':''}" onclick="openClassDetail('${c.id}')">
+      <span class="fav-star" onclick="event.stopPropagation();toggleFavorite('${c.id}')">${isFav?'⭐':'☆'}</span>
+      <div class="class-card-header">
+        <h3>${escHtml(c.title)}</h3>
         <div class="card-actions" onclick="event.stopPropagation()">
-          <button class="icon-btn" onclick="openEditClassModal('${c.id}')">✏️</button>
-          <button class="icon-btn danger" onclick="deleteClass('${c.id}')">🗑</button>
-        </div></div>
+          <button class="icon-btn" onclick="openEditClassModal('${c.id}')" title="Editar">✏️</button>
+          <button class="icon-btn danger" onclick="softDeleteClass('${c.id}')" title="Eliminar">🗑</button>
+        </div>
+      </div>
       <div class="class-card-meta">${badges}</div>
+      ${tagsHtml?`<div class="class-tags">${tagsHtml}</div>`:''}
       <div class="class-desc">${escHtml(c.desc||'Sin descripción')}</div>
-      <div class="class-card-footer"><span class="resource-count">${res.length} recurso${res.length!==1?'s':''} · ${c.date||'Sin fecha'}</span></div>
+      <div class="class-card-footer">
+        <span class="resource-count">${res.length} recurso${res.length!==1?'s':''} · ${c.date||'Sin fecha'}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
@@ -426,14 +807,20 @@ function renderListView(classes){
   document.getElementById('list-view').style.display='block';
   const lv=document.getElementById('classes-list-view');
   if(!classes.length){lv.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>No hay clases.</p></div>';return;}
-  lv.innerHTML=classes.map(c=>`<div class="list-item" onclick="openClassDetail('${c.id}')">
-    <span style="font-size:18px">📄</span>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600;font-family:'Nunito',sans-serif">${escHtml(c.title)}</div>
-    <div style="font-size:11px;color:var(--text2)">${Object.keys(c.resources).length} recursos · ${c.date||'Sin fecha'}</div></div>
-    <div style="display:flex;gap:4px">
-      <button class="icon-btn" onclick="event.stopPropagation();openEditClassModal('${c.id}')">✏️</button>
-      <button class="icon-btn danger" onclick="event.stopPropagation();deleteClass('${c.id}')">🗑</button>
-    </div></div>`).join('');
+  lv.innerHTML=classes.map(c=>{
+    const isFav=state.favorites.includes(c.id);
+    return`<div class="list-item${isFav?' is-favorite':''}" onclick="openClassDetail('${c.id}')">
+      <span onclick="event.stopPropagation();toggleFavorite('${c.id}')" style="cursor:pointer">${isFav?'⭐':'☆'}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;font-family:'Nunito',sans-serif">${escHtml(c.title)}</div>
+        <div style="font-size:11px;color:var(--text2)">${Object.keys(c.resources).length} recursos · ${c.date||'Sin fecha'} ${(c.tags||[]).map(t=>`<span class="class-tag" style="margin-left:4px">${t}</span>`).join('')}</div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="icon-btn" onclick="event.stopPropagation();openEditClassModal('${c.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();softDeleteClass('${c.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function setView(v){
@@ -443,6 +830,20 @@ function setView(v){
   if(state.currentGroup&&!state.currentClass)renderGroupView();
 }
 
+function toggleFavorite(clsId){
+  const idx=state.favorites.indexOf(clsId);
+  if(idx===-1)state.favorites.push(clsId);else state.favorites.splice(idx,1);
+  saveState();
+  if(state.currentGroup)renderGroupView();
+}
+
+function useTemplate(data){
+  openClassModal(data);
+}
+
+// =============================================
+// CLASS DETAIL
+// =============================================
 function openClassDetail(clsId){
   state.currentClass=clsId;
   const grade=state.grades[state.currentGrade];
@@ -459,6 +860,8 @@ function renderClassDetail(clsId){
   const cls=state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
   const resources=Object.values(cls.resources);
   const byType={};resources.forEach(r=>{if(!byType[r.type])byType[r.type]=[];byType[r.type].push(r);});
+  const isFav=state.favorites.includes(clsId);
+  const tagsHtml=(cls.tags||[]).map(t=>`<span class="class-tag">${escHtml(t)}</span>`).join('');
   const sections=Object.entries(byType).map(([type,res])=>`
     <div style="margin-bottom:22px">
       <div class="resources-label">${RES_TYPES[type]?.icon||'📄'} ${RES_TYPES[type]?.label||type} (${res.length})</div>
@@ -467,12 +870,19 @@ function renderClassDetail(clsId){
   document.getElementById('class-detail').innerHTML=`
     <div class="class-view-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-        <div><button class="btn btn-ghost btn-sm" onclick="backToGroup()" style="margin-bottom:10px">← Volver al grupo</button>
-          <h2>${escHtml(cls.title)}</h2>
+        <div style="flex:1">
+          <button class="btn btn-ghost btn-sm" onclick="backToGroup()" style="margin-bottom:10px">← Volver</button>
+          <h2>${escHtml(cls.title)} <span style="cursor:pointer" onclick="toggleFavorite('${clsId}')">${isFav?'⭐':'☆'}</span></h2>
           ${cls.desc?`<p style="margin-top:6px">${escHtml(cls.desc)}</p>`:''}
-          ${cls.date?`<p style="font-size:11px;color:var(--text3);margin-top:8px">📅 ${cls.date}</p>`:''}</div>
-        <button class="btn btn-ghost btn-sm" onclick="openEditClassModal('${clsId}')">✏️ Editar</button>
-      </div></div>
+          ${tagsHtml?`<div class="class-tags" style="margin-top:8px">${tagsHtml}</div>`:''}
+          ${cls.date?`<p style="font-size:11px;color:var(--text3);margin-top:8px">📅 ${cls.date}</p>`:''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-ghost btn-sm" onclick="openEditClassModal('${clsId}')">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="softDeleteClass('${clsId}')">🗑</button>
+        </div>
+      </div>
+    </div>
     <div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div style="font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif">RECURSOS (${resources.length})</div>
@@ -497,7 +907,8 @@ function renderResourceItem(r,clsId){
     <div class="res-actions">
       <button class="icon-btn" onclick="openEditResourceModal('${clsId}','${r.id}')">✏️</button>
       <button class="icon-btn danger" onclick="deleteResource('${clsId}','${r.id}')">🗑</button>
-    </div></div>`;
+    </div>
+  </div>`;
 }
 
 function backToGroup(){
@@ -508,10 +919,102 @@ function backToGroup(){
   renderGroupView();
 }
 
-function openModal(title,body,onSave){
+// =============================================
+// TRASH / RESTORE
+// =============================================
+function softDeleteClass(clsId){
+  if(!confirm('¿Mover esta clase a la papelera?'))return;
+  const grade=state.grades[state.currentGrade];
+  const grp=grade.groups[state.currentGroup];
+  const cls=grp.classes[clsId];
+  state.trash.classes.push({
+    ...cls,
+    gradeId:state.currentGrade,groupId:state.currentGroup,
+    gradeName:grade.name,groupName:grp.name,
+    deletedAt:new Date().toLocaleDateString('es-CO')
+  });
+  delete grp.classes[clsId];
+  state.favorites=state.favorites.filter(f=>f!==clsId);
+  saveState();
+  if(state.currentClass===clsId){state.currentClass=null;renderGroupView();}
+  else renderGroupView();
+}
+
+function restoreClass(clsId){
+  const idx=state.trash.classes.findIndex(c=>c.id===clsId);
+  if(idx===-1)return;
+  const item=state.trash.classes[idx];
+  const grp=state.grades[item.gradeId]?.groups[item.groupId];
+  if(!grp){alert('El grupo original ya no existe.');return;}
+  const {gradeId,groupId,gradeName,groupName,deletedAt,...cls}=item;
+  grp.classes[cls.id]=cls;
+  state.trash.classes.splice(idx,1);
+  saveState();renderTrashPanel();
+}
+
+function permanentDeleteClass(clsId){
+  if(!confirm('¿Eliminar permanentemente? Esta acción no se puede deshacer.'))return;
+  state.trash.classes=state.trash.classes.filter(c=>c.id!==clsId);
+  saveState();renderTrashPanel();
+}
+
+function deleteGroup(gid,grpId){
+  if(!confirm('¿Mover este grupo a la papelera?'))return;
+  const grade=state.grades[gid];
+  const grp=grade.groups[grpId];
+  state.trash.groups.push({
+    ...grp,gradeId:gid,gradeName:grade.name,
+    deletedAt:new Date().toLocaleDateString('es-CO')
+  });
+  delete grade.groups[grpId];
+  if(state.currentGroup===grpId){
+    state.currentGroup=null;state.currentClass=null;
+    document.getElementById('group-content').style.display='none';
+    document.getElementById('welcome-screen').style.display='flex';
+    document.getElementById('add-class-btn').style.display='none';
+    document.getElementById('breadcrumb').innerHTML='Mi Directorio Escolar';
+  }
+  saveState();renderSidebar();
+}
+
+function restoreGroup(grpId){
+  const idx=state.trash.groups.findIndex(g=>g.id===grpId);
+  if(idx===-1)return;
+  const item=state.trash.groups[idx];
+  const grade=state.grades[item.gradeId];
+  if(!grade){alert('El grado original ya no existe.');return;}
+  const {gradeId,gradeName,deletedAt,...grp}=item;
+  grade.groups[grp.id]=grp;
+  state.trash.groups.splice(idx,1);
+  saveState();renderTrashPanel();renderSidebar();
+}
+
+function permanentDeleteGroup(grpId){
+  if(!confirm('¿Eliminar permanentemente?'))return;
+  state.trash.groups=state.trash.groups.filter(g=>g.id!==grpId);
+  saveState();renderTrashPanel();
+}
+
+function emptyTrash(){
+  if(!confirm('¿Vaciar toda la papelera? Esta acción no se puede deshacer.'))return;
+  state.trash={classes:[],groups:[]};
+  saveState();renderTrashPanel();
+}
+
+// =============================================
+// MODALS - Grupos y Clases
+// =============================================
+function openModal(title,body,onSave,opts={}){
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-box').className='modal'+(opts.lg?' modal-lg':'');
   currentSaveHandler=onSave;
+  const actions=document.getElementById('modal-actions');
+  if(opts.noActions){actions.style.display='none';}
+  else{
+    actions.style.display='flex';
+    document.getElementById('modal-save-btn').textContent=opts.saveLabel||'Guardar';
+  }
   document.getElementById('modal-overlay').classList.add('show');
   setTimeout(()=>{const f=document.querySelector('#modal-body input,#modal-body textarea,#modal-body select');if(f)f.focus();},80);
 }
@@ -524,47 +1027,88 @@ function openGroupModal(gid){
     ()=>{
       const name=document.getElementById('f-grp-name').value.trim();
       if(!name){alert('Escribe el nombre.');return;}
-      const id=uid();state.grades[gid].groups[id]={id,name,classes:{}};
+      const id=uid();state.grades[gid].groups[id]={id,name,classes:{},notes:''};
       saveState();closeModal();expandedGrades[gid]=true;renderSidebar();
     });
 }
 
-function openClassModal(){
+function openEditGroupModal(gid,grpId){
+  const grp=state.grades[gid].groups[grpId];
+  openModal('Editar Grupo',`<div class="form-group"><label>Nombre del grupo</label><input id="f-grp-name" value="${escAttrQ(grp.name)}" autofocus></div>`,
+    ()=>{
+      const name=document.getElementById('f-grp-name').value.trim();
+      if(!name){alert('Escribe el nombre.');return;}
+      grp.name=name;saveState();closeModal();renderSidebar();
+      if(state.currentGroup===grpId)renderGroupView();
+    });
+}
+
+function openClassModal(prefill=null){
+  const tagFieldId='f-cls-tags-input';
+  let currentTags=prefill?.tags||[];
+  const renderTagChips=()=>{
+    const area=document.getElementById('tags-area');
+    if(!area)return;
+    area.innerHTML=currentTags.map(t=>`<span class="tag-chip">${escHtml(t)}<button onclick="removeTag('${escAttrQ(t)}')" type="button">×</button></span>`).join('')+`<input id="${tagFieldId}" placeholder="Agregar etiqueta..." onkeydown="handleTagKey(event)">`;
+  };
+  window.removeTag=(t)=>{currentTags=currentTags.filter(x=>x!==t);renderTagChips();};
+  window.handleTagKey=(e)=>{
+    if(e.key==='Enter'||e.key===','){
+      e.preventDefault();
+      const val=e.target.value.trim();
+      if(val&&!currentTags.includes(val)){currentTags.push(val);renderTagChips();}
+      else e.target.value='';
+    }
+  };
   openModal('Nueva Clase',
-    `<div class="form-group"><label>Título</label><input id="f-cls-title" placeholder="Ej: Introducción a Scratch" autofocus></div>
-     <div class="form-group"><label>Descripción</label><textarea id="f-cls-desc" placeholder="¿Qué se trabajará?"></textarea></div>
-     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date"></div>`,
+    `<div class="form-group"><label>Título</label><input id="f-cls-title" value="${escAttrQ(prefill?.title||'')}" placeholder="Título de la clase" autofocus></div>
+     <div class="form-group"><label>Descripción</label><textarea id="f-cls-desc" placeholder="¿Qué se trabajará?">${escHtml(prefill?.desc||'')}</textarea></div>
+     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date"></div>
+     <div class="form-group"><label>Etiquetas (Enter para agregar)</label><div class="tags-input-area" id="tags-area"></div></div>`,
     ()=>{
       const title=document.getElementById('f-cls-title').value.trim();
       if(!title){alert('El título es obligatorio.');return;}
+      const tagInput=document.getElementById(tagFieldId);
+      if(tagInput?.value.trim())currentTags.push(tagInput.value.trim());
       const id=uid();
       state.grades[state.currentGrade].groups[state.currentGroup].classes[id]={
         id,title,desc:document.getElementById('f-cls-desc').value,
-        date:document.getElementById('f-cls-date').value,resources:{}
+        date:document.getElementById('f-cls-date').value,
+        tags:currentTags,resources:{},favorite:false
       };
       saveState();closeModal();renderGroupView();
     });
+  setTimeout(renderTagChips,60);
 }
 
 function openEditClassModal(clsId){
   const cls=state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
+  let currentTags=[...(cls.tags||[])];
+  const renderTagChips=()=>{
+    const area=document.getElementById('tags-area');
+    if(!area)return;
+    area.innerHTML=currentTags.map(t=>`<span class="tag-chip">${escHtml(t)}<button onclick="removeTag('${escAttrQ(t)}')" type="button">×</button></span>`).join('')+`<input id="f-cls-tags-input" placeholder="Agregar etiqueta..." onkeydown="handleTagKey(event)">`;
+  };
+  window.removeTag=(t)=>{currentTags=currentTags.filter(x=>x!==t);renderTagChips();};
+  window.handleTagKey=(e)=>{
+    if(e.key==='Enter'||e.key===','){e.preventDefault();const val=e.target.value.trim();if(val&&!currentTags.includes(val)){currentTags.push(val);renderTagChips();}else e.target.value='';}
+  };
   openModal('Editar Clase',
     `<div class="form-group"><label>Título</label><input id="f-cls-title" value="${escAttrQ(cls.title)}" autofocus></div>
      <div class="form-group"><label>Descripción</label><textarea id="f-cls-desc">${escHtml(cls.desc||'')}</textarea></div>
-     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date" value="${cls.date||''}"></div>`,
+     <div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date" value="${cls.date||''}"></div>
+     <div class="form-group"><label>Etiquetas</label><div class="tags-input-area" id="tags-area"></div></div>`,
     ()=>{
       const title=document.getElementById('f-cls-title').value.trim();
       if(!title){alert('El título es obligatorio.');return;}
-      cls.title=title;cls.desc=document.getElementById('f-cls-desc').value;cls.date=document.getElementById('f-cls-date').value;
+      const tagInput=document.getElementById('f-cls-tags-input');
+      if(tagInput?.value.trim())currentTags.push(tagInput.value.trim());
+      cls.title=title;cls.desc=document.getElementById('f-cls-desc').value;
+      cls.date=document.getElementById('f-cls-date').value;cls.tags=currentTags;
       saveState();closeModal();
       if(state.currentClass===clsId)renderClassDetail(clsId);else renderGroupView();
     });
-}
-
-function deleteClass(clsId){
-  if(!confirm('¿Eliminar esta clase y todos sus recursos?'))return;
-  delete state.grades[state.currentGrade].groups[state.currentGroup].classes[clsId];
-  saveState();if(state.currentClass===clsId)state.currentClass=null;renderGroupView();
+  setTimeout(renderTagChips,60);
 }
 
 function openResourceModal(clsId){
@@ -591,9 +1135,8 @@ function openResourceModal(clsId){
 
 function updateUrlLabel(){
   const type=document.getElementById('f-res-type')?.value;
-  const lbl=document.getElementById('url-label');
-  if(!lbl)return;
-  lbl.textContent=type==='html'?'Código HTML (pega aquí tu HTML)':type==='link'||type==='presentacion'?'URL del recurso':'URL o referencia (opcional)';
+  const lbl=document.getElementById('url-label');if(!lbl)return;
+  lbl.textContent=type==='html'?'Código HTML':type==='link'||type==='presentacion'?'URL del recurso':'URL (opcional)';
 }
 
 function openEditResourceModal(clsId,resId){
@@ -619,13 +1162,74 @@ function deleteResource(clsId,resId){
   saveState();renderClassDetail(clsId);
 }
 
+// =============================================
+// PROFILE MODAL
+// =============================================
+function openProfileModal(){
+  openModal('Mi Perfil',
+    `<div class="form-group"><label>Nombre</label><input id="f-prof-name" value="${escAttrQ(state.settings.profileName||'')}" autofocus></div>
+     <div class="form-group"><label>Cargo</label><input id="f-prof-role" value="${escAttrQ(state.settings.profileRole||'')}"></div>
+     <div class="form-group"><label>Institución</label><input id="f-prof-inst" value="${escAttrQ(state.settings.institution||'GI School')}"></div>`,
+    ()=>{
+      state.settings.profileName=document.getElementById('f-prof-name').value.trim()||state.settings.profileName;
+      state.settings.profileRole=document.getElementById('f-prof-role').value.trim()||state.settings.profileRole;
+      state.settings.institution=document.getElementById('f-prof-inst').value.trim();
+      saveState();closeModal();
+      document.getElementById('user-name').textContent=state.settings.profileName;
+      document.getElementById('user-role').textContent=state.settings.profileRole;
+    });
+}
+
+// =============================================
+// SETTINGS MODAL
+// =============================================
+function openSettingsModal(){
+  openModal('Configuración',
+    `<div class="settings-section">
+      <h3>🎨 Apariencia</h3>
+      <div class="setting-row">
+        <div><div class="setting-label">Tema</div><div class="setting-desc">Claro u oscuro</div></div>
+        <button class="toggle${state.settings.theme==='dark'?' on':''}" id="theme-toggle" onclick="this.classList.toggle('on');"></button>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">Color de acento</div><div class="setting-desc">Color principal de la app</div></div>
+        <div class="color-swatches">${ACCENT_COLORS.map(c=>`<div class="color-swatch${state.settings.accent===c?' active':''}" style="background:${c}" onclick="selectAccent('${c}')" data-color="${c}"></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>📱 Funciones</h3>
+      <div class="setting-row">
+        <div><div class="setting-label">Notas rápidas</div><div class="setting-desc">Mostrar área de notas en cada grupo</div></div>
+        <button class="toggle${state.settings.showNotes!==false?' on':''}" id="notes-toggle" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>🏫 App</h3>
+      <div class="form-group"><label>Nombre de la aplicación</label><input id="f-app-title" value="${escAttrQ(state.settings.appTitle||'Mi Directorio Escolar')}"></div>
+    </div>`,
+    ()=>{
+      state.settings.theme=document.getElementById('theme-toggle').classList.contains('on')?'dark':'light';
+      state.settings.showNotes=document.getElementById('notes-toggle').classList.contains('on');
+      state.settings.appTitle=document.getElementById('f-app-title').value.trim()||'Mi Directorio Escolar';
+      saveState();closeModal();applySettings();
+      if(state.currentGroup)renderGroupView();
+    },{saveLabel:'Aplicar'});
+}
+
+window.selectAccent=(color)=>{
+  state.settings.accent=color;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===color));
+};
+
+// =============================================
+// EXPORT / IMPORT
+// =============================================
 function exportData(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='directorio-escolar-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(a.href);
 }
-
 function importData(e){
   const file=e.target.files[0];if(!file)return;
   const r=new FileReader();
@@ -633,20 +1237,23 @@ function importData(e){
     try{
       const data=JSON.parse(ev.target.result);
       if(!data.grades)throw new Error();
-      state=data;saveState();expandedGrades={};
-      state.currentGrade=null;state.currentGroup=null;state.currentClass=null;
-      renderSidebar();
+      state={...state,...data};if(!state.trash)state.trash={classes:[],groups:[]};if(!state.favorites)state.favorites=[];
+      saveState();expandedGrades={};state.currentGrade=null;state.currentGroup=null;state.currentClass=null;
+      applySettings();renderSidebar();renderWelcomeStats();
       document.getElementById('welcome-screen').style.display='flex';
       document.getElementById('group-content').style.display='none';
       document.getElementById('class-detail').style.display='none';
       document.getElementById('add-class-btn').style.display='none';
       document.getElementById('breadcrumb').innerHTML='Mi Directorio Escolar';
-      alert('Datos importados correctamente.');
-    }catch(err){alert('Archivo inválido.');}
+      alert('✅ Datos importados correctamente.');
+    }catch(err){alert('❌ Archivo inválido.');}
   };
   r.readAsText(file);e.target.value='';
 }
 
+// =============================================
+// UTILS
+// =============================================
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function escAttr(s){return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function escAttrQ(s){return String(s||'').replace(/"/g,'&quot;');}
@@ -654,7 +1261,7 @@ function escAttrQ(s){return String(s||'').replace(/"/g,'&quot;');}
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape')closeModal();
   if(e.key==='Enter'&&document.getElementById('modal-overlay').classList.contains('show')){
-    if(document.activeElement?.tagName!=='TEXTAREA')modalSaveHandler();
+    if(document.activeElement?.tagName!=='TEXTAREA'&&document.activeElement?.id!=='f-cls-tags-input')modalSaveHandler();
   }
 });
 document.getElementById('search-input').addEventListener('input',renderSidebar);
