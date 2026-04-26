@@ -345,6 +345,66 @@ body.light .quick-notes-bar{background:linear-gradient(135deg,#fffdf5 0%,#fffbee
 .qn-textarea:focus{border-color:var(--accent)}
 .qn-save-btn{margin-top:6px;padding:5px 12px;border-radius:7px;border:none;background:var(--accent);color:#1a1000;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
 .qn-save-btn:hover{background:var(--accent2)}
+
+/* ─── ACTIVITIES CLASSROOM ─── */
+.activities-section{background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;margin-bottom:14px;border-left:4px solid var(--accent)}
+.act-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.act-title{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--accent2)}
+.act-filter{display:flex;gap:6px;flex-wrap:wrap}
+.act-filter-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.act-filter-btn.active{background:var(--accent);color:#1a1000;border-color:var(--accent)}
+.activities-list{display:flex;flex-direction:column;gap:10px}
+.activity-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;transition:all .2s;cursor:pointer}
+.activity-card:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.activity-card.pending{border-left:3px solid #f59e0b}
+.activity-card.inProgress{border-left:3px solid #3b82f6}
+.activity-card.completed{border-left:3px solid #10b981}
+.ac-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ac-title{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--text);flex:1}
+.ac-type{font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(245,158,11,.2);color:#f59e0b;font-weight:600;text-transform:uppercase;white-space:nowrap}
+.ac-type.anuncio{background:rgba(59,130,246,.2);color:#3b82f6}
+.ac-type.material{background:rgba(16,185,129,.2);color:#10b981}
+.ac-type.cuestionario{background:rgba(236,72,153,.2);color:#ec4899}
+.ac-meta{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text3);margin-bottom:8px;flex-wrap:wrap}
+.ac-meta-item{display:flex;align-items:center;gap:4px}
+.ac-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.ac-status{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;background:rgba(245,158,11,.15);color:#fcd34d}
+.ac-status.pending{background:rgba(245,158,11,.15);color:#fcd34d}
+.ac-status.inProgress{background:rgba(59,130,246,.15);color:#93c5fd}
+.ac-status.completed{background:rgba(16,185,129,.15);color:#6ee7b7}
+.ac-attachments{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.ac-attach-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.ac-attach-item{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--bg3);border-radius:6px;font-size:11px;margin-bottom:3px}
+.ac-attach-icon{font-size:12px}
+.ac-actions{display:flex;gap:4px;margin-top:8px;opacity:0;transition:opacity .15s}
+.activity-card:hover .ac-actions{opacity:1}
+.ac-actions-btn{flex:1;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.ac-actions-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ac-actions-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+.act-empty{text-align:center;padding:30px 20px;color:var(--text3);font-size:12px}
+
+/* ─── BOTÓN AGREGAR GRUPO MEJORADO ─── */
+.add-group-section{padding:10px 10px 0;margin-bottom:8px}
+.add-group-btn-primary{width:100%;padding:10px 12px;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);color:#1a1000;border:none;font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(245,158,11,.25);display:flex;align-items:center;justify-content:center;gap:6px}
+.add-group-btn-primary:hover{box-shadow:0 4px 14px rgba(245,158,11,.35);transform:translateY(-1px)}
+
+/* ─── TABS PARA SECCIONES ─── */
+.group-tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.group-tab{padding:6px 12px;border-radius:6px 6px 0 0;border:1px solid transparent;background:transparent;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.group-tab:hover{color:var(--text2)}
+.group-tab.active{border-color:var(--border);border-bottom-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.05)}
+
+/* ─── MODAL ACTIVIDAD ─── */
+.modal-wide{max-width:600px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.form-row.full{grid-template-columns:1fr}
+.form-group textarea{min-height:100px}
+.file-input-wrap{border:2px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .15s}
+.file-input-wrap:hover{border-color:var(--accent);background:rgba(245,158,11,.05)}
+.file-input-wrap input[type=file]{display:none}
+.file-input-wrap p{font-size:12px;color:var(--text2);margin-bottom:4px}
+.file-input-wrap small{font-size:11px;color:var(--text3)}
+
 </style>
 </head>
 <body>
@@ -419,9 +479,26 @@ body.light .quick-notes-bar{background:linear-gradient(135deg,#fffdf5 0%,#fffbee
         <div id="group-content" style="display:none">
           <div class="stat-row" id="stat-row"></div>
           <div id="quick-notes-section"></div>
-          <div id="cal-section"></div>
-          <div id="grid-view"><div class="classes-grid" id="classes-grid"></div></div>
-          <div id="list-view" style="display:none"><div id="classes-list-view"></div></div>
+          <div class="group-tabs">
+            <button class="group-tab active" onclick="switchGroupTab('activities')">📋 Actividades</button>
+            <button class="group-tab" onclick="switchGroupTab('classes')">📚 Clases</button>
+            <button class="group-tab" onclick="switchGroupTab('calendar')">📅 Calendario</button>
+          </div>
+          <div id="activities-tab">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <div id="activities-filters"></div>
+              <button class="btn btn-primary btn-sm" onclick="openActivityModal()">+ Nueva Actividad</button>
+            </div>
+            <div id="activities-list"></div>
+          </div>
+          <div id="classes-tab" style="display:none">
+            <div id="cal-section"></div>
+            <div id="grid-view"><div class="classes-grid" id="classes-grid"></div></div>
+            <div id="list-view" style="display:none"><div id="classes-list-view"></div></div>
+          </div>
+          <div id="calendar-tab" style="display:none">
+            <div id="calendar-section"></div>
+          </div>
         </div>
         <div id="class-detail" style="display:none"></div>
       </div>
@@ -575,7 +652,11 @@ const RES_TYPES={
   html:{icon:'🌐',label:'HTML interactivo',badge:'badge-pink'},
   link:{icon:'🔗',label:'Enlace externo',badge:'badge-gray'},
   video:{icon:'🎬',label:'Video',badge:'badge-pink'},
-  evaluacion:{icon:'📝',label:'Evaluación',badge:'badge-amber'}
+  evaluacion:{icon:'📝',label:'Evaluación',badge:'badge-amber'},
+  tarea:{icon:'✏️',label:'Tarea',badge:'badge-blue'},
+  anuncio:{icon:'📢',label:'Anuncio',badge:'badge-amber'},
+  material:{icon:'📚',label:'Material',badge:'badge-green'},
+  cuestionario:{icon:'❓',label:'Cuestionario',badge:'badge-pink'}
 };
 const LOGO_EMOJIS=['🏫','📚','🖥️','🤖','💡','🧠','🎓','🌐','🔬','🎨','🚀','⭐','🏆','📐','🧩','🌍','💻','📱','🎯','🔭','🦋','🌱'];
 const ACCENT_PRESETS=['#f59e0b','#3b82f6','#10b981','#ec4899','#8b5cf6','#ef4444','#06b6d4','#f97316','#84cc16','#e879f9','#14b8a6','#f43f5e'];
@@ -602,6 +683,175 @@ function loadState(){
 }
 function saveState(){localStorage.setItem('mi-directorio-v3',JSON.stringify(state));}
 function uid(){return'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);}
+
+/* ══ CLASSROOM ACTIVITIES ══ */
+let currentActivityTab='activities';
+let activityFilterStatus='all';
+
+function initActivities(grp){
+  if(!grp.activities)grp.activities={};
+}
+
+function switchGroupTab(tab){
+  currentActivityTab=tab;
+  document.querySelectorAll('.group-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('activities-tab').style.display=tab==='activities'?'block':'none';
+  document.getElementById('classes-tab').style.display=tab==='classes'?'block':'none';
+  document.getElementById('calendar-tab').style.display=tab==='calendar'?'block':'none';
+  if(tab==='activities')renderActivities();
+  else if(tab==='classes')renderGroupView();
+  else if(tab==='calendar')renderCalendar();
+}
+
+function renderActivities(){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  if(!grp)return;
+  initActivities(grp);
+  const acts=Object.values(grp.activities||{});
+  const filtered=activityFilterStatus==='all'?acts:acts.filter(a=>a.status===activityFilterStatus);
+  const sorted=filtered.sort((a,b)=>new Date(b.dateCreated)-new Date(a.dateCreated));
+
+  document.getElementById('activities-filters').innerHTML=`<div class="act-filter">
+    <button class="act-filter-btn${activityFilterStatus==='all'?' active':''}" onclick="filterActivities('all')">Todas</button>
+    <button class="act-filter-btn${activityFilterStatus==='pending'?' active':''}" onclick="filterActivities('pending')">⏳ Pendientes</button>
+    <button class="act-filter-btn${activityFilterStatus==='inProgress'?' active':''}" onclick="filterActivities('inProgress')">▶ En progreso</button>
+    <button class="act-filter-btn${activityFilterStatus==='completed'?' active':''}" onclick="filterActivities('completed')">✓ Entregado</button>
+  </div>`;
+
+  const list=document.getElementById('activities-list');
+  if(!sorted.length){list.innerHTML='<div class="act-empty">📭 Sin actividades aún. ¡Crea la primera!</div>';return;}
+
+  list.innerHTML=sorted.map(a=>{
+    const info=RES_TYPES[a.type]||{icon:'📋',label:a.type};
+    const attachHtml=a.attachments&&a.attachments.length?`<div class="ac-attachments"><div class="ac-attach-label">📎 Adjuntos (${a.attachments.length})</div>${a.attachments.map(att=>`<div class="ac-attach-item"><span class="ac-attach-icon">📄</span><a href="${att.url}" target="_blank" style="color:var(--accent);text-decoration:none;flex:1">${escHtml(att.name)}</a></div>`).join('')}</div>`:'';
+    const dueHtml=a.dateDue?`<div class="ac-meta-item">📌 ${new Date(a.dateDue).toLocaleDateString('es-CO')}</div>`:'';
+    return`<div class="activity-card ${a.status}">
+      <div class="ac-top">
+        <div class="ac-title">${escHtml(a.title)}</div>
+        <span class="ac-type ${a.type}">${a.type}</span>
+      </div>
+      <div class="ac-meta">${dueHtml}<span class="ac-meta-item">Por ${escHtml(a.assignedTo||'ti')}</span></div>
+      ${a.description?`<div class="ac-desc">${escHtml(a.description)}</div>`:''}
+      <span class="ac-status ${a.status}">${a.status==='pending'?'⏳ Pendiente':a.status==='inProgress'?'▶ En Progreso':'✓ Completado'}</span>
+      ${attachHtml}
+      <div class="ac-actions">
+        <button class="ac-actions-btn" onclick="openEditActivityModal('${a.id}')">✏️ Editar</button>
+        <button class="ac-actions-btn" onclick="changeActivityStatus('${a.id}')">${a.status==='completed'?'↩ Reabierto':'✓ Marcar'}</button>
+        <button class="ac-actions-btn danger" onclick="deleteActivity('${a.id}')">🗑 Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterActivities(status){
+  activityFilterStatus=status;
+  renderActivities();
+}
+
+function openActivityModal(){
+  openModal('📋 Nueva Actividad',`
+    <div class="form-row">
+      <div class="form-group" style="grid-column:1/-1"><label>Título</label><input id="f-act-title" placeholder="Ej: Tarea sobre fracciones" autofocus></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo</label><select id="f-act-type">
+        <option value="tarea">✏️ Tarea</option>
+        <option value="anuncio">📢 Anuncio</option>
+        <option value="material">📚 Material</option>
+        <option value="cuestionario">❓ Cuestionario</option>
+      </select></div>
+      <div class="form-group"><label>Asignado a</label><input id="f-act-assigned" placeholder="Estudiantes"></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group"><label>Descripción</label><textarea id="f-act-desc" placeholder="Detalles de la actividad..."></textarea></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Fecha de asignación</label><input type="date" id="f-act-assigned-date"></div>
+      <div class="form-group"><label>Fecha de entrega (Deadline)</label><input type="date" id="f-act-due-date"></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group">
+        <label>Adjuntar archivo o enlace</label>
+        <div class="file-input-wrap" onclick="document.getElementById('f-act-file').click()">
+          <p>📎 Arrastra archivo o haz clic para seleccionar</p>
+          <small>PDF, imagen, enlace web, etc.</small>
+          <input type="file" id="f-act-file">
+        </div>
+        <div id="f-act-files-list" style="margin-top:8px"></div>
+      </div>
+    </div>
+  `,()=>{
+    const title=document.getElementById('f-act-title').value.trim();
+    if(!title){alert('El título es obligatorio');return;}
+    const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+    initActivities(grp);
+    const id=uid();
+    grp.activities[id]={
+      id,title,type:document.getElementById('f-act-type').value,
+      description:document.getElementById('f-act-desc').value,
+      assignedTo:document.getElementById('f-act-assigned').value,
+      dateCreated:new Date().toISOString(),
+      dateAssigned:document.getElementById('f-act-assigned-date').value,
+      dateDue:document.getElementById('f-act-due-date').value,
+      attachments:[],status:'pending'
+    };
+    saveState();closeModal();renderActivities();
+  });
+  document.getElementById('f-act-assigned-date').value=new Date().toISOString().slice(0,10);
+}
+
+function openEditActivityModal(actId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const act=grp.activities[actId];
+  if(!act)return;
+  openModal('✏️ Editar Actividad',`
+    <div class="form-row">
+      <div class="form-group" style="grid-column:1/-1"><label>Título</label><input id="f-act-title" value="${escAttrQ(act.title)}" autofocus></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo</label><select id="f-act-type">
+        <option value="tarea"${act.type==='tarea'?' selected':''}>✏️ Tarea</option>
+        <option value="anuncio"${act.type==='anuncio'?' selected':''}>📢 Anuncio</option>
+        <option value="material"${act.type==='material'?' selected':''}>📚 Material</option>
+        <option value="cuestionario"${act.type==='cuestionario'?' selected':''}>❓ Cuestionario</option>
+      </select></div>
+      <div class="form-group"><label>Asignado a</label><input id="f-act-assigned" value="${escAttrQ(act.assignedTo||'')}"></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group"><label>Descripción</label><textarea id="f-act-desc">${escHtml(act.description||'')}</textarea></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Fecha de asignación</label><input type="date" id="f-act-assigned-date" value="${act.dateAssigned||''}"></div>
+      <div class="form-group"><label>Fecha de entrega</label><input type="date" id="f-act-due-date" value="${act.dateDue||''}"></div>
+    </div>
+  `,()=>{
+    const title=document.getElementById('f-act-title').value.trim();
+    if(!title){alert('El título es obligatorio');return;}
+    act.title=title;act.type=document.getElementById('f-act-type').value;
+    act.description=document.getElementById('f-act-desc').value;act.assignedTo=document.getElementById('f-act-assigned').value;
+    act.dateAssigned=document.getElementById('f-act-assigned-date').value;act.dateDue=document.getElementById('f-act-due-date').value;
+    saveState();closeModal();renderActivities();
+  });
+}
+
+function changeActivityStatus(actId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const act=grp.activities[actId];
+  if(!act)return;
+  const statuses=['pending','inProgress','completed'];
+  const idx=statuses.indexOf(act.status);
+  act.status=statuses[(idx+1)%statuses.length];
+  saveState();renderActivities();
+}
+
+function deleteActivity(actId){
+  if(!confirm('¿Eliminar esta actividad?'))return;
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  delete grp.activities[actId];
+  saveState();renderActivities();
+}
+
 
 /* ══ FIRESTORE INTEGRATION ══ */
 async function initFirestoreAndLoad(){
@@ -661,6 +911,7 @@ function loadState(){
 
 function initDemo(){
   state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
+  currentActivityTab='activities';activityFilterStatus='all';
   for(let i=0;i<6;i++){
     const gid='grade-'+(i+1);
     state.grades[gid]={id:gid,name:GRADE_NAMES[i],number:i+1,groups:{}};
@@ -691,6 +942,8 @@ function renderGroupView(){
   document.getElementById('group-content').style.display='block';
   document.getElementById('add-class-btn').style.display='';
   state.currentClass=null;
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  if(grp)initActivities(grp);
   const grade=state.grades[state.currentGrade];
   const grp=grade.groups[state.currentGroup];
   const classes=Object.values(grp.classes);
@@ -700,8 +953,9 @@ function renderGroupView(){
     <div class="stat-card"><div class="num">${classes.length}</div><div class="lbl">Clases</div></div>
     <div class="stat-card"><div class="num">${totalRes}</div><div class="lbl">Recursos totales</div></div>
     <div class="stat-card"><div class="num">${classes.filter(c=>Object.keys(c.resources).length>0).length}</div><div class="lbl">Con recursos</div></div>`;
-  renderCalendar();
   renderQuickNotes();
+  renderActivities();
+  renderCalendar();
   if(state.view==='grid')renderGridView(classes);else renderListView(classes);
 }
 function setView(v){
@@ -1370,7 +1624,11 @@ function renderSidebar(){
       <span class="grade-arrow${isExp?' open':''}">▶</span></div>
       <div class="groups-list${isExp?' open':''}">
         ${groupsHtml}
-        <button class="add-group-btn" onclick="event.stopPropagation();openGroupModal('${grade.id}')">+ Agregar grupo</button>
+        <div class="add-group-section">
+          <button class="add-group-btn-primary" onclick="event.stopPropagation();openGroupModal('${grade.id}')">
+            <span>➕</span> Crear Grupo
+          </button>
+        </div>
       </div>`;
     list.appendChild(div);
   });
