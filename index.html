@@ -127,64 +127,97 @@ html,body{
 .load-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:2px;animation:loadfill 1.2s ease forwards}
 @keyframes loadfill{from{width:0}to{width:100%}}
 
-/* ── LOGIN ── */
+/* ── LOGIN SPLIT SCREEN ── */
 #login{
-  display:none;position:fixed;inset:0;
-  background:var(--surface-0);
-  align-items:center;justify-content:center;
-  z-index:1000;
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:#05080f;
+  flex-direction:row;
 }
 #login.show{display:flex}
-body.canvas #login{
-  background:linear-gradient(135deg,#f0f4ff 0%,#fef9f0 100%);
+.login-left{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:48px 52px;
 }
-.login-wrap{
-  width:100%;max-width:400px;padding:24px;
-  animation:fadeUp .4s ease;
+.login-bg-canvas{position:absolute;inset:0;z-index:0}
+.login-left-content{position:relative;z-index:2}
+.login-logo-mark{
+  display:flex;align-items:center;gap:14px;margin-bottom:48px;
 }
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.login-card{
-  background:var(--surface-1);
-  border:1px solid var(--border);
-  border-radius:var(--r-2xl);
-  padding:40px 36px;
-  box-shadow:var(--shadow-lg);
+.login-hex{
+  width:52px;height:52px;position:relative;flex-shrink:0;
 }
-.login-brand{text-align:center;margin-bottom:36px}
-.login-icon{
-  width:64px;height:64px;border-radius:18px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-light));
+.login-app-name{
+  font-family:var(--font-display);font-size:22px;font-weight:900;
+  color:#fff;letter-spacing:-1px;
+}
+.login-app-tagline{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+.login-headline{
+  font-family:var(--font-display);font-size:52px;font-weight:900;
+  line-height:1.05;letter-spacing:-2px;margin-bottom:18px;
+  color:#fff;
+}
+.login-headline em{
+  font-style:normal;
+  background:linear-gradient(90deg,var(--accent),var(--accent-light));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.login-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.7;max-width:420px;margin-bottom:40px}
+.login-features{display:flex;gap:24px;flex-wrap:wrap}
+.lf-item{display:flex;align-items:center;gap:8px}
+.lf-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.lf-text{font-size:12px;color:rgba(255,255,255,.5);font-weight:500}
+.lf-num{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--accent)}
+
+.login-right{
+  width:440px;flex-shrink:0;
+  background:rgba(10,14,26,.85);
+  backdrop-filter:blur(20px);
+  border-left:1px solid rgba(255,255,255,.06);
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;margin:0 auto 16px;
-  box-shadow:var(--shadow-accent);
+  padding:48px 44px;
 }
-.login-name{
+.login-card{width:100%}
+.login-card-title{
   font-family:var(--font-display);font-size:26px;font-weight:900;
-  color:var(--text-primary);letter-spacing:-1px;
+  color:#fff;letter-spacing:-1px;margin-bottom:6px;
 }
-.login-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.login-card-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:32px;line-height:1.6}
 .google-btn{
-  width:100%;padding:13px 20px;
+  width:100%;padding:14px 20px;
   display:flex;align-items:center;justify-content:center;gap:10px;
   background:#fff;color:#1f1f1f;
   border:none;border-radius:var(--r-lg);
-  font-size:14px;font-weight:600;font-family:var(--font-body);
-  cursor:pointer;transition:all .2s;
-  box-shadow:0 2px 12px rgba(0,0,0,.15);
+  font-size:14px;font-weight:700;font-family:var(--font-body);
+  cursor:pointer;transition:all .2s;letter-spacing:-.2px;
 }
-.google-btn:hover{box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(-1px)}
+.google-btn:hover{background:#f5f5f5;transform:translateY(-2px);box-shadow:0 8px 30px rgba(240,165,0,.2)}
 .google-btn img{width:20px;height:20px}
+.login-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:24px 0;
+}
+.login-divider span{font-size:11px;color:rgba(255,255,255,.2);white-space:nowrap}
+.login-divider::before,.login-divider::after{
+  content:'';flex:1;height:1px;background:rgba(255,255,255,.08);
+}
 .login-note{
-  margin-top:20px;padding:12px 16px;
-  background:var(--accent-dim);border:1px solid var(--border-accent);
-  border-radius:var(--r-md);font-size:11px;color:var(--text-secondary);
+  padding:12px 16px;
+  background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.2);
+  border-radius:var(--r-md);font-size:12px;color:rgba(255,255,255,.5);
   text-align:center;line-height:1.7;
 }
 .login-note strong{color:var(--accent)}
 #login-err{
   display:none;margin-top:12px;padding:10px 14px;
-  background:var(--red-dim);border:1px solid rgba(239,68,68,.3);
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
   border-radius:var(--r-md);font-size:12px;color:#fca5a5;text-align:center;
+}
+@media(max-width:768px){
+  #login{flex-direction:column}
+  .login-left{padding:32px 28px 28px;flex:none;min-height:45vh}
+  .login-headline{font-size:32px}
+  .login-right{width:100%;flex:1;border-left:none;border-top:1px solid rgba(255,255,255,.06)}
 }
 
 /* ══════════════════════════════
@@ -822,22 +855,62 @@ body.canvas .qnotes{background:#fffdf5;border-color:#e5d48a;border-left-color:va
   <div class="load-bar"><div class="load-bar-fill"></div></div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN SPLIT SCREEN -->
 <div id="login">
-  <div class="login-wrap">
-    <div class="login-card">
-      <div class="login-brand">
-        <div class="login-icon" id="login-icon">🎓</div>
-        <div class="login-name">Class Drive</div>
-        <div class="login-sub">Plataforma educativa · GI School</div>
+  <!-- LEFT: BRAND + INFO -->
+  <div class="login-left">
+    <canvas class="login-bg-canvas" id="login-canvas"></canvas>
+    <div class="login-left-content">
+      <div class="login-logo-mark">
+        <svg class="login-hex" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="26,2 48,14 48,38 26,50 4,38 4,14" fill="rgba(240,165,0,0.12)" stroke="rgba(240,165,0,0.6)" stroke-width="1.5"/>
+          <polygon points="26,9 41,17.5 41,34.5 26,43 11,34.5 11,17.5" fill="rgba(240,165,0,0.08)" stroke="rgba(240,165,0,0.3)" stroke-width="1"/>
+          <line x1="26" y1="2" x2="26" y2="9" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="48" y1="14" x2="41" y2="17.5" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="48" y1="38" x2="41" y2="34.5" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="26" y1="50" x2="26" y2="43" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="4" y1="38" x2="11" y2="34.5" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="4" y1="14" x2="11" y2="17.5" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="26" cy="2" r="2.5" fill="#f0a500"/>
+          <circle cx="48" cy="14" r="2" fill="#3b82f6"/>
+          <circle cx="48" cy="38" r="2.5" fill="#f0a500" opacity=".6"/>
+          <circle cx="26" cy="50" r="2" fill="#3b82f6"/>
+          <circle cx="4" cy="38" r="2.5" fill="#f0a500"/>
+          <circle cx="4" cy="14" r="2" fill="#3b82f6" opacity=".7"/>
+          <circle cx="26" cy="26" r="4" fill="#f0a500"/>
+          <circle cx="26" cy="26" r="7" fill="rgba(240,165,0,0.15)"/>
+        </svg>
+        <div>
+          <div class="login-app-name">Class Drive</div>
+          <div class="login-app-tagline">GI School · Tecnología · PYP</div>
+        </div>
       </div>
+      <div class="login-headline">
+        Transforma cómo<br><em>enseñas y planeas</em><br>tus clases.
+      </div>
+      <div class="login-desc">
+        Gestiona grupos, planea clases, comparte recursos y realiza seguimiento de actividades desde una sola plataforma educativa.
+      </div>
+      <div class="login-features">
+        <div class="lf-item"><div class="lf-dot"></div><div class="lf-text">Grupos con código de acceso</div></div>
+        <div class="lf-item"><div class="lf-dot"></div><div class="lf-text">Actividades y recursos multimedia</div></div>
+        <div class="lf-item"><div class="lf-dot"></div><div class="lf-text">Planeador de clases</div></div>
+        <div class="lf-item"><div class="lf-dot"></div><div class="lf-text">Sincronización en la nube</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: LOGIN FORM -->
+  <div class="login-right">
+    <div class="login-card">
+      <div class="login-card-title">Iniciar sesión</div>
+      <div class="login-card-sub">Usa tu cuenta de Google institucional<br>para acceder a Class Drive.</div>
       <button class="google-btn" id="google-btn">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
         Continuar con Google
       </button>
-      <div class="login-note">
-        Acceso exclusivo para<br><strong>franksanlo@gmail.com</strong>
-      </div>
+      <div class="login-divider"><span>ACCESO AUTORIZADO</span></div>
+      <div class="login-note">Solo la cuenta<br><strong>franksanlo@gmail.com</strong><br>puede acceder a esta plataforma.</div>
       <div id="login-err">Acceso denegado. Cuenta no autorizada.</div>
     </div>
   </div>
@@ -1008,6 +1081,64 @@ body.canvas .qnotes{background:#fffdf5;border-color:#e5d48a;border-left-color:va
     </div>
   </div>
 </div>
+
+<!-- LOGIN CANVAS ANIMATION -->
+<script>
+(function(){
+  function initLoginCanvas(){
+    const canvas=document.getElementById('login-canvas');
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    let W,H,nodes,animId;
+    function resize(){
+      W=canvas.width=canvas.offsetWidth;
+      H=canvas.height=canvas.offsetHeight;
+    }
+    function makeNodes(){
+      nodes=Array.from({length:55},()=>({
+        x:Math.random()*W,y:Math.random()*H,
+        vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
+        r:Math.random()*2+1,
+        color:Math.random()>.7?'rgba(240,165,0,':'rgba(59,130,246,'
+      }));
+    }
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      // connections
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<130){
+            ctx.beginPath();
+            ctx.strokeStyle=`rgba(240,165,0,${(1-d/130)*.08})`;
+            ctx.lineWidth=.5;
+            ctx.moveTo(nodes[i].x,nodes[i].y);
+            ctx.lineTo(nodes[j].x,nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      // nodes
+      nodes.forEach(n=>{
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fillStyle=n.color+'.5)';
+        ctx.fill();
+        n.x+=n.vx;n.y+=n.vy;
+        if(n.x<0||n.x>W)n.vx*=-1;
+        if(n.y<0||n.y>H)n.vy*=-1;
+      });
+      animId=requestAnimationFrame(draw);
+    }
+    resize();makeNodes();draw();
+    window.addEventListener('resize',()=>{resize();makeNodes();});
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initLoginCanvas);
+  }else{initLoginCanvas();}
+})();
+</script>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
