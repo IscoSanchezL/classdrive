@@ -1140,7 +1140,7 @@ function fixState(){
       if(!grp.activities)grp.activities={};
       if(!grp.notes)grp.notes='';
       Object.values(grp.classes||{}).forEach(cls=>
-        Object.values(cls.resources||{}).forEach(r=>{if(!r.comments)r.comments[];})
+        Object.values(cls.resources||{}).forEach(r=>{if(!r.comments)r.comments=[];})
       );
     })
   );
