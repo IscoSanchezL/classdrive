@@ -1436,13 +1436,10 @@ function applyAccent(hex){
 
 /* ── LOGO ── */
 function applyStoredLogo(){
-  const img=localStorage.getItem('cd-logo-img');
-  const emoji=localStorage.getItem('cd-logo-emoji')||'🎓';
-  const emojiEl=document.getElementById('sb-logo-emoji');
-  const imgEl=document.getElementById('sb-logo-img');
-  if(img){imgEl.src=img;imgEl.style.display='block';emojiEl.style.display='none';}
-  else{emojiEl.textContent=emoji;emojiEl.style.display='flex';imgEl.style.display='none';}
-  document.getElementById('login-icon').textContent=img?'🎓':emoji;
+  const overrideImg=localStorage.getItem('cd-logo-img');
+  if(!overrideImg) return;
+  const els=['sb-logo-img-custom','welcome-logo-img'];
+  els.forEach(id=>{const el=document.getElementById(id);if(el)el.src=overrideImg;});
 }
 
 /* ── SETTINGS TEXT ── */
