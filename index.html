@@ -419,7 +419,7 @@ body.canvas #topbar{background:#fff;box-shadow:0 1px 0 var(--border)}
 .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ── CONTENT ── */
-#content{flex:1;overflow-y:auto;background:var(--surface-0)}
+#content{flex:1;overflow-y:auto;background:var(--surface-0);display:flex;flex-direction:column}
 
 /* ── WELCOME ── */
 #welcome{
@@ -455,7 +455,7 @@ body.canvas #topbar{background:#fff;box-shadow:0 1px 0 var(--border)}
 .feat-desc{font-size:10px;color:var(--text-muted);line-height:1.5}
 
 /* ── GROUP VIEW ── */
-#group-view{display:none;height:100%;flex-direction:column}
+#group-view{display:none;flex-direction:column;flex:1}
 #group-view.show{display:flex}
 
 /* GROUP HERO */
@@ -521,13 +521,13 @@ body.canvas #topbar{background:#fff;box-shadow:0 1px 0 var(--border)}
 .grp-tab.active .grp-tab-cnt{background:var(--accent-dim);color:var(--accent)}
 
 /* GROUP TAB PANELS */
-.grp-panel{display:none;flex:1;overflow-y:auto;padding:20px 24px}
+.grp-panel{display:none;overflow-y:auto;padding:20px 24px;min-height:200px}
 .grp-panel.show{display:block}
 
 /* ── ACTIVIDADES ── */
 .act-toolbar{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;flex-wrap:wrap;gap:10px;
+  margin-bottom:16px;flex-wrap:wrap;gap:10px;min-height:32px;
 }
 .act-filters{display:flex;gap:6px;flex-wrap:wrap}
 .filter-pill{
@@ -942,7 +942,7 @@ body.canvas .qnotes{background:#fffdf5;border-color:#e5d48a;border-left-color:va
         </div>
 
         <!-- GROUP VIEW -->
-        <div id="group-view">
+        <div id="group-view" style="display:none">
           <div class="grp-hero">
             <div class="grp-hero-top">
               <div class="grp-hero-left">
@@ -977,7 +977,7 @@ body.canvas .qnotes{background:#fffdf5;border-color:#e5d48a;border-left-color:va
             <div class="act-toolbar">
               <div class="act-filters" id="act-filters"></div>
             </div>
-            <div class="act-grid" id="act-grid"></div>
+            <div id="act-grid"></div>
           </div>
 
           <div class="grp-panel" id="panel-classes">
@@ -1331,6 +1331,7 @@ document.addEventListener('click',e=>{
 function showWelcome(){
   document.getElementById('welcome').style.display='flex';
   document.getElementById('group-view').style.display='none';
+  document.getElementById('group-view').style.flexDirection='';
   document.getElementById('class-detail').style.display='none';
   document.getElementById('tb-new-act').style.display='none';
   document.getElementById('tb-new-class').style.display='none';
@@ -1380,6 +1381,12 @@ function renderGroupView(){
   // Quick notes
   renderQuickNotes();
 
+  // Reset tab state visually
+  document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
+  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-'+currentTab)?.classList.add('show');
+
   // Render active tab
   renderTab(currentTab);
 }
@@ -1418,28 +1425,36 @@ function saveNotes(){
 
 /* ── ACTIVIDADES ── */
 function renderActivities(){
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  if(!grp)return;
   if(!grp.activities)grp.activities={};
   const all=Object.values(grp.activities);
   const filtered=actFilter==='all'?all:all.filter(a=>a.status===actFilter);
-  const sorted=filtered.sort((a,b)=>new Date(b.dateCreated)-new Date(a.dateCreated));
+  const sorted=[...filtered].sort((a,b)=>new Date(b.dateCreated)-new Date(a.dateCreated));
   const pend=all.filter(a=>a.status==='pending').length;
   const prog=all.filter(a=>a.status==='inProgress').length;
   const done=all.filter(a=>a.status==='completed').length;
 
-  document.getElementById('act-filters').innerHTML=`
-    <button class="filter-pill${actFilter==='all'?' active':''}" onclick="filterActs('all')">Todas (${all.length})</button>
-    <button class="filter-pill${actFilter==='pending'?' active':''}" onclick="filterActs('pending')">⏳ ${pend}</button>
-    <button class="filter-pill${actFilter==='inProgress'?' active':''}" onclick="filterActs('inProgress')">▶ ${prog}</button>
-    <button class="filter-pill${actFilter==='completed'?' active':''}" onclick="filterActs('completed')">✓ ${done}</button>`;
+  // Update filters
+  const filtersEl=document.getElementById('act-filters');
+  if(filtersEl){
+    filtersEl.innerHTML=`
+      <button class="filter-pill${actFilter==='all'?' active':''}" onclick="filterActs('all')">Todas (${all.length})</button>
+      <button class="filter-pill${actFilter==='pending'?' active':''}" onclick="filterActs('pending')">⏳ ${pend}</button>
+      <button class="filter-pill${actFilter==='inProgress'?' active':''}" onclick="filterActs('inProgress')">▶ ${prog}</button>
+      <button class="filter-pill${actFilter==='completed'?' active':''}" onclick="filterActs('completed')">✓ ${done}</button>`;
+  }
 
+  // Update grid
   const grid=document.getElementById('act-grid');
+  if(!grid)return;
   if(!sorted.length){
     grid.innerHTML=`<div class="act-empty">
       <div class="act-empty-icon">📭</div>
       <h3>Sin actividades aún</h3>
       <p>Usa el botón <strong>+ Nueva Actividad</strong> para crear la primera.</p>
-    </div>`;return;
+    </div>`;
+    return;
   }
   grid.innerHTML=sorted.map(a=>buildActCard(a)).join('');
 }
