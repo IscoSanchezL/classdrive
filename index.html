@@ -659,16 +659,17 @@ body.light .activity-card:hover{box-shadow:0 6px 20px rgba(10,30,80,.1)}
   </div>
 </div>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <!-- FIREBASE -->
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const AUTHORIZED_EMAIL="franksanlo@gmail.com";
 const firebaseApp=initializeApp({apiKey:"AIzaSyCsHA5yATtVbAFAxEtHwP0E491p_eWpuvE",authDomain:"mi-directorio-escolar.firebaseapp.com",projectId:"mi-directorio-escolar",storageBucket:"mi-directorio-escolar.firebasestorage.app",messagingSenderId:"946739239308",appId:"1:946739239308:web:f1fe014d74baa1f6e11ea9"});
-const auth=getAuth(firebaseApp);const db=getFirestore(firebaseApp);const provider=new GoogleAuthProvider();
-window.firebaseModules={getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp};
-window.dbInstance=db;
+const auth=getAuth(firebaseApp);const provider=new GoogleAuthProvider();
 window.authInstance=auth;
 provider.setCustomParameters({login_hint:AUTHORIZED_EMAIL,prompt:'select_account'});
 document.getElementById('google-signin-btn').addEventListener('click',async()=>{
@@ -680,14 +681,14 @@ getRedirectResult(auth).then(r=>{if(r&&r.user&&r.user.email!==AUTHORIZED_EMAIL){
 onAuthStateChanged(auth,user=>{
   document.getElementById('loading-overlay').style.display='none';
   if(user&&user.email===AUTHORIZED_EMAIL){
+    window.currentUser=user;
     document.getElementById('login-screen').classList.remove('show');
     document.getElementById('app').classList.add('show');
-    window.currentUser=user;
     const name=user.displayName||'Francisco Javier';
     document.getElementById('user-name').textContent=name;
     if(user.photoURL){document.getElementById('user-avatar').src=user.photoURL;document.getElementById('user-avatar').style.display='block';document.getElementById('user-avatar-placeholder').style.display='none';}
     else{document.getElementById('user-avatar-placeholder').textContent=name[0].toUpperCase();}
-    if(typeof initFirestoreAndLoad==='function'){initFirestoreAndLoad();renderSidebar();applyStoredColor();applyStoredLogo();applyStoredTheme();applyStoredSettings();}
+    window.currentUser=user;if(typeof initSupabaseAndLoad==='function'){initSupabaseAndLoad().then(()=>{renderSidebar();applyStoredColor();applyStoredLogo();applyStoredTheme();applyStoredSettings();});}
   }else{document.getElementById('app').classList.remove('show');document.getElementById('login-screen').classList.add('show');if(user)document.getElementById('login-error').style.display='block';}
 });
 </script>
@@ -733,6 +734,128 @@ function loadState(){
   expandedGrades={};
 }
 function saveState(){localStorage.setItem('mi-directorio-v3',JSON.stringify(state));}
+/* ══ SUPABASE INTEGRATION ══ */
+const SUPABASE_URL = 'https://pexlhyunjvggychywrst.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Z4MU-Ls9xvyh7fAEhVyDMw_7jLgNs0l';
+let supabase = null;
+
+function initSupabaseClient(){
+  if(!supabase && window.supabase){
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✓ Supabase client inicializado');
+  }
+}
+
+async function initSupabaseAndLoad(){
+  initSupabaseClient();
+  try {
+    const email = window.currentUser?.email;
+    if(!email){ loadState(); return; }
+
+    const { data, error } = await supabase
+      .from('user_data')
+      .select('state, trash, settings')
+      .eq('user_email', email)
+      .single();
+
+    if(error && error.code === 'PGRST116'){
+      // Primera vez: crear fila con datos demo
+      loadState();
+      await saveStateToSupabase();
+      console.log('✓ Usuario nuevo creado en Supabase');
+    } else if(error){
+      console.error('Error Supabase load:', error);
+      loadState();
+    } else {
+      // Cargar datos
+      if(data.state && Object.keys(data.state).length > 0){
+        state = data.state;
+        if(!state.view) state.view = 'grid';
+        // Asegurar comments en recursos
+        Object.values(state.grades||{}).forEach(g=>
+          Object.values(g.groups||{}).forEach(grp=>
+            Object.values(grp.classes||{}).forEach(cls=>
+              Object.values(cls.resources||{}).forEach(r=>{
+                if(!r.comments) r.comments=[];
+              })
+            )
+          )
+        );
+      } else {
+        initDemo();
+      }
+      if(data.trash) localStorage.setItem('mde-trash', JSON.stringify(data.trash));
+      if(data.settings){
+        const s = data.settings;
+        if(s.appName)  localStorage.setItem('mde-app-name',  s.appName);
+        if(s.appSub)   localStorage.setItem('mde-app-sub',   s.appSub);
+        if(s.userName) localStorage.setItem('mde-user-name', s.userName);
+        if(s.theme)    localStorage.setItem('mde-theme',     s.theme);
+        if(s.accent)   localStorage.setItem('mde-accent',    s.accent);
+        if(s.logoEmoji)localStorage.setItem('mde-logo-emoji',s.logoEmoji);
+        if(s.logoImg)  localStorage.setItem('mde-logo-img',  s.logoImg);
+      }
+      console.log('✓ Datos cargados desde Supabase');
+    }
+  } catch(err){
+    console.error('Supabase error:', err);
+    loadState();
+  }
+}
+
+async function saveStateToSupabase(){
+  initSupabaseClient();
+  if(!supabase){ localStorage.setItem('mi-directorio-v3', JSON.stringify(state)); return; }
+  const email = window.currentUser?.email;
+  if(!email){ localStorage.setItem('mi-directorio-v3', JSON.stringify(state)); return; }
+  try {
+    const trash = localStorage.getItem('mde-trash');
+    const settings = {
+      appName:   localStorage.getItem('mde-app-name')  || 'Class Drive',
+      appSub:    localStorage.getItem('mde-app-sub')   || 'GI School · Tecnología · PYP',
+      userName:  localStorage.getItem('mde-user-name') || 'Francisco Javier',
+      theme:     localStorage.getItem('mde-theme')     || 'dark',
+      accent:    localStorage.getItem('mde-accent')    || '#f59e0b',
+      logoEmoji: localStorage.getItem('mde-logo-emoji')|| '🏫',
+      logoImg:   localStorage.getItem('mde-logo-img')  || null,
+    };
+    const { error } = await supabase
+      .from('user_data')
+      .upsert({
+        user_email: email,
+        state: state,
+        trash: trash ? JSON.parse(trash) : {},
+        settings: settings,
+      }, { onConflict: 'user_email' });
+
+    if(error) throw error;
+  } catch(err){
+    console.error('Supabase save error:', err);
+    localStorage.setItem('mi-directorio-v3', JSON.stringify(state));
+  }
+}
+
+// Debounce save to avoid too many requests
+let saveTimeout = null;
+function saveState(){
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(()=>{ saveStateToSupabase(); }, 800);
+}
+
+function loadState(){
+  const s = localStorage.getItem('mi-directorio-v3');
+  if(s){ try{ state=JSON.parse(s); }catch(e){ initDemo(); } }else{ initDemo(); }
+  if(!state.view) state.view='grid';
+  Object.values(state.grades||{}).forEach(g=>
+    Object.values(g.groups||{}).forEach(grp=>
+      Object.values(grp.classes||{}).forEach(cls=>
+        Object.values(cls.resources||{}).forEach(r=>{ if(!r.comments) r.comments=[]; })
+      )
+    )
+  );
+  expandedGrades={};
+}
+
 function uid(){return'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);}
 
 /* ══ CLASSROOM ACTIVITIES ══ */
