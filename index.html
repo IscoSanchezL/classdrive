@@ -1538,14 +1538,7 @@ function renderAiPanel(){
       <div class="ai-title">✨ Asistente IA — Gemini</div>
       <div class="ai-sub">Planea tus clases con Google Gemini. Obtén tu API key gratis en <a href="https://aistudio.google.com" target="_blank" style="color:var(--ac)">aistudio.google.com</a></div>
     </div>
-    <div class="ai-config">
-      <div class="ai-config-title">Tu API Key de Gemini</div>
-      <div class="ai-key-row">
-        <div class="form-group"><label>API Key (empieza con AIza...)</label>
-          <input type="password" id="ai-key-input" value="${escQ(localStorage.getItem('cd-ai-key')||'')}" placeholder="AIzaSy..."></div>
-        <div style="padding-top:22px"><button onclick="saveAiKey()" class="btn-s" style="white-space:nowrap">Guardar</button></div>
-      </div>
-    </div>
+    <div id="ai-key-section"></div>
     <div class="ai-chat">
       <div class="ai-msgs" id="ai-msgs">${msgsHtml}</div>
       <div class="ai-suggestions">
@@ -1560,6 +1553,7 @@ function renderAiPanel(){
       </div>
       <div style="font-size:10px;color:var(--tm);margin-top:6px;text-align:right">Ctrl+Enter para enviar</div>
     </div>`;
+  renderKeySection();
   setTimeout(()=>{const m=document.getElementById('ai-msgs');if(m)m.scrollTop=m.scrollHeight;},100);
 }
 function selectAiProvider(id){localStorage.setItem('cd-ai-provider','gemini');}
@@ -1568,6 +1562,43 @@ function saveAiKey(){
   if(!key){showToast('Ingresa tu API key');return;}
   localStorage.setItem('cd-ai-key',key);saveState();showToast('✓ API key guardada');
 }
+function renderKeySection(){
+  const hasKey=!!(localStorage.getItem('cd-ai-key'));
+  const sec=document.getElementById('ai-key-section');if(!sec)return;
+  if(hasKey){
+    sec.innerHTML=`<div class="ai-config" style="background:var(--grd);border:1px solid rgba(16,185,129,.25)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">✅</span>
+          <div><div style="font-size:13px;font-weight:700;color:var(--gr)">IA Lista — Gemini</div>
+          <div style="font-size:11px;color:var(--tm);margin-top:1px">API key activa</div></div>
+        </div>
+        <button onclick="toggleApiKeyForm()" style="padding:4px 10px;border-radius:var(--r2);border:1px solid rgba(16,185,129,.3);background:transparent;color:var(--gr);font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font-b)">Cambiar</button>
+      </div>
+      <div id="api-key-form" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(16,185,129,.2)">
+        <div style="display:flex;gap:8px">
+          <input type="password" id="ai-key-input" placeholder="Nueva API key (AIzaSy...)" style="flex:1;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)">
+          <button onclick="saveAiKey()" class="btn-s" style="white-space:nowrap;padding:8px 14px">Guardar</button>
+        </div>
+      </div>
+    </div>`;
+  }else{
+    sec.innerHTML=`<div class="ai-config">
+      <div class="ai-config-title">Configurar Gemini</div>
+      <div style="font-size:12px;color:var(--tm);margin-bottom:10px">Obtén tu API key gratis en <a href="https://aistudio.google.com" target="_blank" style="color:var(--ac)">aistudio.google.com</a></div>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="ai-key-input" placeholder="AIzaSy..." style="flex:1;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)">
+        <button onclick="saveAiKey()" class="btn-s" style="white-space:nowrap;padding:8px 14px">Guardar</button>
+      </div>
+    </div>`;
+  }
+}
+
+function toggleApiKeyForm(){
+  const f=document.getElementById('api-key-form');
+  if(f)f.style.display=f.style.display==='none'?'block':'none';
+}
+
 async function sendAiMsg(msg){
   const input=document.getElementById('ai-input');
   const text=msg||(input?.value.trim());if(!text)return;
