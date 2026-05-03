@@ -2043,13 +2043,10 @@ function renderMarkdown(text){
     // URLs without markdown
     .replace(/(?<!["\(])(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')
     // Line breaks
-    .replace(/
-
-/g,'</p><p>')
-    .replace(/
-/g,'<br>');
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/\n/g,'<br>');
   // Wrap consecutive li in ul
-  h=h.replace(/(<li>.*?<\/li>(\s*<br>)*)+/gs,m=>'<ul>'+m.replace(/<br>/g,'')+'</ul>');
+  h=h.replace(/(<li>[\s\S]*?<\/li>)+/g,m=>'<ul>'+m+'</ul>');
   return '<p>'+h+'</p>';
 }
 
