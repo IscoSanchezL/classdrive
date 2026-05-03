@@ -1332,6 +1332,25 @@ function buildGrpOptions(currentVal){
   return opts.join('');
 }
 
+function buildGrpCheckboxes(selectedArr){
+  const sel=selectedArr||[];
+  const rows=['<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:var(--ts);cursor:pointer"><input type="checkbox" value="Todos" style="accent-color:var(--ac)" '+(sel.includes('Todos')||!sel.length?'checked':'')+'>👥 Todos los grupos</label>'];
+  Object.values(state.grades||{}).forEach(g=>{
+    Object.values(g.groups||{}).forEach(grp=>{
+      const chk=sel.includes(grp.name)?'checked':'';
+      rows.push(`<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:var(--ts);cursor:pointer"><input type="checkbox" value="${escQ(grp.name)}" style="accent-color:var(--ac)" ${chk}>${escH(g.name)} — ${escH(grp.name)}</label>`);
+    });
+  });
+  return rows.join('');
+}
+
+function getCheckedGroups(wrapperId){
+  const wrap=document.getElementById(wrapperId);if(!wrap)return'Todos';
+  const checked=[...wrap.querySelectorAll('input[type=checkbox]:checked')].map(el=>el.value);
+  if(!checked.length||checked.includes('Todos'))return'Todos';
+  return checked.join(', ');
+}
+
 function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
   // Build classes dropdown from current group
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
@@ -1351,7 +1370,11 @@ function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
         <option value="material">📚 Material</option><option value="cuestionario">❓ Cuestionario</option>
         <option value="presentacion">📊 Presentación</option><option value="video">🎬 Video</option>
       </select></div>
-      <div class="form-group"><label>Asignado a</label><select id="f-who">${buildGrpOptions()}</select></div>
+      <div class="form-group"><label>👥 Asignar a grupos</label>
+        <div id="f-who-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;max-height:130px;overflow-y:auto">
+          ${buildGrpCheckboxes()}
+        </div>
+      </div>
     </div>
     ${clsOptions}
     <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:80px" placeholder="Describe la actividad...">${escH(prefillDesc||'')}</textarea></div>
@@ -1371,7 +1394,7 @@ function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
       if(!grp.activities)grp.activities={};const id=uid();
       const url=document.getElementById('f-url').value.trim(),fname=document.getElementById('f-fname').value.trim();
       const act={id,title,type:document.getElementById('f-type').value,description:document.getElementById('f-desc').value,
-        assignedTo:document.getElementById('f-who').value,dateCreated:new Date().toISOString(),
+        assignedTo:getCheckedGroups('f-who-wrap'),dateCreated:new Date().toISOString(),
         dateAssigned:document.getElementById('f-start').value,dateDue:document.getElementById('f-due').value,
         attachments:url?[{name:fname||'Recurso',url,icon:getFileIcon(url)}]:[],comments:[],status:'pending'};
       grp.activities[id]=act;
@@ -1392,7 +1415,7 @@ async function generateActWithAI(){
   const key=localStorage.getItem('cd-ai-key')||'';
   if(!key){showToast('Configura tu API key de Gemini ☝️');return;}
   const title=document.getElementById('f-t')?.value.trim();
-  const grupo=document.getElementById('f-who')?.value||'los estudiantes';
+  const grupo=getCheckedGroups('f-who-wrap')||'los estudiantes';
   if(!title){showToast('Escribe un título primero');return;}
   const btn=document.querySelector('[onclick="generateActWithAI()"]');
   if(btn){btn.textContent='⏳ Generando...';btn.disabled=true;}
@@ -1710,14 +1733,14 @@ async function sendAiMsg(msg){
     msgsEl.innerHTML+=`<div class="ai-msg ai"><div style="display:flex;align-items:center;gap:8px">✨ <span>Pensando...</span></div></div>`;
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  // Build context from current state
+  // Build context
   const grps=[];
   Object.values(state.grades||{}).forEach(g=>Object.values(g.groups||{}).forEach(grp=>{
-    const cls=Object.values(grp.classes||{}).map(c=>c.title).slice(0,3).join(', ');
-    grps.push(`${grp.name}${cls?' (clases: '+cls+')':''}`);
+    const cls=Object.values(grp.classes||{}).map(cl=>cl.title).slice(0,3).join(', ');
+    grps.push(grp.name+(cls?' (clases: '+cls+')':''));
   }));
-  const ctx=grps.length?`\nContexto del profesor: tiene los grupos ${grps.slice(0,5).join('; ')}.`:'';
-  const fullPrompt=`Eres un asistente educativo experto. Responde en español, de forma directa y práctica. Sin introducciones largas.${ctx}\n\n${text}`;
+  const ctx=grps.length?' El profesor tiene estos grupos: '+grps.slice(0,6).join(', ')+'.':'';
+  const fullPrompt='Eres un asistente educativo para profesores. REGLAS: 1) Responde SIEMPRE en español. 2) Sé directo y práctico. 3) NUNCA hagas preguntas de vuelta. 4) Si te piden crear algo, créalo de inmediato completo. 5) Usa formato claro con emojis cuando ayude.'+ctx+'\n\nProfesor: '+text+'\n\nRespuesta directa:';
   let reply='',lastErr='';
   const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
   for(const model of MODELS){
@@ -2029,7 +2052,11 @@ function openClassModal(){
     <div class="form-group"><label>Descripción</label><textarea id="f-cls-d" placeholder="¿Qué se trabajará? Objetivos, materiales..."></textarea></div>
     <div class="form-2col">
       <div class="form-group"><label>📅 Fecha de la clase</label><input type="date" id="f-cls-date"></div>
-      <div class="form-group"><label>👥 Grupo(s)</label><select id="f-cls-grp">${buildGrpOptions()}</select></div>
+      <div class="form-group"><label>👥 Grupos</label>
+        <div id="f-cls-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;max-height:130px;overflow-y:auto">
+          ${buildGrpCheckboxes()}
+        </div>
+      </div>
     </div>`,
     ()=>{const t=document.getElementById('f-cls-t').value.trim();if(!t){showToast('Título obligatorio');return;}const id=uid();state.grades[state.currentGrade].groups[state.currentGroup].classes[id]={id,title:t,desc:document.getElementById('f-cls-d').value,date:document.getElementById('f-cls-date').value,resources:{}};saveState();closeModal();renderClasses();document.getElementById('tab-cnt-classes').textContent=Object.keys(state.grades[state.currentGrade].groups[state.currentGroup].classes).length;});
 }
