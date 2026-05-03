@@ -613,6 +613,25 @@ body.light .cal-wrap{background:rgba(255,255,255,.85)}
 
 /* Toast */
 #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(99,102,241,.96);color:#fff;padding:10px 22px;border-radius:40px;font-size:13px;font-weight:600;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;box-shadow:0 4px 24px var(--acg)}
+
+/* ══ AI MARKDOWN ══ */
+.ai-msg.ai h1,.ai-msg.ai h2,.ai-msg.ai h3{font-family:var(--font-d);font-weight:800;color:var(--tp);margin:10px 0 6px}
+.ai-msg.ai h1{font-size:17px}.ai-msg.ai h2{font-size:15px}.ai-msg.ai h3{font-size:13px}
+.ai-msg.ai p{margin:6px 0;line-height:1.7}
+.ai-msg.ai ul,.ai-msg.ai ol{margin:6px 0 6px 18px;line-height:1.8}
+.ai-msg.ai li{margin:2px 0}
+.ai-msg.ai strong{color:var(--acl);font-weight:700}
+.ai-msg.ai em{color:var(--cy);font-style:italic}
+.ai-msg.ai code{background:var(--s4);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;color:var(--cy)}
+.ai-msg.ai pre{background:var(--s4);border-radius:var(--r2);padding:10px 14px;margin:8px 0;overflow-x:auto}
+.ai-msg.ai pre code{background:none;padding:0;font-size:12px}
+.ai-msg.ai hr{border:none;border-top:1px solid var(--br);margin:10px 0}
+.ai-msg.ai blockquote{border-left:3px solid var(--ac);padding-left:12px;margin:6px 0;color:var(--ts)}
+.ai-msg.ai a{color:var(--ac);text-decoration:underline}
+.ai-msg.ai table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.ai-msg.ai th{background:var(--s4);padding:6px 10px;text-align:left;font-weight:700;border:1px solid var(--br)}
+.ai-msg.ai td{padding:5px 10px;border:1px solid var(--br)}
+.ai-msg.ai tr:nth-child(even) td{background:rgba(255,255,255,.03)}
 </style>
 </head>
 <body>
@@ -1649,6 +1668,45 @@ function openAiPanel(){
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('ai-nav').classList.add('active');
   renderAiPanel();
 }
+function renderMarkdown(text){
+  if(!text)return'';
+  let h=text
+    // Escape HTML first but preserve structure
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // Headers
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    // Bold & italic
+    .replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/__(.+?)__/g,'<strong>$1</strong>')
+    // Inline code
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    // HR
+    .replace(/^---+$/gm,'<hr>')
+    // Unordered lists
+    .replace(/^[\*\-\+] (.+)$/gm,'<li>$1</li>')
+    // Ordered lists
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    // Blockquote
+    .replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>')
+    // Links
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    // URLs without markdown
+    .replace(/(?<!["\(])(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')
+    // Line breaks
+    .replace(/
+
+/g,'</p><p>')
+    .replace(/
+/g,'<br>');
+  // Wrap consecutive li in ul
+  h=h.replace(/(<li>.*?<\/li>(\s*<br>)*)+/gs,m=>'<ul>'+m.replace(/<br>/g,'')+'</ul>');
+  return '<p>'+h+'</p>';
+}
+
 function renderAiPanel(){
   const p=document.getElementById('ai-panel');
   localStorage.setItem('cd-ai-provider','gemini');
@@ -1671,7 +1729,10 @@ function renderAiPanel(){
         <textarea id="ai-input" placeholder="Ej: Planea una clase de ciencias para 4° sobre el sistema solar, 60 minutos..." onkeydown="if(event.key==='Enter'&&event.ctrlKey)sendAiMsg()"></textarea>
         <button class="ai-send" id="ai-send-btn" onclick="sendAiMsg()">Enviar ↑</button>
       </div>
-      <div style="font-size:10px;color:var(--tm);margin-top:6px;text-align:right">Ctrl+Enter para enviar</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <button onclick="aiMsgs=[];renderAiPanel()" style="padding:3px 10px;border-radius:var(--r2);border:1px solid var(--br);background:transparent;color:var(--tm);font-size:10px;cursor:pointer;font-family:var(--font-b)">🗑 Limpiar chat</button>
+        <span style="font-size:10px;color:var(--tm)">Ctrl+Enter para enviar</span>
+      </div>
     </div>`;
   renderKeySection();
   setTimeout(()=>{const m=document.getElementById('ai-msgs');if(m)m.scrollTop=m.scrollHeight;},100);
@@ -1727,20 +1788,42 @@ async function sendAiMsg(msg){
   aiMsgs.push({role:'user',content:text});
   if(input)input.value='';
   const sendBtn=document.getElementById('ai-send-btn');if(sendBtn)sendBtn.disabled=true;
+  // Show thinking
   const msgsEl=document.getElementById('ai-msgs');
   if(msgsEl){
-    msgsEl.innerHTML=aiMsgs.map(m=>`<div class="ai-msg ${m.role}"><div>${escH(m.content)}</div></div>`).join('');
-    msgsEl.innerHTML+=`<div class="ai-msg ai"><div style="display:flex;align-items:center;gap:8px">✨ <span>Pensando...</span></div></div>`;
+    msgsEl.innerHTML=aiMsgs.map(m=>{
+      const cont=m.role==='ai'?renderMarkdown(m.content):escH(m.content);
+      return`<div class="ai-msg ${m.role}"><div>${cont}</div></div>`;
+    }).join('');
+    msgsEl.innerHTML+=`<div class="ai-msg ai" id="ai-thinking"><div style="display:flex;align-items:center;gap:8px;color:var(--tm)"><span style="animation:pulse 1s infinite">✨</span> <span>Escribiendo...</span></div></div>`;
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  // Build context
+  // Build context from state
   const grps=[];
   Object.values(state.grades||{}).forEach(g=>Object.values(g.groups||{}).forEach(grp=>{
-    const cls=Object.values(grp.classes||{}).map(cl=>cl.title).slice(0,3).join(', ');
-    grps.push(grp.name+(cls?' (clases: '+cls+')':''));
+    const cls=Object.values(grp.classes||{}).map(cl=>cl.title).slice(0,4).join(', ');
+    grps.push(grp.name+(cls?' → clases: '+cls:''));
   }));
-  const ctx=grps.length?' El profesor tiene estos grupos: '+grps.slice(0,6).join(', ')+'.':'';
-  const fullPrompt='Eres un asistente educativo para profesores. REGLAS: 1) Responde SIEMPRE en español. 2) Sé directo y práctico. 3) NUNCA hagas preguntas de vuelta. 4) Si te piden crear algo, créalo de inmediato completo. 5) Usa formato claro con emojis cuando ayude.'+ctx+'\n\nProfesor: '+text+'\n\nRespuesta directa:';
+  const ctx=grps.length?'\n\nGrupos del profesor: '+grps.slice(0,8).join(' | '):'';
+
+  // Build FULL conversation history for Gemini
+  const SYSTEM=`Eres ProfeBot, un asistente educativo experto para profesores de primaria y secundaria. Hablas en español colombiano. Eres muy capaz, creativo y directo. Cuando te pidan crear algo (actividad, clase, evaluación, planeación, logo conceptual, recurso) lo creas INMEDIATAMENTE y COMPLETO sin pedir más información. Usas formato Markdown: # para títulos, ** para negrita, - para listas. Tus respuestas son útiles, detalladas y listas para usar en el aula.${ctx}`;
+
+  // Convert history to Gemini multi-turn format
+  const history=aiMsgs.slice(0,-1).slice(-8); // last 8 messages for context
+  const contents=[];
+  // Add system as first user message
+  if(contents.length===0){
+    contents.push({role:'user',parts:[{text:SYSTEM+'\n\nEntendido, estoy listo para ayudarte.'}]});
+    contents.push({role:'model',parts:[{text:'¡Hola profe! 👋 Soy ProfeBot, tu asistente educativo. Estoy listo para ayudarte a planear clases, crear actividades, diseñar evaluaciones y mucho más. ¿En qué trabajamos hoy?'}]});
+  }
+  // Add chat history
+  history.forEach(m=>{
+    contents.push({role:m.role==='user'?'user':'model',parts:[{text:m.content}]});
+  });
+  // Add current message
+  contents.push({role:'user',parts:[{text:text}]});
+
   let reply='',lastErr='';
   const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
   for(const model of MODELS){
@@ -1748,8 +1831,8 @@ async function sendAiMsg(msg){
       const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          contents:[{parts:[{text:fullPrompt}]}],
-          generationConfig:{maxOutputTokens:1500,temperature:0.7}
+          contents,
+          generationConfig:{maxOutputTokens:2000,temperature:0.8,topP:0.95}
         })
       });
       if(!res.ok){const e=await res.json();lastErr=e.error?.message||'Error '+res.status;continue;}
@@ -1762,13 +1845,20 @@ async function sendAiMsg(msg){
     aiMsgs.push({role:'ai',content:reply});
   }else{
     let msg='❌ '+lastErr;
-    if(lastErr.includes('API_KEY_INVALID')||lastErr.includes('400')||lastErr.includes('invalid'))msg='❌ API key inválida. Ve a aistudio.google.com → Get API Key → copia la key completa (AIzaSy...).';
-    else if(lastErr.includes('429'))msg='❌ Límite de solicitudes alcanzado. Espera un momento e intenta de nuevo.';
-    else if(lastErr.includes('403'))msg='❌ Sin permisos. Tu API key no tiene acceso a Gemini.';
+    if(lastErr.includes('API_KEY_INVALID')||lastErr.includes('400')||lastErr.includes('invalid'))msg='❌ API key inválida. Ve a [aistudio.google.com](https://aistudio.google.com) → Get API Key → copia la key completa (AIzaSy...).';
+    else if(lastErr.includes('429'))msg='❌ Demasiadas solicitudes. Espera un momento e intenta de nuevo.';
+    else if(lastErr.includes('403'))msg='❌ Sin permisos. Verifica tu API key de Gemini.';
     aiMsgs.push({role:'ai',content:msg});
   }
   if(sendBtn)sendBtn.disabled=false;
-  renderAiPanel();
+  // Update messages with markdown
+  if(msgsEl){
+    msgsEl.innerHTML=aiMsgs.map(m=>{
+      const cont=m.role==='ai'?renderMarkdown(m.content):escH(m.content);
+      return`<div class="ai-msg ${m.role}"><div>${cont}</div></div>`;
+    }).join('');
+    msgsEl.scrollTop=msgsEl.scrollHeight;
+  }
 }
 
 /* ── WHITEBOARD ── */
