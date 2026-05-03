@@ -1321,6 +1321,17 @@ function getFileIcon(url){
   if(u.includes('canva'))return'🎨';if(u.includes('genially'))return'✨';
   if(u.includes('.pdf'))return'📄';return'🔗';
 }
+function buildGrpOptions(currentVal){
+  const opts=['<option value="Todos">👥 Todos los grupos</option>'];
+  Object.values(state.grades||{}).forEach(g=>{
+    Object.values(g.groups||{}).forEach(grp=>{
+      const sel=currentVal===grp.name?' selected':'';
+      opts.push(`<option value="${escQ(grp.name)}"${sel}>${escH(g.name)} — ${escH(grp.name)}</option>`);
+    });
+  });
+  return opts.join('');
+}
+
 function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
   // Build classes dropdown from current group
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
@@ -1340,7 +1351,7 @@ function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
         <option value="material">📚 Material</option><option value="cuestionario">❓ Cuestionario</option>
         <option value="presentacion">📊 Presentación</option><option value="video">🎬 Video</option>
       </select></div>
-      <div class="form-group"><label>Asignado a</label><input id="f-who" placeholder="Todos / Grupo A"></div>
+      <div class="form-group"><label>Asignado a</label><select id="f-who">${buildGrpOptions()}</select></div>
     </div>
     ${clsOptions}
     <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:80px" placeholder="Describe la actividad...">${escH(prefillDesc||'')}</textarea></div>
@@ -1380,20 +1391,33 @@ function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
 async function generateActWithAI(){
   const key=localStorage.getItem('cd-ai-key')||'';
   if(!key){showToast('Configura tu API key de Gemini ☝️');return;}
-  const title=document.getElementById('f-t')?.value.trim()||'actividad';
+  const title=document.getElementById('f-t')?.value.trim();
+  const grupo=document.getElementById('f-who')?.value||'los estudiantes';
+  if(!title){showToast('Escribe un título primero');return;}
   const btn=document.querySelector('[onclick="generateActWithAI()"]');
-  if(btn){btn.textContent='✨ Generando...';btn.disabled=true;}
-  const prompt=`Crea una actividad educativa interactiva sobre "${title}" para estudiantes. Dame: título específico, instrucciones claras paso a paso (máx 5 pasos), y un enlace de recurso útil (YouTube, Kahoot, Padlet, Canva, o Google). Responde en este formato exacto:
-TÍTULO: [título]
-INSTRUCCIONES: [instrucciones]
-RECURSO: [url]`;
+  if(btn){btn.textContent='⏳ Generando...';btn.disabled=true;}
+
+  // Get grade context
+  const gradeCtx=Object.values(state.grades||{}).find(g=>
+    Object.values(g.groups||{}).find(grp=>grp.name===grupo)
+  );
+  const gradeName=gradeCtx?.name||'primaria';
+
+  const prompt=`Crea AHORA una actividad educativa interactiva completa sobre "${title}" para ${grupo} de ${gradeName}. NO hagas preguntas. Responde SOLO en este formato:
+
+TÍTULO: [título concreto de la actividad]
+INSTRUCCIONES: [3 a 5 pasos claros y específicos para que los estudiantes realicen la actividad]
+RECURSO: [un enlace real y útil: puede ser un video de YouTube, un kahoot, un padlet, una presentación de Google, o una página educativa relacionada con el tema]
+
+Responde directamente sin introducción ni explicaciones adicionales.`;
+
   try{
     const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
     let reply='';
     for(const model of MODELS){
       const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:500,temperature:0.7}})
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:600,temperature:0.8}})
       });
       if(!res.ok)continue;
       const data=await res.json();
@@ -1401,13 +1425,26 @@ RECURSO: [url]`;
       if(reply)break;
     }
     if(reply){
-      const tMatch=reply.match(/TÍTULO:\s*(.+)/i);
-      const iMatch=reply.match(/INSTRUCCIONES:\s*([\s\S]+?)(?=RECURSO:|$)/i);
-      const rMatch=reply.match(/RECURSO:\s*(https?:\/\/\S+)/i);
-      if(tMatch)document.getElementById('f-t').value=tMatch[1].trim();
-      if(iMatch)document.getElementById('f-desc').value=iMatch[1].trim();
-      if(rMatch){document.getElementById('f-url').value=rMatch[1].trim();document.getElementById('f-fname').value='Recurso IA';}
-      showToast('✨ Actividad generada por IA');
+      const tLine=reply.split('\n').find(l=>/^TÍTULO:/i.test(l.trim()));
+      const rLine=reply.split('\n').find(l=>/^RECURSO:/i.test(l.trim()));
+      const iStart=reply.search(/INSTRUCCIONES:/i);
+      const iEnd=reply.search(/RECURSO:/i);
+      if(tLine)document.getElementById('f-t').value=tLine.replace(/^TÍTULO:\s*/i,'').trim();
+      if(iStart>-1){
+        const instrText=reply.slice(iStart,iEnd>-1?iEnd:undefined)
+          .replace(/^INSTRUCCIONES:\s*/i,'').trim();
+        document.getElementById('f-desc').value=instrText;
+      }
+      if(rLine){
+        const url=rLine.replace(/^RECURSO:\s*/i,'').trim();
+        if(url.startsWith('http')){
+          document.getElementById('f-url').value=url;
+          document.getElementById('f-fname').value='Recurso generado por IA';
+        }
+      }
+      showToast('✨ Actividad generada — revisa y guarda');
+    }else{
+      showToast('No se pudo generar. Intenta de nuevo.');
     }
   }catch(e){showToast('Error: '+e.message);}
   if(btn){btn.textContent='✨ Generar con IA';btn.disabled=false;}
@@ -1987,7 +2024,13 @@ function copyCode(){const c=document.getElementById('grp-code')?.textContent;if(
 
 /* ── CLASSES CRUD ── */
 function openClassModal(){
-  openModal('📖 Nueva Clase',`<div class="form-group"><label>Título</label><input id="f-cls-t" placeholder="Ej: Introducción a Scratch" autofocus></div><div class="form-group"><label>Descripción</label><textarea id="f-cls-d" placeholder="¿Qué se trabajará?"></textarea></div><div class="form-group"><label>Fecha</label><input type="date" id="f-cls-date"></div>`,
+  openModal('📖 Nueva Clase',`
+    <div class="form-group"><label>Título</label><input id="f-cls-t" placeholder="Ej: Introducción a Scratch" autofocus></div>
+    <div class="form-group"><label>Descripción</label><textarea id="f-cls-d" placeholder="¿Qué se trabajará? Objetivos, materiales..."></textarea></div>
+    <div class="form-2col">
+      <div class="form-group"><label>📅 Fecha de la clase</label><input type="date" id="f-cls-date"></div>
+      <div class="form-group"><label>👥 Grupo(s)</label><select id="f-cls-grp">${buildGrpOptions()}</select></div>
+    </div>`,
     ()=>{const t=document.getElementById('f-cls-t').value.trim();if(!t){showToast('Título obligatorio');return;}const id=uid();state.grades[state.currentGrade].groups[state.currentGroup].classes[id]={id,title:t,desc:document.getElementById('f-cls-d').value,date:document.getElementById('f-cls-date').value,resources:{}};saveState();closeModal();renderClasses();document.getElementById('tab-cnt-classes').textContent=Object.keys(state.grades[state.currentGrade].groups[state.currentGroup].classes).length;});
 }
 function editCls(clsId){
