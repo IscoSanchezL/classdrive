@@ -1321,9 +1321,19 @@ function getFileIcon(url){
   if(u.includes('canva'))return'🎨';if(u.includes('genially'))return'✨';
   if(u.includes('.pdf'))return'📄';return'🔗';
 }
-function openActivityModal(){
+function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
+  // Build classes dropdown from current group
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const classes=grp?Object.values(grp.classes||{}):[]; 
+  const clsOptions=classes.length
+    ?`<div class="form-group"><label>📖 Vincular a una clase (opcional)</label><select id="f-cls-link">
+        <option value="">— Sin vincular —</option>
+        ${classes.map(cl=>`<option value="${cl.id}">${escH(cl.title)}</option>`).join('')}
+      </select></div>`
+    :'';
+  
   openModal('📋 Nueva Actividad',`
-    <div class="form-group"><label>Título</label><input id="f-t" placeholder="Ej: Tarea sobre el sistema solar" autofocus></div>
+    <div class="form-group"><label>Título</label><input id="f-t" placeholder="Ej: Tarea sobre el sistema solar" autofocus value="${escQ(prefillTitle||'')}"></div>
     <div class="form-2col">
       <div class="form-group"><label>Tipo</label><select id="f-type">
         <option value="tarea">✏️ Tarea</option><option value="anuncio">📢 Anuncio</option>
@@ -1332,25 +1342,75 @@ function openActivityModal(){
       </select></div>
       <div class="form-group"><label>Asignado a</label><input id="f-who" placeholder="Todos / Grupo A"></div>
     </div>
-    <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:80px" placeholder="Describe la actividad..."></textarea></div>
+    ${clsOptions}
+    <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:80px" placeholder="Describe la actividad...">${escH(prefillDesc||'')}</textarea></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button type="button" onclick="generateActWithAI()" style="padding:6px 12px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b);display:flex;align-items:center;gap:5px">✨ Generar con IA</button>
+      <span style="font-size:10px;color:var(--tm);align-self:center">Gemini crea la actividad automáticamente</span>
+    </div>
     <div class="form-2col">
       <div class="form-group"><label>📅 Fecha asignación</label><input type="date" id="f-start"></div>
       <div class="form-group"><label>⏰ Fecha límite</label><input type="date" id="f-due"></div>
     </div>
-    <div class="form-group"><label>🔗 Enlace del recurso</label><input id="f-url" placeholder="https://..."></div>
+    <div class="form-group"><label>🔗 Enlace del recurso</label><input id="f-url" placeholder="https://..." value="${escQ(prefillUrl||'')}"></div>
     <div class="form-group"><label>📎 Nombre del recurso</label><input id="f-fname" placeholder="Nombre del archivo o link"></div>`,
     ()=>{
       const title=document.getElementById('f-t').value.trim();if(!title){showToast('El título es obligatorio');return;}
-      const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+      if(!grp)return;
       if(!grp.activities)grp.activities={};const id=uid();
       const url=document.getElementById('f-url').value.trim(),fname=document.getElementById('f-fname').value.trim();
-      grp.activities[id]={id,title,type:document.getElementById('f-type').value,description:document.getElementById('f-desc').value,
+      const act={id,title,type:document.getElementById('f-type').value,description:document.getElementById('f-desc').value,
         assignedTo:document.getElementById('f-who').value,dateCreated:new Date().toISOString(),
         dateAssigned:document.getElementById('f-start').value,dateDue:document.getElementById('f-due').value,
         attachments:url?[{name:fname||'Recurso',url,icon:getFileIcon(url)}]:[],comments:[],status:'pending'};
-      saveState();closeModal();renderActivities();document.getElementById('tab-cnt-activities').textContent=Object.keys(grp.activities).length;
+      grp.activities[id]=act;
+      // Also add as resource to linked class if selected
+      const clsId=document.getElementById('f-cls-link')?.value;
+      if(clsId&&grp.classes[clsId]){
+        const resId=uid();
+        if(!grp.classes[clsId].resources)grp.classes[clsId].resources={};
+        grp.classes[clsId].resources[resId]={id:resId,type:'actividad',title,desc:act.description,url,comments:[]};
+      }
+      saveState();closeModal();renderActivities();
+      document.getElementById('tab-cnt-activities').textContent=Object.keys(grp.activities).length;
     });
   setTimeout(()=>{const e=document.getElementById('f-start');if(e)e.value=ds(new Date());},60);
+}
+
+async function generateActWithAI(){
+  const key=localStorage.getItem('cd-ai-key')||'';
+  if(!key){showToast('Configura tu API key de Gemini ☝️');return;}
+  const title=document.getElementById('f-t')?.value.trim()||'actividad';
+  const btn=document.querySelector('[onclick="generateActWithAI()"]');
+  if(btn){btn.textContent='✨ Generando...';btn.disabled=true;}
+  const prompt=`Crea una actividad educativa interactiva sobre "${title}" para estudiantes. Dame: título específico, instrucciones claras paso a paso (máx 5 pasos), y un enlace de recurso útil (YouTube, Kahoot, Padlet, Canva, o Google). Responde en este formato exacto:
+TÍTULO: [título]
+INSTRUCCIONES: [instrucciones]
+RECURSO: [url]`;
+  try{
+    const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
+    let reply='';
+    for(const model of MODELS){
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:500,temperature:0.7}})
+      });
+      if(!res.ok)continue;
+      const data=await res.json();
+      reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+      if(reply)break;
+    }
+    if(reply){
+      const tMatch=reply.match(/TÍTULO:\s*(.+)/i);
+      const iMatch=reply.match(/INSTRUCCIONES:\s*([\s\S]+?)(?=RECURSO:|$)/i);
+      const rMatch=reply.match(/RECURSO:\s*(https?:\/\/\S+)/i);
+      if(tMatch)document.getElementById('f-t').value=tMatch[1].trim();
+      if(iMatch)document.getElementById('f-desc').value=iMatch[1].trim();
+      if(rMatch){document.getElementById('f-url').value=rMatch[1].trim();document.getElementById('f-fname').value='Recurso IA';}
+      showToast('✨ Actividad generada por IA');
+    }
+  }catch(e){showToast('Error: '+e.message);}
+  if(btn){btn.textContent='✨ Generar con IA';btn.disabled=false;}
 }
 function editAct(id){
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];const a=grp?.activities[id];if(!a)return;
@@ -1613,8 +1673,14 @@ async function sendAiMsg(msg){
     msgsEl.innerHTML+=`<div class="ai-msg ai"><div style="display:flex;align-items:center;gap:8px">✨ <span>Pensando...</span></div></div>`;
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  const SYSTEM_PROMPT='Eres un asistente experto en educación y planeación de clases para profesores de primaria y secundaria. Ayudas a planear clases innovadoras, crear actividades interactivas y diseñar evaluaciones. Responde siempre en español, de forma práctica y estructurada. Cuando planees una clase incluye: objetivo de aprendizaje, materiales necesarios, apertura (10%), desarrollo (80%) y cierre con evaluación (10%).';
-  const fullPrompt=SYSTEM_PROMPT+'\n\nProfesor pregunta: '+text;
+  // Build context from current state
+  const grps=[];
+  Object.values(state.grades||{}).forEach(g=>Object.values(g.groups||{}).forEach(grp=>{
+    const cls=Object.values(grp.classes||{}).map(c=>c.title).slice(0,3).join(', ');
+    grps.push(`${grp.name}${cls?' (clases: '+cls+')':''}`);
+  }));
+  const ctx=grps.length?`\nContexto del profesor: tiene los grupos ${grps.slice(0,5).join('; ')}.`:'';
+  const fullPrompt=`Eres un asistente educativo experto. Responde en español, de forma directa y práctica. Sin introducciones largas.${ctx}\n\n${text}`;
   let reply='',lastErr='';
   const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
   for(const model of MODELS){
