@@ -1646,58 +1646,200 @@ async function sendAiMsg(msg){
 }
 
 /* ── WHITEBOARD ── */
-let wbCtx=null,wbTool='pen',wbColor='#6366f1',wbSize=3,wbDrawing=false,wbLastX=0,wbLastY=0;
+/* ══ WHITEBOARD — FULL REWRITE ══ */
+let wbCtx=null,wbTool='pen',wbColor='#6366f1',wbSize=4,wbDrawing=false;
+let wbLastX=0,wbLastY=0,wbStartX=0,wbStartY=0,wbSnapshot=null;
+
 function openWhiteboard(){
-  hideAll();const p=document.getElementById('wb-panel');p.style.display='flex';p.style.flexDirection='column';p.classList.add('show');
+  hideAll();
+  const p=document.getElementById('wb-panel');
+  p.style.display='flex';p.style.flexDirection='column';p.classList.add('show');
   document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span class="bc-a">🎨 Pizarra Virtual</span>`;
-  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('wb-nav').classList.add('active');
-  renderWhiteboard();
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('wb-nav').classList.add('active');
+  initWhiteboard();
 }
-function renderWhiteboard(){
-  const colors=['#6366f1','#06b6d4','#10b981','#f0a500','#ef4444','#ffffff','#000000','#a855f7'];
-  document.getElementById('wb-panel').innerHTML=`
+
+function initWhiteboard(){
+  const colors=['#6366f1','#06b6d4','#10b981','#f0a500','#ef4444','#ffffff','#94a3b8','#a855f7','#f472b6','#000000'];
+  const tools=[
+    {id:'pen',icon:'✏️',tip:'Lápiz libre'},
+    {id:'line',icon:'╱',tip:'Línea recta'},
+    {id:'rect',icon:'▭',tip:'Rectángulo'},
+    {id:'circle',icon:'○',tip:'Círculo/Elipse'},
+    {id:'arrow',icon:'→',tip:'Flecha'},
+    {id:'text',icon:'T',tip:'Texto'},
+    {id:'eraser',icon:'🧹',tip:'Borrador'},
+  ];
+  const panel=document.getElementById('wb-panel');
+  panel.innerHTML=`
     <div class="wb-toolbar">
-      <button class="wb-tool${wbTool==='pen'?' active':''}" onclick="setWBTool('pen')" title="Lápiz">✏️</button>
-      <button class="wb-tool${wbTool==='line'?' active':''}" onclick="setWBTool('line')" title="Línea">📏</button>
-      <button class="wb-tool${wbTool==='rect'?' active':''}" onclick="setWBTool('rect')" title="Rectángulo">▭</button>
-      <button class="wb-tool${wbTool==='circle'?' active':''}" onclick="setWBTool('circle')" title="Círculo">○</button>
-      <button class="wb-tool${wbTool==='eraser'?' active':''}" onclick="setWBTool('eraser')" title="Borrador">🧹</button>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+        ${tools.map(t=>`<button class="wb-tool${wbTool===t.id?' active':''}" id="wbt-${t.id}" onclick="setWBTool('${t.id}')" title="${t.tip}" style="font-size:${t.id==='text'||t.id==='line'||t.id==='arrow'?'13px':'15px'};font-weight:${t.id==='text'?'900':'normal'}">${t.icon}</button>`).join('')}
+      </div>
       <div class="wb-sep"></div>
-      ${colors.map(c=>`<div class="wb-color${c===wbColor?' active':''}" style="background:${c};border:2px solid ${c===wbColor?'#fff':'rgba(255,255,255,.2)'}" onclick="setWBColor('${c}')"></div>`).join('')}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+        ${colors.map(col=>`<div class="wb-color${col===wbColor?' active':''}" id="wbc-${col.replace('#','')}" style="background:${col};width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid ${col===wbColor?'#fff':'rgba(255,255,255,.2)'};transition:all .15s;flex-shrink:0" onclick="setWBColor('${col}')"></div>`).join('')}
+        <input type="color" id="wb-custom-color" value="${wbColor}" style="width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;padding:0;background:none;overflow:hidden" title="Color personalizado" onchange="setWBColor(this.value)">
+      </div>
       <div class="wb-sep"></div>
-      <span style="font-size:10px;color:var(--tm)">Grosor</span>
-      <input type="range" class="wb-size" min="1" max="20" value="${wbSize}" oninput="wbSize=this.value">
-      <div class="wb-actions">
-        <button class="wb-tool" onclick="clearWB()" title="Limpiar">🗑</button>
-        <button class="wb-tool" onclick="saveWB()" title="Guardar imagen">💾</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:10px;color:var(--tm);white-space:nowrap">Grosor: <span id="wb-size-lbl">${wbSize}</span></span>
+        <input type="range" class="wb-size" min="1" max="30" value="${wbSize}" oninput="wbSize=parseInt(this.value);document.getElementById('wb-size-lbl').textContent=wbSize;" style="width:80px">
+      </div>
+      <div class="wb-sep"></div>
+      <div style="display:flex;gap:4px">
+        <button class="wb-tool" onclick="wbUndo()" title="Deshacer" style="font-size:12px">↩</button>
+        <button class="wb-tool" onclick="clearWB()" title="Limpiar todo" style="font-size:12px">🗑</button>
+        <button class="wb-tool" onclick="saveWB()" title="Guardar como imagen" style="font-size:12px">💾</button>
       </div>
     </div>
-    <canvas id="wb-canvas"></canvas>`;
-  const canvas=document.getElementById('wb-canvas');const parent=canvas.parentElement;
-  canvas.width=parent.clientWidth;canvas.height=parent.clientHeight-60;
+    <canvas id="wb-canvas" style="flex:1;cursor:crosshair;display:block;touch-action:none;background:${document.body.classList.contains('light')?'#f8f9fc':'#0d1628'}"></canvas>`;
+
+  const canvas=document.getElementById('wb-canvas');
+  const toolbarH=panel.querySelector('.wb-toolbar').offsetHeight||56;
+  canvas.width=panel.clientWidth;
+  canvas.height=panel.clientHeight-toolbarH;
   wbCtx=canvas.getContext('2d');
-  wbCtx.fillStyle=document.body.classList.contains('light')?'#f0f2f8':'#0d1628';
+  // Fill background
+  wbCtx.fillStyle=document.body.classList.contains('light')?'#f8f9fc':'#0d1628';
   wbCtx.fillRect(0,0,canvas.width,canvas.height);
-  canvas.addEventListener('mousedown',wbStart);canvas.addEventListener('mousemove',wbMove);canvas.addEventListener('mouseup',wbEnd);canvas.addEventListener('mouseleave',wbEnd);
-  canvas.addEventListener('touchstart',e=>{e.preventDefault();wbStart(e.touches[0]);},{passive:false});
-  canvas.addEventListener('touchmove',e=>{e.preventDefault();wbMove(e.touches[0]);},{passive:false});
-  canvas.addEventListener('touchend',wbEnd);
+  // Restore previous drawing if any
+  if(wbSnapshot&&wbSnapshot.w===canvas.width&&wbSnapshot.h===canvas.height){
+    wbCtx.putImageData(wbSnapshot.data,0,0);
+  }
+  wbUndoStack=[];
+  attachWBEvents(canvas);
 }
-function setWBTool(t){wbTool=t;renderWhiteboard();}
-function setWBColor(c){wbColor=c;renderWhiteboard();}
-function wbStart(e){wbDrawing=true;const r=e.target.getBoundingClientRect();wbLastX=e.clientX-r.left;wbLastY=e.clientY-r.top;}
-function wbMove(e){
-  if(!wbDrawing||!wbCtx)return;
-  const r=e.target.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
-  wbCtx.strokeStyle=wbTool==='eraser'?(document.body.classList.contains('light')?'#f0f2f8':'#0d1628'):wbColor;
-  wbCtx.lineWidth=wbTool==='eraser'?wbSize*4:wbSize;
+
+let wbUndoStack=[];
+function wbSaveSnapshot(){
+  const c=document.getElementById('wb-canvas');if(!c||!wbCtx)return;
+  wbUndoStack.push(wbCtx.getImageData(0,0,c.width,c.height));
+  if(wbUndoStack.length>30)wbUndoStack.shift();
+}
+function wbUndo(){
+  const c=document.getElementById('wb-canvas');if(!c||!wbCtx||!wbUndoStack.length)return;
+  wbCtx.putImageData(wbUndoStack.pop(),0,0);
+}
+
+function attachWBEvents(canvas){
+  const getPos=e=>{const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};};
+  const getTouchPos=e=>{const t=e.touches[0];return getPos(t);};
+
+  canvas.addEventListener('mousedown',e=>{
+    const p=getPos(e);wbDrawing=true;wbStartX=p.x;wbStartY=p.y;wbLastX=p.x;wbLastY=p.y;
+    wbSaveSnapshot();
+    if(wbTool==='text'){wbDrawText(p.x,p.y);return;}
+  });
+  canvas.addEventListener('mousemove',e=>{if(!wbDrawing)return;const p=getPos(e);wbDraw(p.x,p.y);});
+  canvas.addEventListener('mouseup',e=>{if(!wbDrawing)return;const p=getPos(e);wbDrawFinal(p.x,p.y);wbDrawing=false;wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};});
+  canvas.addEventListener('mouseleave',e=>{if(wbDrawing){const p=getPos(e);wbDrawFinal(p.x,p.y);wbDrawing=false;}});
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();const p=getTouchPos(e);wbDrawing=true;wbStartX=p.x;wbStartY=p.y;wbLastX=p.x;wbLastY=p.y;wbSaveSnapshot();},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!wbDrawing)return;const p=getTouchPos(e);wbDraw(p.x,p.y);},{passive:false});
+  canvas.addEventListener('touchend',e=>{e.preventDefault();if(!wbDrawing)return;const t=e.changedTouches[0];const r=canvas.getBoundingClientRect();const p={x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)};wbDrawFinal(p.x,p.y);wbDrawing=false;wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};},{passive:false});
+}
+
+function wbSetStyle(){
+  wbCtx.strokeStyle=wbTool==='eraser'?(document.body.classList.contains('light')?'#f8f9fc':'#0d1628'):wbColor;
+  wbCtx.fillStyle=wbColor;
+  wbCtx.lineWidth=wbTool==='eraser'?wbSize*3:wbSize;
   wbCtx.lineCap='round';wbCtx.lineJoin='round';
-  if(wbTool==='pen'||wbTool==='eraser'){wbCtx.beginPath();wbCtx.moveTo(wbLastX,wbLastY);wbCtx.lineTo(x,y);wbCtx.stroke();}
-  wbLastX=x;wbLastY=y;
 }
-function wbEnd(){wbDrawing=false;}
-function clearWB(){if(confirm('¿Limpiar la pizarra?')){renderWhiteboard();}}
-function saveWB(){const c=document.getElementById('wb-canvas');if(!c)return;const a=document.createElement('a');a.download='pizarra-classdrive.png';a.href=c.toDataURL();a.click();}
+
+function wbDraw(x,y){
+  if(!wbCtx)return;
+  wbSetStyle();
+  if(wbTool==='pen'||wbTool==='eraser'){
+    wbCtx.beginPath();wbCtx.moveTo(wbLastX,wbLastY);wbCtx.lineTo(x,y);wbCtx.stroke();
+    wbLastX=x;wbLastY=y;
+  } else {
+    // For shapes: restore snapshot then redraw preview
+    if(wbUndoStack.length>0){
+      wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
+    }
+    wbDrawShape(wbStartX,wbStartY,x,y,false);
+  }
+}
+
+function wbDrawFinal(x,y){
+  if(!wbCtx)return;
+  wbSetStyle();
+  if(wbTool==='pen'||wbTool==='eraser')return;
+  if(wbUndoStack.length>0){
+    wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
+  }
+  wbDrawShape(wbStartX,wbStartY,x,y,true);
+}
+
+function wbDrawShape(x1,y1,x2,y2,final){
+  if(!wbCtx)return;
+  wbSetStyle();
+  const dx=x2-x1,dy=y2-y1;
+  wbCtx.beginPath();
+  if(wbTool==='line'){
+    wbCtx.moveTo(x1,y1);wbCtx.lineTo(x2,y2);wbCtx.stroke();
+  } else if(wbTool==='rect'){
+    wbCtx.strokeRect(x1,y1,dx,dy);
+  } else if(wbTool==='circle'){
+    const rx=Math.abs(dx)/2,ry=Math.abs(dy)/2,cx=x1+dx/2,cy=y1+dy/2;
+    wbCtx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);wbCtx.stroke();
+  } else if(wbTool==='arrow'){
+    // Line
+    wbCtx.moveTo(x1,y1);wbCtx.lineTo(x2,y2);wbCtx.stroke();
+    // Arrowhead
+    const angle=Math.atan2(dy,dx);const len=14;
+    wbCtx.beginPath();
+    wbCtx.moveTo(x2,y2);
+    wbCtx.lineTo(x2-len*Math.cos(angle-Math.PI/6),y2-len*Math.sin(angle-Math.PI/6));
+    wbCtx.moveTo(x2,y2);
+    wbCtx.lineTo(x2-len*Math.cos(angle+Math.PI/6),y2-len*Math.sin(angle+Math.PI/6));
+    wbCtx.stroke();
+  }
+}
+
+function wbDrawText(x,y){
+  wbDrawing=false;
+  const txt=prompt('Escribe el texto:');
+  if(!txt)return;
+  wbCtx.font=`${Math.max(wbSize*4,16)}px ${getComputedStyle(document.body).getPropertyValue('--font-d')||'sans-serif'}`;
+  wbCtx.fillStyle=wbColor;
+  wbCtx.fillText(txt,x,y);
+  wbSnapshot={data:wbCtx.getImageData(0,0,document.getElementById('wb-canvas').width,document.getElementById('wb-canvas').height),w:document.getElementById('wb-canvas').width,h:document.getElementById('wb-canvas').height};
+}
+
+function setWBTool(t){
+  wbTool=t;
+  // Update toolbar buttons without re-rendering the whole panel
+  document.querySelectorAll('.wb-tool').forEach(el=>el.classList.remove('active'));
+  document.getElementById('wbt-'+t)?.classList.add('active');
+  const canvas=document.getElementById('wb-canvas');
+  if(canvas)canvas.style.cursor=t==='eraser'?'cell':t==='text'?'text':'crosshair';
+}
+
+function setWBColor(col){
+  wbColor=col;
+  // Update color dots without re-rendering
+  document.querySelectorAll('.wb-color').forEach(el=>{
+    const isActive=el.style.background===col||el.style.backgroundColor===col;
+    el.style.border=`2px solid ${isActive?'#fff':'rgba(255,255,255,.2)'}`;
+  });
+  const cc=document.getElementById('wb-custom-color');if(cc)cc.value=col;
+}
+
+function clearWB(){
+  if(!confirm('¿Limpiar la pizarra?'))return;
+  if(!wbCtx)return;
+  const c=document.getElementById('wb-canvas');
+  wbCtx.fillStyle=document.body.classList.contains('light')?'#f8f9fc':'#0d1628';
+  wbCtx.fillRect(0,0,c.width,c.height);
+  wbUndoStack=[];wbSnapshot=null;
+}
+
+function saveWB(){
+  const c=document.getElementById('wb-canvas');if(!c)return;
+  const a=document.createElement('a');a.download='pizarra-classdrive.png';a.href=c.toDataURL('image/png');a.click();
+}
 
 /* ── ADMIN PANEL ── */
 function openAdminPanel(){
