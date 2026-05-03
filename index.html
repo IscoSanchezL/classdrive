@@ -2231,77 +2231,102 @@ function openClassModal2(clsId){
 let selectedResType='slides';
 function openAddResModal(clsId){
   selectedResType='slides';
-  openModal('📎 Agregar Recurso',`
-    <div class="form-group"><label>Nombre del recurso</label>
-      <input id="fr-name" placeholder="Ej: Presentación Clase 1" autofocus></div>
-    <div class="form-group"><label>Tipo de recurso</label>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px">
-        ${RES_TYPES2.map(t=>`
-        <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r2);border:2px solid var(--br);background:var(--s3);cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--ts)" id="rtl-${t.id}">
-          <input type="radio" name="res-type" value="${t.id}" ${t.id==='slides'?'checked':''} style="accent-color:var(--ac)" onchange="selectResType('${t.id}')">
-          ${t.icon} ${t.label}
-        </label>`).join('')}
-      </div>
-    </div>
-    <div id="fr-dynamic-field"></div>
-    <div class="form-group"><label>Descripción (opcional)</label>
-      <input id="fr-desc" placeholder="Breve descripción del recurso"></div>`,
+  openModal('📎 Agregar Recurso',buildResModalHtml(),
     ()=>{
       const name=document.getElementById('fr-name').value.trim();
       if(!name){showToast('El nombre es obligatorio');return;}
       const url=(document.getElementById('fr-url')?.value||'').trim();
-      if(!url&&selectedResType!=='link'){showToast('Agrega la URL o código HTML');return;}
+      if(!url&&selectedResType!=='link'){showToast('Agrega la URL o el código HTML');return;}
       const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
       if(!grp.classes[clsId])return;
       const id=uid();
       grp.classes[clsId].resources[id]={
-        id,type:selectedResType,title:name,url,
-        desc:document.getElementById('fr-desc').value,
+        id,type:selectedResType,
+        title:name,url,
+        desc:document.getElementById('fr-desc')?.value||'',
       };
       saveState();closeModal();renderClasses2();
     });
-  // Init first field after modal renders
-  setTimeout(()=>selectResType('slides'),60);
 }
 
-function selectResType(type){
-  selectedResType=type;
-  // Highlight selected radio label
-  RES_TYPES2.forEach(t=>{
-    const lbl=document.getElementById('rtl-'+t.id);
-    if(lbl)lbl.style.borderColor=t.id===type?'var(--ac)':'var(--br)';
-    if(lbl)lbl.style.background=t.id===type?'var(--acd)':'var(--s3)';
-    if(lbl)lbl.style.color=t.id===type?'var(--ac)':'var(--ts)';
-  });
-  // Build dynamic field
+function buildResModalHtml(){
   const hints={
-    slides:'Abre Google Slides → Compartir → Copiar enlace',
-    video:'Pega la URL del video de YouTube',
+    slides:'Google Slides → Compartir → Copiar enlace',
+    video:'Copia la URL del video de YouTube',
     pdf:'Google Drive → clic derecho → Obtener enlace',
     drive:'Google Drive → Compartir → Copiar enlace',
-    canva:'Canva → Compartir → Enlace público',
+    canva:'Canva → Compartir → Enlace público → Copiar',
     genially:'Genially → Publicar → Copiar enlace',
-    link:'Cualquier URL de internet',
-    image:'URL directa de imagen (.jpg .png .webp)',
+    link:'Cualquier URL del internet',
+    image:'URL directa (.jpg .png .webp .gif)',
+    html:'Pega el código HTML completo',
   };
-  const df=document.getElementById('fr-dynamic-field');if(!df)return;
-  if(type==='html'){
-    df.innerHTML=`<div class="form-group">
-      <label>Código HTML</label>
-      <textarea id="fr-url" style="min-height:120px;font-family:monospace;font-size:12px" placeholder="&lt;!DOCTYPE html&gt;&#10;&lt;html&gt;&#10;  &lt;body&gt;&#10;    Tu contenido interactivo aquí...&#10;  &lt;/body&gt;&#10;&lt;/html&gt;"></textarea>
-      <div style="font-size:10px;color:var(--tm);margin-top:4px">Pega código HTML completo o solo un fragmento. Se ejecutará en un sandbox seguro.</div>
+  return`
+    <div class="form-group">
+      <label>Nombre del recurso</label>
+      <input id="fr-name" placeholder="Ej: Presentación Clase 1" autofocus>
+    </div>
+    <div class="form-group">
+      <label>Tipo de recurso</label>
+      <select id="fr-type-sel" style="font-size:13px" onchange="updateResField(this.value)">
+        ${RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group" id="fr-field-wrap">
+      <label id="fr-field-lbl">URL del recurso</label>
+      <input id="fr-url" placeholder="${hints.slides}">
+      <div id="fr-hint" style="font-size:10px;color:var(--tm);margin-top:4px">💡 ${hints.slides}</div>
+    </div>
+    <div class="form-group">
+      <label>Descripción (opcional)</label>
+      <input id="fr-desc" placeholder="Breve descripción">
     </div>`;
-  }else{
-    const info=RES_TYPES2.find(r=>r.id===type);
-    df.innerHTML=`<div class="form-group">
-      <label>URL del recurso</label>
-      <input id="fr-url" placeholder="${info?.hint||'https://...'}" style="font-size:13px">
-      <div style="font-size:10px;color:var(--tm);margin-top:4px">💡 ${hints[type]||'Pega la URL completa'}</div>
-    </div>`;
-  }
-  // Focus the field
-  setTimeout(()=>document.getElementById('fr-url')?.focus(),50);
 }
+
+function updateResField(type){
+  selectedResType=type;
+  const hints={
+    slides:'Google Slides → Compartir → Copiar enlace',
+    video:'Copia la URL del video de YouTube',
+    pdf:'Google Drive → clic derecho → Obtener enlace',
+    drive:'Google Drive → Compartir → Copiar enlace',
+    canva:'Canva → Compartir → Enlace público → Copiar',
+    genially:'Genially → Publicar → Copiar enlace',
+    link:'Cualquier URL del internet',
+    image:'URL directa (.jpg .png .webp .gif)',
+    html:'Pega el código HTML completo',
+  };
+  const wrap=document.getElementById('fr-field-wrap');if(!wrap)return;
+  const lbl=document.getElementById('fr-field-lbl');
+  const hint=document.getElementById('fr-hint');
+  if(type==='html'){
+    if(lbl)lbl.textContent='Código HTML';
+    if(hint)hint.textContent='💡 Pega el código HTML. Se ejecuta en sandbox seguro.';
+    // Replace input with textarea
+    const existing=document.getElementById('fr-url');
+    if(existing&&existing.tagName==='INPUT'){
+      const ta=document.createElement('textarea');
+      ta.id='fr-url';ta.style.minHeight='110px';ta.style.fontFamily='monospace';ta.style.fontSize='12px';
+      ta.placeholder='<!DOCTYPE html><html><body>Tu actividad interactiva...</body></html>';
+      existing.parentNode.insertBefore(ta,existing);existing.remove();
+    }
+  }else{
+    if(lbl)lbl.textContent='URL del recurso';
+    if(hint)hint.textContent='💡 '+hints[type];
+    const info=RES_TYPES2.find(r=>r.id===type);
+    // Replace textarea with input if needed
+    const existing=document.getElementById('fr-url');
+    if(existing&&existing.tagName==='TEXTAREA'){
+      const inp=document.createElement('input');
+      inp.id='fr-url';inp.placeholder=info?.hint||'https://...';
+      existing.parentNode.insertBefore(inp,existing);existing.remove();
+    }else if(existing){
+      existing.placeholder=info?.hint||'https://...';
+    }
+  }
+}
+
+// selectResType replaced by updateResField
 
 /* ── Edit resource ── */
 function editRes2(clsId,resId){
