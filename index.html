@@ -1582,7 +1582,7 @@ async function sendAiMsg(msg){
     msgsEl.innerHTML+=`<div class="ai-msg ai"><div style="display:flex;align-items:center;gap:8px">✨ <span>Pensando...</span></div></div>`;
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  const SYSTEM_PROMPT='Eres un asistente experto en educación y planeación de clases. Ayudas a profesores de primaria y secundaria a planear clases innovadoras, crear actividades interactivas y diseñar evaluaciones. Responde siempre en español, de forma práctica y estructurada. Cuando planees una clase incluye: objetivo de aprendizaje, materiales necesarios, apertura (10%), desarrollo (80%) y cierre con evaluación (10%).';
+  const SYSTEM_PROMPT='Eres un asistente experto en educación y planeación de clases para profesores de primaria y secundaria. Ayudas a planear clases innovadoras, crear actividades interactivas y diseñar evaluaciones. Responde siempre en español, de forma práctica y estructurada. Cuando planees una clase incluye: objetivo de aprendizaje, materiales necesarios, apertura (10%), desarrollo (80%) y cierre con evaluación (10%).';
   const fullPrompt=SYSTEM_PROMPT+'\n\nProfesor pregunta: '+text;
   let reply='',lastErr='';
   const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
