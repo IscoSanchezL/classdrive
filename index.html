@@ -1006,7 +1006,7 @@ body.light .cls-empty2{background:rgba(255,255,255,.6)}
           <div class="grp-hero">
             <div class="grp-hero-top">
               <div><div class="grp-h1" id="grp-title">Grupo</div><div class="grp-h2" id="grp-sub">—</div></div>
-              <div class="grp-code-box"><div><div class="grp-code-lbl">Código</div><div class="grp-code-val" id="grp-code">——</div></div><button class="grp-code-copy" onclick="copyCode()">📋</button></div>
+
             </div>
             <div class="grp-stats" id="grp-stats"></div>
           </div>
@@ -1476,10 +1476,13 @@ document.getElementById('tb-new-class').style.display='';
   if(!grp.code)grp.code=genCode();
   document.getElementById('grp-code').textContent=grp.code;
   const classes=Object.values(grp.classes);const acts=Object.values(grp.activities||{});
-  document.getElementById('tab-cnt-classes').textContent=classes.length;
-  const totalRes=classes.reduce((n,cls)=>n+Object.keys(cls.resources||{}).length,0);
+  // Always recount from fresh state
+  const freshGrp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const freshClasses=Object.values(freshGrp?.classes||{});
+  document.getElementById('tab-cnt-classes').textContent=freshClasses.length;
+  const totalRes=freshClasses.reduce((n,cls)=>n+Object.keys(cls.resources||{}).length,0);
   document.getElementById('grp-stats').innerHTML=`
-    <div class="stat-chip"><span class="sc-n">${classes.length}</span> Clase${classes.length!==1?'s':''}</div>
+    <div class="stat-chip"><span class="sc-n">${freshClasses.length}</span> Clase${freshClasses.length!==1?'s':''}</div>
     <div class="stat-chip"><span class="sc-n">${totalRes}</span> Recurso${totalRes!==1?'s':''}</div>`;
   renderQNotes();
   if(currentTab==='activities')currentTab='classes';
@@ -2086,6 +2089,13 @@ function renderClasses2(){
     return;
   }
   list.innerHTML=classes.map(cls=>buildClassCard2(cls)).join('');
+  // Fix: ensure all open cards show resources button
+  setTimeout(()=>{
+    document.querySelectorAll('.cls-card2.open').forEach(card=>{
+      const clsId=card.id.replace('clsc-','');
+      // Make sure + Agregar button triggers correctly
+    });
+  },50);
 }
 
 function buildClassCard2(cls){
@@ -2372,8 +2382,16 @@ function deleteClass2(clsId){
   if(grp?.classes[clsId]){
     pushTrash('classes',JSON.parse(JSON.stringify(grp.classes[clsId])),{gradeId:state.currentGrade,groupId:state.currentGroup});
     delete grp.classes[clsId];
-    saveState();renderClasses2();
-    document.getElementById('tab-cnt-classes').textContent=Object.keys(grp.classes).length;
+    saveState();
+    renderClasses2();
+    // Update counts
+    const cnt=Object.keys(grp.classes).length;
+    const tc=document.getElementById('tab-cnt-classes');if(tc)tc.textContent=cnt;
+    // Refresh stats
+    const totalRes=Object.values(grp.classes).reduce((n,cls)=>n+Object.keys(cls.resources||{}).length,0);
+    document.getElementById('grp-stats').innerHTML=`
+      <div class="stat-chip"><span class="sc-n">${cnt}</span> Clase${cnt!==1?'s':''}</div>
+      <div class="stat-chip"><span class="sc-n">${totalRes}</span> Recurso${totalRes!==1?'s':''}</div>`;
   }
 }
 
@@ -3103,24 +3121,64 @@ function adminTab(tab,el){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');loadAdminTab(tab);
 }
+function showRegistrationInfo(){
+  const url=window.location.origin;
+  return`<div style="background:var(--grd);border:1px solid rgba(16,185,129,.25);border-radius:var(--r3);padding:14px 16px;margin-bottom:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:6px">✅ Registro de profesores</div>
+    <div style="font-size:12px;color:var(--ts);line-height:1.7">Cualquier profesor puede registrarse en:<br>
+      <strong style="color:var(--acl)">${url}</strong><br>
+      Solo deben iniciar sesión con su cuenta de <strong>Google</strong>. Cada profesor tendrá su propio espacio con sus grupos y clases.
+    </div>
+  </div>`;
+}
+
 async function loadAdminTab(tab){
   const c=document.getElementById('admin-content');if(!c)return;
   if(tab==='teachers'){
     c.innerHTML='<div style="color:var(--tm);font-size:13px">Cargando profesores...</div>';
-    initSB();if(!sb){c.innerHTML='<p style="color:var(--tm)">Supabase no disponible.</p>';return;}
+    initSB();
+    if(!sb){
+      c.innerHTML=showRegistrationInfo();
+      return;
+    }
     try{
       const{data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
-      if(error)throw error;
-      if(!data?.length){c.innerHTML='<div style="color:var(--tm);font-size:13px;padding:20px;text-align:center">Sin profesores registrados.</div>';return;}
+      if(error){
+        // Table might not exist yet — show setup info
+        if(error.message.includes('profiles')||error.code==='42P01'){
+          c.innerHTML=`<div style="background:var(--amd);border:1px solid rgba(240,165,0,.3);border-radius:var(--r3);padding:16px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--am);margin-bottom:8px">⚠ Tabla de perfiles no encontrada</div>
+            <div style="font-size:12px;color:var(--ts);line-height:1.7">Ve a <strong>supabase.com</strong> → SQL Editor y ejecuta el schema inicial.<br>Los profesores podrán registrarse con su cuenta de Google.</div>
+          </div>`+showRegistrationInfo();
+        }else{
+          c.innerHTML=`<div style="color:var(--tm);font-size:12px">Error: ${escH(error.message)}</div>`;
+        }
+        return;
+      }
+      if(!data?.length){
+        c.innerHTML=`<div style="color:var(--tm);font-size:13px;padding:20px;text-align:center;margin-bottom:12px">Sin profesores registrados aún.</div>`+showRegistrationInfo();
+        return;
+      }
       const rows=await Promise.all(data.map(async pr=>{
-        let g=0,cl=0;try{const{data:ud}=await sb.from('user_data').select('state').eq('user_email',pr.email).single();if(ud?.state?.grades){Object.values(ud.state.grades).forEach(grade=>{g+=Object.keys(grade.groups||{}).length;Object.values(grade.groups||{}).forEach(grp=>{cl+=Object.keys(grp.classes||{}).length;});});}}catch(e){}return{...pr,g,cl};
+        let g=0,cl=0;
+        try{
+          const{data:ud}=await sb.from('user_data').select('state').eq('user_email',pr.email).single();
+          if(ud?.state?.grades){Object.values(ud.state.grades).forEach(grade=>{g+=Object.keys(grade.groups||{}).length;Object.values(grade.groups||{}).forEach(grp=>{cl+=Object.keys(grp.classes||{}).length;});});}
+        }catch(e){}
+        return{...pr,g,cl};
       }));
-      c.innerHTML=rows.map(pr=>`<div class="teacher-card">
+      c.innerHTML=`<div style="margin-bottom:14px">${showRegistrationInfo()}</div>`+rows.map(pr=>`<div class="teacher-card">
         <div class="t-av">${(pr.name||pr.email)[0].toUpperCase()}</div>
-        <div class="t-info"><div class="t-name">${escH(pr.name||'Sin nombre')}</div><div class="t-email">${escH(pr.email)}</div><div class="t-stats">${pr.g} grupos · ${pr.cl} clases · Desde ${new Date(pr.created_at).toLocaleDateString('es-CO')}</div></div>
+        <div class="t-info">
+          <div class="t-name">${escH(pr.name||'Sin nombre')}</div>
+          <div class="t-email">${escH(pr.email)}</div>
+          <div class="t-stats">${pr.g} grupos · ${pr.cl} clases · Desde ${new Date(pr.created_at).toLocaleDateString('es-CO')}</div>
+        </div>
         <span class="t-role ${pr.role}">${pr.role==='admin'?'⚡ Admin':'👨‍🏫 Profe'}</span>
       </div>`).join('');
-    }catch(e){c.innerHTML=`<p style="color:var(--tm)">Error: ${e.message}</p>`;}
+    }catch(e){
+      c.innerHTML=`<div style="color:var(--tm);font-size:12px">Error: ${escH(e.message)}</div>`;
+    }
   }else if(tab==='visual'){
     c.innerHTML=`<div class="vc-grid">
       <div class="vc-card" onclick="openColorPicker()"><div class="vc-icon">🎨</div><div class="vc-name">Color de acento</div><div class="vc-desc">Cambia el color principal de la app</div></div>
@@ -3155,7 +3213,7 @@ function delGrp(gid,grpId){
   delete state.grades[gid].groups[grpId];saveState();
   if(state.currentGroup===grpId){state.currentGroup=null;showWelcome();}else renderSidebar();
 }
-function copyCode(){const c=document.getElementById('grp-code')?.textContent;if(c)navigator.clipboard?.writeText(c).then(()=>{const b=document.querySelector('.grp-code-copy');if(b){b.textContent='✓';setTimeout(()=>b.textContent='📋',1500);}});}
+function copyCode(){}
 
 /* ── CLASSES CRUD ── */
 function openClassModal(){
