@@ -1200,9 +1200,13 @@ function tod(){const d=new Date();d.setHours(0,0,0,0);return d;}
 function fixState(){
   if(!state.grades)state.grades={};
   Object.values(state.grades).forEach(g=>Object.values(g.groups||{}).forEach(grp=>{
-    if(!grp.activities)grp.activities={};
     if(!grp.notes)grp.notes='';
-    Object.values(grp.classes||{}).forEach(cls=>Object.values(cls.resources||{}).forEach(r=>{if(!r.comments)r.comments=[];}));
+    if(!grp.classes)grp.classes={};
+    Object.values(grp.classes||{}).forEach(cls=>{
+      if(!cls.resources)cls.resources={};
+      if(!cls.status)cls.status='draft';
+      Object.values(cls.resources||{}).forEach(r=>{if(!r.comments)r.comments=[];});
+    });
   }));
 }
 
@@ -2219,6 +2223,7 @@ function openClassModal2(clsId){
         editing.date=document.getElementById('fc-date').value;
         editing.status=document.getElementById('fc-status').value;
         editing.groups=getCheckedGroups('fc-grp-wrap');
+        if(!editing.resources)editing.resources={};
       }else{
         const id=uid();
         if(!grp.classes)grp.classes={};
@@ -2231,9 +2236,19 @@ function openClassModal2(clsId){
           groups:getCheckedGroups('fc-grp-wrap'),
           resources:{}
         };
-        document.getElementById('tab-cnt-classes').textContent=Object.keys(grp.classes).length;
       }
-      saveState();closeModal();renderClasses2();
+      saveState();
+      closeModal();
+      // Switch to classes tab and render
+      currentTab='classes';
+      document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-btn-classes')?.classList.add('active');
+      document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
+      document.getElementById('panel-classes')?.classList.add('show');
+      renderClasses2();
+      // Update count
+      const freshCnt=Object.keys(grp.classes).length;
+      const tc=document.getElementById('tab-cnt-classes');if(tc)tc.textContent=freshCnt;
     });
 }
 
@@ -2924,50 +2939,73 @@ function wbUndo(){
 }
 
 function attachWBEvents(canvas){
-  const getPos=e=>{const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};};
-  const getTouchPos=e=>{const t=e.touches[0];return getPos(t);};
+  const getPos=e=>{
+    const r=canvas.getBoundingClientRect();
+    return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};
+  };
 
-  canvas.addEventListener('mousedown',e=>{
-    const p=getPos(e);wbDrawing=true;wbStartX=p.x;wbStartY=p.y;wbLastX=p.x;wbLastY=p.y;
+  function onDown(x,y){
+    if(wbTool==='text'){wbDrawText(x,y);return;}
+    wbDrawing=true;wbStartX=x;wbStartY=y;wbLastX=x;wbLastY=y;
     wbSaveSnapshot();
-    if(wbTool==='text'){wbDrawText(p.x,p.y);return;}
-  });
-  canvas.addEventListener('mousemove',e=>{if(!wbDrawing)return;const p=getPos(e);wbDraw(p.x,p.y);});
-  canvas.addEventListener('mouseup',e=>{if(!wbDrawing)return;const p=getPos(e);wbDrawFinal(p.x,p.y);wbDrawing=false;wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};});
-  canvas.addEventListener('mouseleave',e=>{if(wbDrawing){const p=getPos(e);wbDrawFinal(p.x,p.y);wbDrawing=false;}});
-  canvas.addEventListener('touchstart',e=>{e.preventDefault();const p=getTouchPos(e);wbDrawing=true;wbStartX=p.x;wbStartY=p.y;wbLastX=p.x;wbLastY=p.y;wbSaveSnapshot();},{passive:false});
-  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!wbDrawing)return;const p=getTouchPos(e);wbDraw(p.x,p.y);},{passive:false});
-  canvas.addEventListener('touchend',e=>{e.preventDefault();if(!wbDrawing)return;const t=e.changedTouches[0];const r=canvas.getBoundingClientRect();const p={x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)};wbDrawFinal(p.x,p.y);wbDrawing=false;wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};},{passive:false});
-}
-
-
-
-function wbDraw(x,y){
-  if(!wbCtx)return;
-  wbSetStyle();
-  if(wbTool==='pen'||wbTool==='eraser'){
-    wbCtx.beginPath();wbCtx.moveTo(wbLastX,wbLastY);wbCtx.lineTo(x,y);wbCtx.stroke();
-    wbLastX=x;wbLastY=y;
-  } else {
-    // For shapes: restore snapshot then redraw preview
-    if(wbUndoStack.length>0){
-      wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
+    // For pen/eraser start path
+    if(wbTool==='pen'||wbTool==='eraser'){
+      wbCtx.beginPath();wbCtx.moveTo(x,y);
     }
-    wbDrawShape(wbStartX,wbStartY,x,y,false);
   }
+
+  function onMove(x,y){
+    if(!wbDrawing||!wbCtx)return;
+    wbSetStyle();
+    if(wbTool==='pen'||wbTool==='eraser'){
+      wbCtx.lineTo(x,y);wbCtx.stroke();
+      wbCtx.beginPath();wbCtx.moveTo(x,y);
+      wbLastX=x;wbLastY=y;
+    }else{
+      // Shape preview: restore snapshot then draw preview
+      if(wbUndoStack.length>0){
+        wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
+      }
+      wbDrawShape(wbStartX,wbStartY,x,y);
+    }
+  }
+
+  function onUp(x,y){
+    if(!wbDrawing)return;
+    wbSetStyle();
+    if(wbTool!=='pen'&&wbTool!=='eraser'){
+      if(wbUndoStack.length>0){
+        wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
+      }
+      wbDrawShape(wbStartX,wbStartY,x,y);
+    }
+    wbDrawing=false;
+    wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};
+  }
+
+  canvas.addEventListener('mousedown',e=>{const p=getPos(e);onDown(p.x,p.y);});
+  canvas.addEventListener('mousemove',e=>{const p=getPos(e);onMove(p.x,p.y);});
+  canvas.addEventListener('mouseup',e=>{const p=getPos(e);onUp(p.x,p.y);});
+  canvas.addEventListener('mouseleave',e=>{if(wbDrawing){const p=getPos(e);onUp(p.x,p.y);}});
+  canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();const t=e.touches[0];const p=getPos(t);onDown(p.x,p.y);
+  },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();const t=e.touches[0];const p=getPos(t);onMove(p.x,p.y);
+  },{passive:false});
+  canvas.addEventListener('touchend',e=>{
+    e.preventDefault();
+    const t=e.changedTouches[0];
+    const r=canvas.getBoundingClientRect();
+    onUp((t.clientX-r.left)*(canvas.width/r.width),(t.clientY-r.top)*(canvas.height/r.height));
+  },{passive:false});
 }
 
-function wbDrawFinal(x,y){
-  if(!wbCtx)return;
-  wbSetStyle();
-  if(wbTool==='pen'||wbTool==='eraser')return;
-  if(wbUndoStack.length>0){
-    wbCtx.putImageData(wbUndoStack[wbUndoStack.length-1],0,0);
-  }
-  wbDrawShape(wbStartX,wbStartY,x,y,true);
-}
 
-function wbDrawShape(x1,y1,x2,y2,final){
+
+// wbDraw and wbDrawFinal replaced by onMove/onUp in attachWBEvents
+
+function wbDrawShape(x1,y1,x2,y2){
   if(!wbCtx)return;
   wbSetStyle();
   const dx=x2-x1,dy=y2-y1;
