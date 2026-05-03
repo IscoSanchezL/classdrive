@@ -1602,13 +1602,27 @@ function buildGrpOptions(currentVal){
 
 function buildGrpCheckboxes(selectedArr){
   const sel=selectedArr||[];
-  const rows=['<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:var(--ts);cursor:pointer"><input type="checkbox" value="Todos" style="accent-color:var(--ac)" '+(sel.includes('Todos')||!sel.length?'checked':'')+'>👥 Todos los grupos</label>'];
+  const rows=[];
+  // "Todos" option
+  const allChk=sel.includes('Todos')||!sel.length?'checked':'';
+  rows.push(`<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--ts);cursor:pointer;border-bottom:1px solid var(--br)">
+    <input type="checkbox" value="Todos" style="accent-color:var(--ac);width:14px;height:14px;flex-shrink:0" ${allChk}>
+    <span>👥 Todos los grupos</span>
+  </label>`);
   Object.values(state.grades||{}).forEach(g=>{
+    // Grade header
+    rows.push(`<div style="font-size:9px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;padding:6px 0 2px">${escH(g.name)}</div>`);
     Object.values(g.groups||{}).forEach(grp=>{
       const chk=sel.includes(grp.name)?'checked':'';
-      rows.push(`<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:var(--ts);cursor:pointer"><input type="checkbox" value="${escQ(grp.name)}" style="accent-color:var(--ac)" ${chk}>${escH(g.name)} — ${escH(grp.name)}</label>`);
+      rows.push(`<label style="display:flex;align-items:center;gap:8px;padding:4px 0 4px 8px;font-size:12px;color:var(--ts);cursor:pointer">
+        <input type="checkbox" value="${escQ(grp.name)}" style="accent-color:var(--ac);width:14px;height:14px;flex-shrink:0" ${chk}>
+        <span>${escH(grp.name)}</span>
+      </label>`);
     });
   });
+  if(rows.length===1){
+    rows.push('<div style="font-size:12px;color:var(--tm);padding:8px 0">Sin grupos creados aún</div>');
+  }
   return rows.join('');
 }
 
@@ -2183,7 +2197,7 @@ function openClassModal2(clsId){
         </select></div>
     </div>
     <div class="form-group"><label>👥 Grupos</label>
-      <div id="fc-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;max-height:120px;overflow-y:auto">
+      <div id="fc-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 14px;max-height:160px;overflow-y:auto;line-height:1.2">
         ${buildGrpCheckboxes(editing?.groups?editing.groups.split(', '):[])}</div></div>`,
     ()=>{
       const title=document.getElementById('fc-title').value.trim();
@@ -2218,18 +2232,18 @@ let selectedResType='slides';
 function openAddResModal(clsId){
   selectedResType='slides';
   openModal('📎 Agregar Recurso',`
-    <div class="res-type-grid">
-      ${RES_TYPES2.map(t=>`<div class="res-type-opt${t.id===selectedResType?' active':''}" id="rto-${t.id}" onclick="selectResType('${t.id}')">
-        <div class="rto-icon">${t.icon}</div>
-        <div class="rto-name">${t.label}</div>
-      </div>`).join('')}
-    </div>
     <div class="form-group"><label>Nombre del recurso</label>
       <input id="fr-name" placeholder="Ej: Presentación Clase 1" autofocus></div>
+    <div class="form-group"><label>Tipo de recurso</label>
+      <select id="fr-type-sel" onchange="selectResType(this.value)" style="font-size:13px">
+        ${RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('')}
+      </select></div>
     <div class="form-group"><label id="fr-url-lbl">URL del recurso</label>
-      <textarea id="fr-url" style="min-height:70px" placeholder="${RES_TYPES2[0].hint}"></textarea></div>
+      <textarea id="fr-url" style="min-height:80px" placeholder="${RES_TYPES2[0].hint}"></textarea>
+      <div style="font-size:10px;color:var(--tm);margin-top:4px" id="fr-url-hint">Pega la URL de Google Slides, Drive, YouTube, Canva, etc.</div>
+    </div>
     <div class="form-group"><label>Descripción (opcional)</label>
-      <input id="fr-desc" placeholder="Breve descripción del recurso"></div>`,
+      <input id="fr-desc" placeholder="Breve descripción"></div>`,
     ()=>{
       const name=document.getElementById('fr-name').value.trim();
       if(!name){showToast('El nombre es obligatorio');return;}
@@ -2252,13 +2266,26 @@ function openAddResModal(clsId){
 
 function selectResType(type){
   selectedResType=type;
-  document.querySelectorAll('.res-type-opt').forEach(el=>el.classList.remove('active'));
-  document.getElementById('rto-'+type)?.classList.add('active');
   const info=RES_TYPES2.find(r=>r.id===type);
   const lbl=document.getElementById('fr-url-lbl');
-  if(lbl)lbl.textContent=type==='html'?'Código HTML o URL':'URL del recurso';
+  if(lbl)lbl.textContent=type==='html'?'Código HTML':'URL del recurso';
   const urlField=document.getElementById('fr-url');
   if(urlField&&info)urlField.placeholder=info.hint||'https://...';
+  const hint=document.getElementById('fr-url-hint');
+  if(hint){
+    const hints={
+      slides:'Abre Google Slides → Archivo → Compartir → Copiar enlace',
+      video:'Copia la URL del video de YouTube',
+      pdf:'Sube a Google Drive → clic derecho → Compartir → Copiar enlace',
+      drive:'Copia el enlace de compartir de Google Drive',
+      canva:'En Canva → Compartir → Enlace público',
+      genially:'En Genially → Publicar → Copiar enlace',
+      html:'Pega el código HTML directamente o una URL',
+      link:'Cualquier URL de internet',
+      image:'URL directa de una imagen (.jpg .png .gif)',
+    };
+    hint.textContent=hints[type]||'Pega la URL del recurso';
+  }
 }
 
 /* ── Edit resource ── */
