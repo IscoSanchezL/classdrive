@@ -632,6 +632,134 @@ body.light .cal-wrap{background:rgba(255,255,255,.85)}
 .ai-msg.ai th{background:var(--s4);padding:6px 10px;text-align:left;font-weight:700;border:1px solid var(--br)}
 .ai-msg.ai td{padding:5px 10px;border:1px solid var(--br)}
 .ai-msg.ai tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+
+/* ══ CLASS UNIFIED CARD ══ */
+.cls-unified{
+  background:rgba(8,15,30,.8);border:1px solid var(--br);
+  border-radius:var(--r4);margin-bottom:16px;
+  overflow:hidden;backdrop-filter:blur(8px);
+  transition:border-color .2s;
+}
+body.light .cls-unified{background:rgba(255,255,255,.9)}
+.cls-unified:hover{border-color:var(--brh)}
+.cls-unified-head{
+  padding:16px 20px;cursor:pointer;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--br);
+  background:rgba(99,102,241,.05);
+}
+.cls-unified-head:hover{background:rgba(99,102,241,.08)}
+.cls-u-title{font-family:var(--font-d);font-size:16px;font-weight:900;color:var(--tp);margin-bottom:4px;letter-spacing:-.3px}
+.cls-u-meta{font-size:11px;color:var(--tm);display:flex;gap:12px;flex-wrap:wrap}
+.cls-u-meta span{display:flex;align-items:center;gap:4px}
+.cls-u-body{display:none;padding:0}
+.cls-u-body.open{display:block}
+.cls-u-section{padding:16px 20px;border-bottom:1px solid var(--br)}
+.cls-u-section:last-child{border-bottom:none}
+.cls-u-sec-title{font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.cls-u-sec-title button{padding:3px 10px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font-b)}
+.cls-u-sec-title button:hover{background:var(--ac);color:#fff}
+
+/* Resource tiles */
+.res-tiles{display:flex;flex-wrap:wrap;gap:8px}
+.res-tile{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:var(--r2);
+  border:1px solid var(--br);background:var(--s3);
+  cursor:pointer;transition:all .18s;max-width:220px;
+}
+.res-tile:hover{border-color:var(--ac);background:var(--acd);transform:translateY(-1px)}
+.res-tile-icon{font-size:18px;flex-shrink:0}
+.res-tile-info{min-width:0}
+.res-tile-name{font-size:12px;font-weight:600;color:var(--tp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-tile-type{font-size:10px;color:var(--tm)}
+.res-tile-actions{display:flex;gap:3px;margin-left:auto;flex-shrink:0;opacity:0;transition:opacity .15s}
+.res-tile:hover .res-tile-actions{opacity:1}
+
+/* Embedded viewer inside class */
+.res-embed{
+  margin:10px 0;border-radius:var(--r3);overflow:hidden;
+  border:1px solid var(--br);background:#000;
+  position:relative;
+}
+.res-embed iframe{width:100%;display:block;border:none}
+.res-embed-close{
+  position:absolute;top:8px;right:8px;
+  width:28px;height:28px;border-radius:var(--r2);
+  background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);
+  color:#fff;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:10;
+}
+.res-embed-close:hover{background:var(--rd)}
+
+/* Mini activity inside class */
+.cls-act-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:var(--r2);
+  border:1px solid var(--br);background:var(--s3);
+  margin-bottom:6px;transition:all .15s;
+}
+.cls-act-item:hover{border-color:var(--brh)}
+.cls-act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cls-act-dot.pending{background:var(--am)}
+.cls-act-dot.inProgress{background:var(--ac)}
+.cls-act-dot.completed{background:var(--gr)}
+.cls-act-title{flex:1;font-size:12px;font-weight:600;color:var(--tp)}
+.cls-act-type{font-size:10px;color:var(--tm)}
+.cls-act-due{font-size:10px;color:var(--tm)}
+
+/* ══ WHITEBOARD COSMOS ══ */
+#wb-panel{position:relative}
+#wb-cosmos{position:absolute;inset:0;z-index:0;pointer-events:none}
+#wb-canvas{position:relative;z-index:1}
+.wb-toolbar{position:relative;z-index:2;background:rgba(5,8,20,.95) !important;backdrop-filter:blur(16px)}
+.wb-font-sel{background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:4px 8px;color:var(--tp);font-size:11px;outline:none;cursor:pointer;max-width:110px}
+.wb-fill-toggle{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--tm);white-space:nowrap}
+
+/* Sticky notes */
+.wb-sticky{
+  position:absolute;z-index:5;cursor:move;
+  width:140px;min-height:100px;
+  border-radius:var(--r3);padding:10px 12px;
+  font-size:12px;line-height:1.5;
+  box-shadow:3px 3px 10px rgba(0,0,0,.4);
+  user-select:none;
+}
+.wb-sticky textarea{
+  width:100%;min-height:70px;background:transparent;
+  border:none;outline:none;resize:none;
+  font-size:12px;font-family:var(--font-b);
+  color:#1a1a1a;line-height:1.5;
+}
+.wb-sticky-del{
+  position:absolute;top:4px;right:6px;
+  background:transparent;border:none;
+  font-size:14px;cursor:pointer;opacity:.5;
+}
+.wb-sticky-del:hover{opacity:1}
+
+/* Emoji picker */
+.emoji-picker-wrap{
+  position:absolute;z-index:20;
+  background:var(--s2);border:1px solid var(--br);
+  border-radius:var(--r3);padding:10px;
+  display:flex;flex-wrap:wrap;gap:6px;
+  max-width:260px;box-shadow:var(--sh-lg);
+}
+.emoji-opt{font-size:22px;cursor:pointer;padding:3px;border-radius:6px;transition:background .12s}
+.emoji-opt:hover{background:var(--s4)}
+
+/* Presentation mode */
+#wb-present-btn{transition:all .15s}
+#wb-panel.presenting .wb-toolbar{display:none}
+#wb-panel.presenting #wb-cosmos{pointer-events:none}
+#wb-present-exit{
+  display:none;position:fixed;top:12px;right:12px;z-index:9999;
+  padding:6px 14px;border-radius:var(--r2);
+  background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.2);
+  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-b);
+}
+#wb-panel.presenting #wb-present-exit{display:block}
 </style>
 </head>
 <body>
@@ -730,8 +858,8 @@ body.light .cal-wrap{background:rgba(255,255,255,.85)}
         <div id="breadcrumb"><span>Class Drive</span></div>
         <div class="tb-right">
           <button class="theme-tog" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
-          <button class="tb-btn" id="tb-new-class" style="display:none" onclick="openClassModal()">+ Nueva Clase</button>
-          <button class="tb-btn tb-primary" id="tb-new-act" style="display:none" onclick="openActivityModal()">+ Nueva Actividad</button>
+          <button class="tb-btn" id="tb-new-class" style="display:none" onclick="openUnifiedClassModal()">+ Nueva Clase</button>
+          <button class="tb-btn tb-primary" id="tb-new-act" style="display:none" onclick="openUnifiedClassModal()">+ Nueva Actividad</button>
         </div>
       </div>
       <div id="content">
@@ -763,16 +891,15 @@ body.light .cal-wrap{background:rgba(255,255,255,.85)}
           </div>
           <div style="padding:0 24px"><div class="qnotes" id="qnotes"></div></div>
           <div class="grp-tabs">
-            <button class="grp-tab active" id="tab-btn-activities" onclick="switchTab('activities',this)">📋 Actividades<span class="grp-tab-cnt" id="tab-cnt-activities">0</span></button>
-            <button class="grp-tab" id="tab-btn-classes" onclick="switchTab('classes',this)">📖 Clases<span class="grp-tab-cnt" id="tab-cnt-classes">0</span></button>
+            <button class="grp-tab active" id="tab-btn-classes" onclick="switchTab('classes',this)">📖 Clases<span class="grp-tab-cnt" id="tab-cnt-classes">0</span></button>
             <button class="grp-tab" id="tab-btn-calendar" onclick="switchTab('calendar',this)">📅 Calendario</button>
+            <button class="grp-tab" id="tab-btn-wb" onclick="switchTab('wb',this)">🎨 Pizarra</button>
           </div>
-          <div class="grp-panel show" id="panel-activities">
-            <div class="act-toolbar"><div class="act-filters" id="act-filters"></div></div>
-            <div id="act-grid"></div>
+          <div class="grp-panel show" id="panel-classes">
+            <div id="cls-unified-list"></div>
           </div>
-          <div class="grp-panel" id="panel-classes"><div class="cls-grid" id="cls-grid"></div></div>
           <div class="grp-panel" id="panel-calendar"><div id="cal-section"></div></div>
+          <div class="grp-panel" id="panel-wb"><div id="wb-inline"></div></div>
         </div>
         <!-- CLASS DETAIL -->
         <div id="cls-detail"></div>
@@ -1227,13 +1354,14 @@ function renderGroupView(){
   if(!grp.code)grp.code=genCode();
   document.getElementById('grp-code').textContent=grp.code;
   const classes=Object.values(grp.classes);const acts=Object.values(grp.activities||{});
-  document.getElementById('tab-cnt-activities').textContent=acts.length;
+  const totalActs=Object.values(grp.classes||{}).reduce((n,cls)=>n+Object.keys(cls.activities||{}).length,0);
   document.getElementById('tab-cnt-classes').textContent=classes.length;
   document.getElementById('grp-stats').innerHTML=`
     <div class="stat-chip"><span class="sc-n">${classes.length}</span> Clases</div>
-    <div class="stat-chip"><span class="sc-n">${acts.length}</span> Actividades</div>
-    <div class="stat-chip"><span class="sc-n">${acts.filter(a=>a.status==='pending').length}</span> Pendientes</div>`;
+    <div class="stat-chip"><span class="sc-n">${totalActs}</span> Actividades</div>`;
   renderQNotes();
+  // Always default to classes tab
+  if(currentTab==='activities')currentTab='classes';
   document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
   document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
@@ -1249,9 +1377,9 @@ function switchTab(tab,el){
   renderTab(tab);
 }
 function renderTab(tab){
-  if(tab==='activities')renderActivities();
-  else if(tab==='classes')renderClasses();
+  if(tab==='classes')renderUnifiedClasses();
   else if(tab==='calendar')renderCalendar();
+  else if(tab==='wb')renderInlineWB();
 }
 
 /* ── QUICK NOTES ── */
@@ -1527,6 +1655,224 @@ function editAct(id){
       saveState();closeModal();renderActivities();
     });
 }
+
+/* ══ UNIFIED CLASS VIEW ══ */
+function renderUnifiedClasses(){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+  if(!grp.classes)grp.classes={};
+  const list=document.getElementById('cls-unified-list');if(!list)return;
+  const classes=Object.values(grp.classes).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!classes.length){
+    list.innerHTML=`<div class="act-empty"><div class="act-empty-icon">📖</div><h3>Sin clases aún</h3><p>Usa <strong>+ Nueva Clase</strong> para crear tu primera clase con recursos y actividades.</p></div>`;
+    return;
+  }
+  list.innerHTML=classes.map(cls=>buildUnifiedCard(cls)).join('');
+}
+
+function buildUnifiedCard(cls){
+  const resources=Object.values(cls.resources||{});
+  const activities=Object.values(cls.activities||{});
+  const pending=activities.filter(a=>a.status==='pending').length;
+  const resTilesHtml=resources.map(r=>{
+    const info=getResInfo(r.type);
+    return`<div class="res-tile" onclick="toggleEmbedRes('${cls.id}','${r.id}')">
+      <span class="res-tile-icon">${info.icon}</span>
+      <div class="res-tile-info">
+        <div class="res-tile-name">${escH(r.title)}</div>
+        <div class="res-tile-type">${info.label}</div>
+      </div>
+      <div class="res-tile-actions">
+        <button class="icon-btn" onclick="event.stopPropagation();editRes('${cls.id}','${r.id}')" title="Editar">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();delRes('${cls.id}','${r.id}')" title="Eliminar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+  const actsHtml=activities.length?activities.map(a=>{
+    const due=a.dateDue?new Date(a.dateDue+'T00:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short'}):'';
+    const typeIcon={tarea:'✏️',anuncio:'📢',material:'📚',cuestionario:'❓',presentacion:'📊',video:'🎬'}[a.type]||'📋';
+    return`<div class="cls-act-item">
+      <div class="cls-act-dot ${a.status}"></div>
+      <span class="cls-act-title">${typeIcon} ${escH(a.title)}</span>
+      <span class="cls-act-type">${a.type}</span>
+      ${due?`<span class="cls-act-due">📅 ${due}</span>`:''}
+      <button class="act-btn accent" style="font-size:10px;padding:2px 7px" onclick="cycleClsActStatus('${cls.id}','${a.id}')">${a.status==='completed'?'↩':'▶'}</button>
+      <button class="icon-btn danger" onclick="delClsAct('${cls.id}','${a.id}')">🗑</button>
+    </div>`;
+  }).join(''):`<div style="font-size:12px;color:var(--tm);padding:8px 0">Sin actividades — usa el botón para agregar</div>`;
+  return`<div class="cls-unified" id="cls-card-${cls.id}">
+    <div class="cls-unified-head" onclick="toggleClsCard('${cls.id}')">
+      <div>
+        <div class="cls-u-title">📖 ${escH(cls.title)}</div>
+        <div class="cls-u-meta">
+          ${cls.date?`<span>📅 ${cls.date}</span>`:''}
+          ${cls.groups?`<span>👥 ${escH(cls.groups)}</span>`:''}
+          <span>📎 ${resources.length} recurso${resources.length!==1?'s':''}</span>
+          <span>📋 ${activities.length} actividad${activities.length!==1?'es':''}</span>
+          ${pending?`<span style="color:var(--am)">⏳ ${pending} pendiente${pending!==1?'s':''}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="tb-btn" onclick="event.stopPropagation();editUnifiedClass('${cls.id}')" style="padding:5px 10px;font-size:11px">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();delUnifiedClass('${cls.id}')">🗑</button>
+        <span style="font-size:18px;color:var(--tm);align-self:center" id="cls-chev-${cls.id}">›</span>
+      </div>
+    </div>
+    <div class="cls-u-body" id="cls-body-${cls.id}">
+      ${cls.objective?`<div class="cls-u-section"><div class="cls-u-sec-title">🎯 Objetivo</div><div style="font-size:13px;color:var(--ts);line-height:1.6">${escH(cls.objective)}</div></div>`:''}
+      ${cls.desc?`<div class="cls-u-section"><div class="cls-u-sec-title">📝 Descripción</div><div style="font-size:13px;color:var(--ts);line-height:1.6">${escH(cls.desc)}</div></div>`:''}
+      <div class="cls-u-section" id="cls-res-section-${cls.id}">
+        <div class="cls-u-sec-title">📎 Recursos
+          <button onclick="openResModal('${cls.id}')">+ Agregar recurso</button>
+        </div>
+        ${resources.length?`<div class="res-tiles">${resTilesHtml}</div>`:'<div style="font-size:12px;color:var(--tm);padding:4px 0">Sin recursos — agrega presentaciones, videos, PDFs y más</div>'}
+        <div id="embed-${cls.id}" style="margin-top:10px"></div>
+      </div>
+      <div class="cls-u-section">
+        <div class="cls-u-sec-title">📋 Actividades
+          <button onclick="openClsActivityModal('${cls.id}')">+ Nueva actividad</button>
+        </div>
+        <div id="cls-acts-${cls.id}">${actsHtml}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleClsCard(clsId){
+  const body=document.getElementById('cls-body-'+clsId);
+  const chev=document.getElementById('cls-chev-'+clsId);
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(chev)chev.textContent=open?'⌄':'›';
+}
+
+function getResInfo(type){
+  const map={
+    slides:{icon:'📊',label:'Presentación'},video:{icon:'🎬',label:'YouTube'},
+    pdf:{icon:'📄',label:'PDF/Drive'},canva:{icon:'🎨',label:'Canva'},
+    genially:{icon:'✨',label:'Genially'},html:{icon:'🌐',label:'HTML'},
+    link:{icon:'🔗',label:'Enlace'},imagen:{icon:'🖼️',label:'Imagen'},
+    actividad:{icon:'✏️',label:'Actividad'},plan:{icon:'📋',label:'Plan'},
+    evaluacion:{icon:'📝',label:'Evaluación'},presentacion:{icon:'📊',label:'Presentación'},
+  };
+  return map[type]||{icon:'📎',label:'Recurso'};
+}
+
+function toggleEmbedRes(clsId,resId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const cls=grp?.classes[clsId];const r=cls?.resources[resId];if(!r)return;
+  const container=document.getElementById('embed-'+clsId);if(!container)return;
+  // If same resource is open, close it
+  if(container.dataset.open===resId){container.innerHTML='';container.dataset.open='';return;}
+  container.dataset.open=resId;
+  const rt=getRType(r.url||'',r.type);
+  if(rt==='link'){window.open(r.url,'_blank');container.innerHTML='';container.dataset.open='';return;}
+  const embedUrl=getEmbedUrl(r.url,rt);
+  const h=rt==='youtube'?300:rt==='slides'?420:rt==='pdf'?500:400;
+  container.innerHTML=`<div class="res-embed">
+    <button class="res-embed-close" onclick="document.getElementById('embed-${clsId}').innerHTML='';document.getElementById('embed-${clsId}').dataset.open=''">✕</button>
+    ${rt==='html'
+      ?`<iframe srcdoc="${escA(r.url)}" sandbox="allow-scripts allow-same-origin" style="height:${h}px"></iframe>`
+      :`<iframe src="${escA(embedUrl)}" allowfullscreen allow="autoplay;encrypted-media" style="height:${h}px"></iframe>`
+    }
+  </div>`;
+  container.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── CLASS ACTIVITY (inside class) ── */
+function openClsActivityModal(clsId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+  if(!grp.classes[clsId].activities)grp.classes[clsId].activities={};
+  openModal('📋 Nueva Actividad en esta Clase',`
+    <div class="form-group"><label>Título</label><input id="f-t" placeholder="Ej: Completa el ejercicio 3" autofocus></div>
+    <div class="form-2col">
+      <div class="form-group"><label>Tipo</label><select id="f-type">
+        <option value="tarea">✏️ Tarea</option><option value="cuestionario">❓ Cuestionario</option>
+        <option value="material">📚 Material</option><option value="anuncio">📢 Anuncio</option>
+        <option value="presentacion">📊 Presentación</option><option value="video">🎬 Video</option>
+      </select></div>
+      <div class="form-group"><label>⏰ Fecha límite</label><input type="date" id="f-due"></div>
+    </div>
+    <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:70px" placeholder="¿Qué deben hacer?"></textarea></div>
+    <div class="form-group"><label>🔗 Enlace (opcional)</label><input id="f-url" placeholder="https://..."></div>`,
+    ()=>{
+      const title=document.getElementById('f-t').value.trim();if(!title){showToast('Título obligatorio');return;}
+      const id=uid();
+      grp.classes[clsId].activities[id]={id,title,
+        type:document.getElementById('f-type').value,
+        description:document.getElementById('f-desc').value,
+        dateDue:document.getElementById('f-due').value,
+        url:document.getElementById('f-url').value,
+        dateCreated:new Date().toISOString(),status:'pending'
+      };
+      saveState();closeModal();renderUnifiedClasses();
+    });
+}
+
+function cycleClsActStatus(clsId,actId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  const a=grp?.classes[clsId]?.activities?.[actId];if(!a)return;
+  const s=['pending','inProgress','completed'];
+  a.status=s[(s.indexOf(a.status)+1)%s.length];
+  saveState();renderUnifiedClasses();
+}
+
+function delClsAct(clsId,actId){
+  if(!confirm('¿Eliminar esta actividad?'))return;
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  delete grp?.classes[clsId]?.activities?.[actId];
+  saveState();renderUnifiedClasses();
+}
+
+function delUnifiedClass(clsId){
+  if(!confirm('¿Eliminar esta clase y todo su contenido?'))return;
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
+  if(grp?.classes[clsId]){
+    pushTrash('classes',JSON.parse(JSON.stringify(grp.classes[clsId])),{gradeId:state.currentGrade,groupId:state.currentGroup});
+    delete grp.classes[clsId];saveState();renderUnifiedClasses();
+    document.getElementById('tab-cnt-classes').textContent=Object.keys(grp.classes).length;
+  }
+}
+
+/* ── UNIFIED CLASS MODAL ── */
+function openUnifiedClassModal(clsId){
+  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
+  const editing=clsId?grp.classes[clsId]:null;
+  const allGrps=[];
+  Object.values(state.grades||{}).forEach(g=>Object.values(g.groups||{}).forEach(grp2=>allGrps.push(grp2.name)));
+  openModal(editing?'✏️ Editar Clase':'📖 Nueva Clase',`
+    <div class="form-group"><label>Título de la clase</label><input id="f-cls-t" value="${escQ(editing?.title||'')}" placeholder="Ej: Introducción a Scratch Jr" autofocus></div>
+    <div class="form-group"><label>🎯 Objetivo de aprendizaje</label><input id="f-cls-obj" value="${escQ(editing?.objective||'')}" placeholder="Al finalizar el estudiante podrá..."></div>
+    <div class="form-group"><label>📝 Descripción / Notas</label><textarea id="f-cls-d" style="min-height:70px" placeholder="Materiales necesarios, contexto, metodología...">${escH(editing?.desc||'')}</textarea></div>
+    <div class="form-2col">
+      <div class="form-group"><label>📅 Fecha</label><input type="date" id="f-cls-date" value="${editing?.date||''}"></div>
+      <div class="form-group"><label>👥 Grupos</label>
+        <div id="f-cls-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px;max-height:110px;overflow-y:auto">
+          ${buildGrpCheckboxes(editing?.groups?editing.groups.split(', '):[])}
+        </div>
+      </div>
+    </div>`,
+    ()=>{
+      const title=document.getElementById('f-cls-t').value.trim();if(!title){showToast('Título obligatorio');return;}
+      const groups=getCheckedGroups('f-cls-grp-wrap');
+      if(editing){
+        editing.title=title;editing.objective=document.getElementById('f-cls-obj').value;
+        editing.desc=document.getElementById('f-cls-d').value;
+        editing.date=document.getElementById('f-cls-date').value;editing.groups=groups;
+      }else{
+        const id=uid();
+        grp.classes[id]={id,title,
+          objective:document.getElementById('f-cls-obj').value,
+          desc:document.getElementById('f-cls-d').value,
+          date:document.getElementById('f-cls-date').value,
+          groups,resources:{},activities:{}
+        };
+        document.getElementById('tab-cnt-classes').textContent=Object.keys(grp.classes).length;
+      }
+      saveState();closeModal();renderUnifiedClasses();
+    });
+}
+
+function editUnifiedClass(clsId){openUnifiedClassModal(clsId);}
 
 /* ── CLASSES ── */
 function renderClasses(){
@@ -1866,66 +2212,150 @@ async function sendAiMsg(msg){
 let wbCtx=null,wbTool='pen',wbColor='#6366f1',wbSize=4,wbDrawing=false;
 let wbLastX=0,wbLastY=0,wbStartX=0,wbStartY=0,wbSnapshot=null;
 
-function openWhiteboard(){
+function openWhiteboard(inlineEl){
+  if(inlineEl){
+    // Inline mode inside group tab
+    inlineEl.innerHTML='<div style="height:500px;display:flex;flex-direction:column;border-radius:var(--r3);overflow:hidden;border:1px solid var(--br)"><div id="wb-inline-inner" style="display:flex;flex-direction:column;flex:1"></div></div>';
+    initWhiteboard(document.getElementById('wb-inline-inner'));
+    return;
+  }
   hideAll();
   const p=document.getElementById('wb-panel');
   p.style.display='flex';p.style.flexDirection='column';p.classList.add('show');
-  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span class="bc-a">🎨 Pizarra Virtual</span>`;
+  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span class="bc-a">🎨 Pizarra Interactiva</span>`;
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('wb-nav').classList.add('active');
-  initWhiteboard();
+  initWhiteboard(p);
 }
 
-function initWhiteboard(){
-  const colors=['#6366f1','#06b6d4','#10b981','#f0a500','#ef4444','#ffffff','#94a3b8','#a855f7','#f472b6','#000000'];
+function renderInlineWB(){
+  const el=document.getElementById('wb-inline');
+  if(el)el.innerHTML=`<div style="text-align:center;padding:30px;color:var(--tm)">
+    <div style="font-size:48px;margin-bottom:12px">🎨</div>
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:800;color:var(--tp);margin-bottom:8px">Pizarra Interactiva</div>
+    <p style="font-size:13px;margin-bottom:20px">Tablero digital con cosmos para tu clase</p>
+    <button class="tb-btn tb-primary" onclick="openWhiteboard(document.getElementById('wb-inline'))">🚀 Abrir Pizarra</button>
+  </div>`;
+}
+
+let wbFill=false,wbFont='Cabinet Grotesk',wbStickies=[],wbCosmosAnim=null;
+const WB_EMOJIS=['😀','🎉','⭐','🔥','💡','✅','❌','❓','🏆','📚','🎨','🚀','💻','🔬','📐','✏️','🎯','👏','🌟','💪'];
+
+function initWhiteboard(panel){
+  if(!panel)panel=document.getElementById('wb-panel');
+  const colors=['#6366f1','#06b6d4','#10b981','#f0a500','#ef4444','#ffffff','#e879f9','#fb923c','#000000'];
   const tools=[
     {id:'pen',icon:'✏️',tip:'Lápiz libre'},
-    {id:'line',icon:'╱',tip:'Línea recta'},
+    {id:'line',icon:'╱',tip:'Línea'},
     {id:'rect',icon:'▭',tip:'Rectángulo'},
-    {id:'circle',icon:'○',tip:'Círculo/Elipse'},
+    {id:'circle',icon:'○',tip:'Círculo'},
     {id:'arrow',icon:'→',tip:'Flecha'},
     {id:'text',icon:'T',tip:'Texto'},
+    {id:'sticky',icon:'📌',tip:'Nota adhesiva'},
+    {id:'emoji',icon:'😀',tip:'Emoji'},
+    {id:'image',icon:'🖼️',tip:'Imagen URL'},
     {id:'eraser',icon:'🧹',tip:'Borrador'},
   ];
-  const panel=document.getElementById('wb-panel');
   panel.innerHTML=`
+    <div id="wb-present-exit" onclick="exitPresent()">✕ Salir de presentación</div>
     <div class="wb-toolbar">
+      <div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center">
+        ${tools.map(t=>`<button class="wb-tool${wbTool===t.id?' active':''}" id="wbt-${t.id}" onclick="setWBTool('${t.id}')" title="${t.tip}" style="font-size:${['text','line','arrow'].includes(t.id)?'12px':'15px'};font-weight:${t.id==='text'?'900':'normal'}">${t.icon}</button>`).join('')}
+      </div>
+      <div class="wb-sep"></div>
       <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-        ${tools.map(t=>`<button class="wb-tool${wbTool===t.id?' active':''}" id="wbt-${t.id}" onclick="setWBTool('${t.id}')" title="${t.tip}" style="font-size:${t.id==='text'||t.id==='line'||t.id==='arrow'?'13px':'15px'};font-weight:${t.id==='text'?'900':'normal'}">${t.icon}</button>`).join('')}
+        ${colors.map(col=>`<div style="background:${col};width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid ${col===wbColor?'#fff':'rgba(255,255,255,.15)'};transition:all .15s;flex-shrink:0" onclick="setWBColor('${col}')"></div>`).join('')}
+        <input type="color" value="${wbColor}" style="width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;padding:0;overflow:hidden;flex-shrink:0" title="Color" onchange="setWBColor(this.value)">
       </div>
       <div class="wb-sep"></div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-        ${colors.map(col=>`<div class="wb-color${col===wbColor?' active':''}" id="wbc-${col.replace('#','')}" style="background:${col};width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid ${col===wbColor?'#fff':'rgba(255,255,255,.2)'};transition:all .15s;flex-shrink:0" onclick="setWBColor('${col}')"></div>`).join('')}
-        <input type="color" id="wb-custom-color" value="${wbColor}" style="width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;padding:0;background:none;overflow:hidden" title="Color personalizado" onchange="setWBColor(this.value)">
-      </div>
+      <label class="wb-fill-toggle" title="Relleno">
+        <input type="checkbox" id="wb-fill" ${wbFill?'checked':''} onchange="wbFill=this.checked" style="accent-color:var(--ac)"> Relleno
+      </label>
       <div class="wb-sep"></div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:10px;color:var(--tm);white-space:nowrap">Grosor: <span id="wb-size-lbl">${wbSize}</span></span>
-        <input type="range" class="wb-size" min="1" max="30" value="${wbSize}" oninput="wbSize=parseInt(this.value);document.getElementById('wb-size-lbl').textContent=wbSize;" style="width:80px">
-      </div>
+      <select class="wb-font-sel" id="wb-font-sel" onchange="wbFont=this.value" title="Fuente">
+        <option value="Cabinet Grotesk" ${wbFont==='Cabinet Grotesk'?'selected':''}>Cabinet</option>
+        <option value="serif" ${wbFont==='serif'?'selected':''}>Serif</option>
+        <option value="monospace" ${wbFont==='monospace'?'selected':''}>Mono</option>
+        <option value="cursive" ${wbFont==='cursive'?'selected':''}>Cursive</option>
+        <option value="fantasy" ${wbFont==='fantasy'?'selected':''}>Fantasy</option>
+      </select>
       <div class="wb-sep"></div>
-      <div style="display:flex;gap:4px">
-        <button class="wb-tool" onclick="wbUndo()" title="Deshacer" style="font-size:12px">↩</button>
-        <button class="wb-tool" onclick="clearWB()" title="Limpiar todo" style="font-size:12px">🗑</button>
-        <button class="wb-tool" onclick="saveWB()" title="Guardar como imagen" style="font-size:12px">💾</button>
-      </div>
+      <span style="font-size:10px;color:var(--tm)"><span id="wb-size-lbl">${wbSize}</span>px</span>
+      <input type="range" class="wb-size" min="1" max="40" value="${wbSize}" oninput="wbSize=parseInt(this.value);document.getElementById('wb-size-lbl').textContent=wbSize;" style="width:70px">
+      <div class="wb-sep"></div>
+      <button class="wb-tool" onclick="wbUndo()" title="Deshacer">↩</button>
+      <button class="wb-tool" onclick="clearWB()" title="Limpiar">🗑</button>
+      <button class="wb-tool" onclick="saveWB()" title="Guardar PNG">💾</button>
+      <button class="wb-tool" id="wb-present-btn" onclick="enterPresent()" title="Modo presentación" style="font-size:11px">⛶</button>
     </div>
-    <canvas id="wb-canvas" style="flex:1;cursor:crosshair;display:block;touch-action:none;background:${document.body.classList.contains('light')?'#f8f9fc':'#0d1628'}"></canvas>`;
+    <div style="position:relative;flex:1;overflow:hidden">
+      <canvas id="wb-cosmos-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none"></canvas>
+      <canvas id="wb-canvas" style="position:relative;z-index:1;cursor:crosshair;display:block;touch-action:none;background:transparent"></canvas>
+      <div id="wb-stickies" style="position:absolute;inset:0;z-index:2;pointer-events:none"></div>
+      <div id="wb-emoji-picker" class="emoji-picker-wrap" style="display:none"></div>
+    </div>`;
 
+  const canvasWrap=panel.querySelector('div[style*="position:relative;flex:1"]');
+  const cosmosCanvas=document.getElementById('wb-cosmos-canvas');
   const canvas=document.getElementById('wb-canvas');
-  const toolbarH=panel.querySelector('.wb-toolbar').offsetHeight||56;
-  canvas.width=panel.clientWidth;
-  canvas.height=panel.clientHeight-toolbarH;
+  const toolbarH=panel.querySelector('.wb-toolbar').offsetHeight||60;
+  const H=Math.max((panel.clientHeight||600)-toolbarH,300);
+  const W=panel.clientWidth||800;
+  cosmosCanvas.width=canvas.width=W;
+  cosmosCanvas.height=canvas.height=H;
+  // Draw cosmos background
+  initWBCosmos(cosmosCanvas,W,H);
   wbCtx=canvas.getContext('2d');
-  // Fill background
-  wbCtx.fillStyle=document.body.classList.contains('light')?'#f8f9fc':'#0d1628';
-  wbCtx.fillRect(0,0,canvas.width,canvas.height);
-  // Restore previous drawing if any
-  if(wbSnapshot&&wbSnapshot.w===canvas.width&&wbSnapshot.h===canvas.height){
+  wbCtx.clearRect(0,0,W,H);
+  if(wbSnapshot&&wbSnapshot.w===W&&wbSnapshot.h===H){
     wbCtx.putImageData(wbSnapshot.data,0,0);
   }
   wbUndoStack=[];
+  wbStickies=[];
   attachWBEvents(canvas);
+}
+
+function initWBCosmos(canvas,W,H){
+  const ctx=canvas.getContext('2d');
+  // Dark space background
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#030712');bg.addColorStop(.5,'#0a0520');bg.addColorStop(1,'#030712');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // Nebula
+  [[W*.2,H*.3,200,'80,0,160',.12],[W*.75,H*.6,160,'0,40,140',.1]].forEach(([x,y,r,col,a])=>{
+    const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,`rgba(${col},${a})`);g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  });
+  // Stars
+  for(let i=0;i<120;i++){
+    const x=Math.random()*W,y=Math.random()*H,r=Math.random()*1.4+.3;
+    const bright=Math.random()>.82;
+    if(bright){
+      const g=ctx.createRadialGradient(x,y,0,x,y,r*6);
+      g.addColorStop(0,'rgba(255,255,255,.25)');g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*6,0,Math.PI*2);ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${Math.random()*.7+.3})`;ctx.fill();
+  }
+  // Constellation lines
+  const pts=Array.from({length:12},()=>({x:Math.random()*W,y:Math.random()*H}));
+  ctx.strokeStyle='rgba(99,102,241,.12)';ctx.lineWidth=.5;
+  for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){
+    const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+    if(Math.sqrt(dx*dx+dy*dy)<W*.25){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}
+  }}
+}
+
+function enterPresent(){
+  const p=document.getElementById('wb-panel');
+  if(p){p.classList.add('presenting');p.requestFullscreen?.();}
+}
+function exitPresent(){
+  const p=document.getElementById('wb-panel');
+  if(p)p.classList.remove('presenting');
+  document.exitFullscreen?.();
 }
 
 let wbUndoStack=[];
@@ -1956,12 +2386,7 @@ function attachWBEvents(canvas){
   canvas.addEventListener('touchend',e=>{e.preventDefault();if(!wbDrawing)return;const t=e.changedTouches[0];const r=canvas.getBoundingClientRect();const p={x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)};wbDrawFinal(p.x,p.y);wbDrawing=false;wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};},{passive:false});
 }
 
-function wbSetStyle(){
-  wbCtx.strokeStyle=wbTool==='eraser'?(document.body.classList.contains('light')?'#f8f9fc':'#0d1628'):wbColor;
-  wbCtx.fillStyle=wbColor;
-  wbCtx.lineWidth=wbTool==='eraser'?wbSize*3:wbSize;
-  wbCtx.lineCap='round';wbCtx.lineJoin='round';
-}
+
 
 function wbDraw(x,y){
   if(!wbCtx)return;
@@ -1996,15 +2421,16 @@ function wbDrawShape(x1,y1,x2,y2,final){
   if(wbTool==='line'){
     wbCtx.moveTo(x1,y1);wbCtx.lineTo(x2,y2);wbCtx.stroke();
   } else if(wbTool==='rect'){
+    if(wbFill){wbCtx.fillStyle=wbColor;wbCtx.fillRect(x1,y1,dx,dy);}
     wbCtx.strokeRect(x1,y1,dx,dy);
   } else if(wbTool==='circle'){
     const rx=Math.abs(dx)/2,ry=Math.abs(dy)/2,cx=x1+dx/2,cy=y1+dy/2;
-    wbCtx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);wbCtx.stroke();
+    wbCtx.ellipse(cx,cy,rx||1,ry||1,0,0,Math.PI*2);
+    if(wbFill){wbCtx.fillStyle=wbColor;wbCtx.fill();}
+    wbCtx.stroke();
   } else if(wbTool==='arrow'){
-    // Line
+    const angle=Math.atan2(dy,dx);const len=Math.max(14,wbSize*3);
     wbCtx.moveTo(x1,y1);wbCtx.lineTo(x2,y2);wbCtx.stroke();
-    // Arrowhead
-    const angle=Math.atan2(dy,dx);const len=14;
     wbCtx.beginPath();
     wbCtx.moveTo(x2,y2);
     wbCtx.lineTo(x2-len*Math.cos(angle-Math.PI/6),y2-len*Math.sin(angle-Math.PI/6));
@@ -2014,23 +2440,83 @@ function wbDrawShape(x1,y1,x2,y2,final){
   }
 }
 
+function wbSetStyle(){
+  wbCtx.strokeStyle=wbTool==='eraser'?(document.body.classList.contains('light')?'#f8f9fc':'#030712'):wbColor;
+  wbCtx.lineWidth=wbTool==='eraser'?wbSize*3:wbSize;
+  wbCtx.lineCap='round';wbCtx.lineJoin='round';
+}
+
 function wbDrawText(x,y){
   wbDrawing=false;
   const txt=prompt('Escribe el texto:');
   if(!txt)return;
-  wbCtx.font=`${Math.max(wbSize*4,16)}px ${getComputedStyle(document.body).getPropertyValue('--font-d')||'sans-serif'}`;
+  wbCtx.font=`${Math.max(wbSize*4,16)}px '${wbFont}',sans-serif`;
   wbCtx.fillStyle=wbColor;
   wbCtx.fillText(txt,x,y);
   wbSnapshot={data:wbCtx.getImageData(0,0,document.getElementById('wb-canvas').width,document.getElementById('wb-canvas').height),w:document.getElementById('wb-canvas').width,h:document.getElementById('wb-canvas').height};
 }
 
 function setWBTool(t){
+  // Handle special tools immediately
+  if(t==='sticky'){addSticky();return;}
+  if(t==='emoji'){toggleEmojiPicker();return;}
+  if(t==='image'){insertWBImage();return;}
   wbTool=t;
-  // Update toolbar buttons without re-rendering the whole panel
   document.querySelectorAll('.wb-tool').forEach(el=>el.classList.remove('active'));
   document.getElementById('wbt-'+t)?.classList.add('active');
   const canvas=document.getElementById('wb-canvas');
   if(canvas)canvas.style.cursor=t==='eraser'?'cell':t==='text'?'text':'crosshair';
+  // Close emoji picker
+  const ep=document.getElementById('wb-emoji-picker');if(ep)ep.style.display='none';
+}
+
+function addSticky(){
+  const colors=['#fef08a','#bbf7d0','#bfdbfe','#fecaca','#e9d5ff','#fed7aa'];
+  const col=colors[Math.floor(Math.random()*colors.length)];
+  const canvas=document.getElementById('wb-canvas');if(!canvas)return;
+  const wrap=document.getElementById('wb-stickies');if(!wrap)return;
+  wrap.style.pointerEvents='all';
+  const id='sticky-'+Date.now();
+  const s=document.createElement('div');
+  s.className='wb-sticky';s.id=id;
+  s.style.cssText=`left:${50+Math.random()*200}px;top:${50+Math.random()*100}px;background:${col}`;
+  s.innerHTML=`<button class="wb-sticky-del" onclick="document.getElementById('${id}').remove()">✕</button><textarea placeholder="Escribe aquí..."></textarea>`;
+  // Drag
+  let ox=0,oy=0;
+  s.addEventListener('mousedown',e=>{if(e.target.tagName==='TEXTAREA'||e.target.tagName==='BUTTON')return;ox=e.clientX-s.offsetLeft;oy=e.clientY-s.offsetTop;const mv=e2=>{s.style.left=(e2.clientX-ox)+'px';s.style.top=(e2.clientY-oy)+'px'};const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)};document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
+  wrap.appendChild(s);
+}
+
+function toggleEmojiPicker(){
+  const ep=document.getElementById('wb-emoji-picker');if(!ep)return;
+  if(ep.style.display==='flex'){ep.style.display='none';return;}
+  ep.innerHTML=WB_EMOJIS.map(e=>`<span class="emoji-opt" onclick="placeEmoji('${e}')">${e}</span>`).join('');
+  ep.style.display='flex';ep.style.top='70px';ep.style.left='20px';
+}
+function placeEmoji(emoji){
+  const canvas=document.getElementById('wb-canvas');if(!canvas||!wbCtx)return;
+  wbSaveSnapshot();
+  const size=Math.max(wbSize*6,24);
+  wbCtx.font=`${size}px serif`;
+  wbCtx.fillText(emoji,canvas.width/2-size/2,canvas.height/2+size/3);
+  document.getElementById('wb-emoji-picker').style.display='none';
+  showToast('Emoji añadido — arrastra con la herramienta de texto');
+}
+
+function insertWBImage(){
+  const url=prompt('URL de la imagen:');if(!url)return;
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{
+    wbSaveSnapshot();const canvas=document.getElementById('wb-canvas');if(!canvas||!wbCtx)return;
+    const maxW=canvas.width*.4,maxH=canvas.height*.4;
+    const ratio=Math.min(maxW/img.width,maxH/img.height);
+    const w=img.width*ratio,h=img.height*ratio;
+    wbCtx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+    wbSnapshot={data:wbCtx.getImageData(0,0,canvas.width,canvas.height),w:canvas.width,h:canvas.height};
+    showToast('Imagen añadida ✓');
+  };
+  img.onerror=()=>showToast('No se pudo cargar la imagen. Verifica la URL.');
+  img.src=url;
 }
 
 function setWBColor(col){
