@@ -2235,70 +2235,90 @@ function openAddResModal(clsId){
     <div class="form-group"><label>Nombre del recurso</label>
       <input id="fr-name" placeholder="Ej: Presentación Clase 1" autofocus></div>
     <div class="form-group"><label>Tipo de recurso</label>
-      <select id="fr-type-sel" onchange="selectResType(this.value)" style="font-size:13px">
-        ${RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('')}
-      </select></div>
-    <div class="form-group"><label id="fr-url-lbl">URL del recurso</label>
-      <textarea id="fr-url" style="min-height:80px" placeholder="${RES_TYPES2[0].hint}"></textarea>
-      <div style="font-size:10px;color:var(--tm);margin-top:4px" id="fr-url-hint">Pega la URL de Google Slides, Drive, YouTube, Canva, etc.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px">
+        ${RES_TYPES2.map(t=>`
+        <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r2);border:2px solid var(--br);background:var(--s3);cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--ts)" id="rtl-${t.id}">
+          <input type="radio" name="res-type" value="${t.id}" ${t.id==='slides'?'checked':''} style="accent-color:var(--ac)" onchange="selectResType('${t.id}')">
+          ${t.icon} ${t.label}
+        </label>`).join('')}
+      </div>
     </div>
+    <div id="fr-dynamic-field"></div>
     <div class="form-group"><label>Descripción (opcional)</label>
-      <input id="fr-desc" placeholder="Breve descripción"></div>`,
+      <input id="fr-desc" placeholder="Breve descripción del recurso"></div>`,
     ()=>{
       const name=document.getElementById('fr-name').value.trim();
       if(!name){showToast('El nombre es obligatorio');return;}
-      const url=document.getElementById('fr-url').value.trim();
-      if(!url&&selectedResType!=='link'){showToast('La URL es obligatoria');return;}
+      const url=(document.getElementById('fr-url')?.value||'').trim();
+      if(!url&&selectedResType!=='link'){showToast('Agrega la URL o código HTML');return;}
       const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
       if(!grp.classes[clsId])return;
       const id=uid();
-      const autoType=url?detectResType(url):selectedResType;
       grp.classes[clsId].resources[id]={
-        id,
-        type:selectedResType||autoType,
-        title:name,
-        url:url,
+        id,type:selectedResType,title:name,url,
         desc:document.getElementById('fr-desc').value,
       };
       saveState();closeModal();renderClasses2();
     });
+  // Init first field after modal renders
+  setTimeout(()=>selectResType('slides'),60);
 }
 
 function selectResType(type){
   selectedResType=type;
-  const info=RES_TYPES2.find(r=>r.id===type);
-  const lbl=document.getElementById('fr-url-lbl');
-  if(lbl)lbl.textContent=type==='html'?'Código HTML':'URL del recurso';
-  const urlField=document.getElementById('fr-url');
-  if(urlField&&info)urlField.placeholder=info.hint||'https://...';
-  const hint=document.getElementById('fr-url-hint');
-  if(hint){
-    const hints={
-      slides:'Abre Google Slides → Archivo → Compartir → Copiar enlace',
-      video:'Copia la URL del video de YouTube',
-      pdf:'Sube a Google Drive → clic derecho → Compartir → Copiar enlace',
-      drive:'Copia el enlace de compartir de Google Drive',
-      canva:'En Canva → Compartir → Enlace público',
-      genially:'En Genially → Publicar → Copiar enlace',
-      html:'Pega el código HTML directamente o una URL',
-      link:'Cualquier URL de internet',
-      image:'URL directa de una imagen (.jpg .png .gif)',
-    };
-    hint.textContent=hints[type]||'Pega la URL del recurso';
+  // Highlight selected radio label
+  RES_TYPES2.forEach(t=>{
+    const lbl=document.getElementById('rtl-'+t.id);
+    if(lbl)lbl.style.borderColor=t.id===type?'var(--ac)':'var(--br)';
+    if(lbl)lbl.style.background=t.id===type?'var(--acd)':'var(--s3)';
+    if(lbl)lbl.style.color=t.id===type?'var(--ac)':'var(--ts)';
+  });
+  // Build dynamic field
+  const hints={
+    slides:'Abre Google Slides → Compartir → Copiar enlace',
+    video:'Pega la URL del video de YouTube',
+    pdf:'Google Drive → clic derecho → Obtener enlace',
+    drive:'Google Drive → Compartir → Copiar enlace',
+    canva:'Canva → Compartir → Enlace público',
+    genially:'Genially → Publicar → Copiar enlace',
+    link:'Cualquier URL de internet',
+    image:'URL directa de imagen (.jpg .png .webp)',
+  };
+  const df=document.getElementById('fr-dynamic-field');if(!df)return;
+  if(type==='html'){
+    df.innerHTML=`<div class="form-group">
+      <label>Código HTML</label>
+      <textarea id="fr-url" style="min-height:120px;font-family:monospace;font-size:12px" placeholder="&lt;!DOCTYPE html&gt;&#10;&lt;html&gt;&#10;  &lt;body&gt;&#10;    Tu contenido interactivo aquí...&#10;  &lt;/body&gt;&#10;&lt;/html&gt;"></textarea>
+      <div style="font-size:10px;color:var(--tm);margin-top:4px">Pega código HTML completo o solo un fragmento. Se ejecutará en un sandbox seguro.</div>
+    </div>`;
+  }else{
+    const info=RES_TYPES2.find(r=>r.id===type);
+    df.innerHTML=`<div class="form-group">
+      <label>URL del recurso</label>
+      <input id="fr-url" placeholder="${info?.hint||'https://...'}" style="font-size:13px">
+      <div style="font-size:10px;color:var(--tm);margin-top:4px">💡 ${hints[type]||'Pega la URL completa'}</div>
+    </div>`;
   }
+  // Focus the field
+  setTimeout(()=>document.getElementById('fr-url')?.focus(),50);
 }
 
 /* ── Edit resource ── */
 function editRes2(clsId,resId){
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
   const r=grp?.classes[clsId]?.resources[resId];if(!r)return;
+  const isHtml=r.type==='html';
   openModal('✏️ Editar Recurso',`
     <div class="form-group"><label>Nombre</label><input id="fr-name" value="${escQ(r.title)}" autofocus></div>
     <div class="form-group"><label>Tipo</label><select id="fr-type">
       ${RES_TYPES2.map(t=>`<option value="${t.id}"${t.id===r.type?' selected':''}>${t.icon} ${t.label}</option>`).join('')}
     </select></div>
-    <div class="form-group"><label>URL / Contenido</label>
-      <textarea id="fr-url" style="min-height:70px">${escH(r.url||'')}</textarea></div>
+    <div class="form-group"><label>${isHtml?'Código HTML':'URL del recurso'}</label>
+      ${isHtml
+        ?`<textarea id="fr-url" style="min-height:120px;font-family:monospace;font-size:12px">${escH(r.url||'')}</textarea>`
+        :`<input id="fr-url" value="${escQ(r.url||'')}">`
+      }
+    </div>
     <div class="form-group"><label>Descripción</label>
       <input id="fr-desc" value="${escQ(r.desc||'')}"></div>`,
     ()=>{
@@ -2444,6 +2464,31 @@ function buildResCard(r,clsId){
 }
 
 /* ── CALENDAR ── */
+function goToClassFromCal(clsId){
+  // Switch to classes tab
+  currentTab='classes';
+  document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-btn-classes')?.classList.add('active');
+  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-classes')?.classList.add('show');
+  // Render classes
+  renderClasses2();
+  // Scroll to and open the class
+  setTimeout(()=>{
+    const card=document.getElementById('clsc-'+clsId);
+    if(card){
+      // Make sure it's open
+      if(!card.classList.contains('open'))card.classList.add('open');
+      // Scroll to it
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      // Flash highlight
+      card.style.borderColor='var(--ac)';
+      card.style.boxShadow='0 0 0 2px var(--acg)';
+      setTimeout(()=>{card.style.borderColor='';card.style.boxShadow='';},2000);
+    }
+  },120);
+}
+
 function renderCalendar(){
   const sec=document.getElementById('cal-section');if(!sec)return;
   const t=tod();const dow=t.getDay();const mon=new Date(t);mon.setDate(t.getDate()-dow+1+(calWeekOff*7));
@@ -2451,7 +2496,15 @@ function renderCalendar(){
   const sun=days[6];const range=`${mon.getDate()} ${MONTHS[mon.getMonth()]} – ${sun.getDate()} ${MONTHS[sun.getMonth()]} ${sun.getFullYear()}`;
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];const classes=Object.values(grp?.classes||{});
   const dayHd=days.map(d=>{const isT=ds(d)===ds(t);return`<div class="wk-day-h"><div class="wk-day-name">${DAYS_S[d.getDay()]}</div><div class="wk-day-num${isT?' today-n':''}">${d.getDate()}</div></div>`;}).join('');
-  const dayCells=days.map(d=>{const dc=ds(d);const dc2=classes.filter(c=>c.date===dc);return`<div class="wk-cell">${dc2.map(c=>`<span class="wk-chip" onclick="openClsDetail('${c.id}')" title="${escA(c.title)}">${escH(c.title.length>18?c.title.slice(0,16)+'…':c.title)}</span>`).join('')}${!dc2.length?'<div class="wk-empty">—</div>':''}</div>`;}).join('');
+  const dayCells=days.map(d=>{
+    const dc=ds(d);
+    const dc2=classes.filter(cls=>cls.date===dc);
+    return`<div class="wk-cell">${dc2.map(cls=>`<span class="wk-chip"
+      onclick="goToClassFromCal('${cls.id}')"
+      title="${escA(cls.title)}"
+      style="cursor:pointer"
+    >${escH(cls.title.length>18?cls.title.slice(0,16)+'…':cls.title)}</span>`).join('')}${!dc2.length?'<div class="wk-empty">—</div>':''}</div>`;
+  }).join('');
   sec.innerHTML=`<div class="cal-wrap">
     <div class="cal-head">
       <div style="display:flex;align-items:center;gap:6px">
