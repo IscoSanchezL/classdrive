@@ -1582,33 +1582,35 @@ async function sendAiMsg(msg){
     msgsEl.innerHTML+=`<div class="ai-msg ai"><div style="display:flex;align-items:center;gap:8px">✨ <span>Pensando...</span></div></div>`;
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  const SYSTEM='Eres un asistente experto en educación y planeación de clases para profesores de primaria y secundaria. Ayudas a planear clases innovadoras, crear actividades interactivas y diseñar evaluaciones. Responde siempre en español, de forma práctica y estructurada. Cuando planees una clase incluye: objetivo de aprendizaje, materiales necesarios, apertura (10%), desarrollo (80%) y cierre con evaluación (10%).';
-  // Try models in order of availability
-  const MODELS=['gemini-2.0-flash','gemini-1.5-flash','gemini-1.5-flash-latest','gemini-pro'];
   let reply='',lastErr='';
-  for(const model of MODELS){
-    try{
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          systemInstruction:{parts:[{text:SYSTEM}]},
-          contents:[{role:'user',parts:[{text}]}],
-          generationConfig:{maxOutputTokens:1500,temperature:0.7}
-        })
-      });
-      if(!res.ok){const err=await res.json();lastErr=err.error?.message||'Error '+res.status;continue;}
-      const data=await res.json();
-      const candidate=data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if(candidate){reply=candidate;break;}
-    }catch(e){lastErr=e.message;continue;}
-  }
+  try{
+    // Use v1 API (stable) with gemini-2.5-flash
+    // Build prompt with system context embedded in user message
+    const fullPrompt=SYSTEM+'\n\n'+text;
+    const MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'];
+    for(const model of MODELS){
+      try{
+        const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            contents:[{parts:[{text:fullPrompt}]}],
+            generationConfig:{maxOutputTokens:1500,temperature:0.7}
+          })
+        });
+        if(!res.ok){const e=await res.json();lastErr=e.error?.message||'Error '+res.status;continue;}
+        const data=await res.json();
+        const txt=data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(txt){reply=txt;break;}
+      }catch(e){lastErr=e.message;continue;}
+    }
+  }catch(e){lastErr=e.message;}
   if(reply){
     aiMsgs.push({role:'ai',content:reply});
   }else{
     let msg='❌ '+lastErr;
-    if(lastErr.includes('API_KEY_INVALID')||lastErr.includes('400'))msg='❌ API key inválida. Ve a aistudio.google.com, copia tu key (AIzaSy...) y guárdala aquí.';
-    else if(lastErr.includes('429'))msg='❌ Límite de solicitudes alcanzado. Espera un momento.';
-    else if(lastErr.includes('403'))msg='❌ Sin permisos. Verifica que tu API key de Gemini es correcta.';
+    if(lastErr.includes('API_KEY_INVALID')||lastErr.includes('400')||lastErr.includes('invalid'))msg='❌ API key inválida. Ve a aistudio.google.com → Get API Key → copia la key completa (AIzaSy...).';
+    else if(lastErr.includes('429'))msg='❌ Límite de solicitudes alcanzado. Espera un momento e intenta de nuevo.';
+    else if(lastErr.includes('403'))msg='❌ Sin permisos. Tu API key no tiene acceso a Gemini.';
     aiMsgs.push({role:'ai',content:msg});
   }
   if(sendBtn)sendBtn.disabled=false;
