@@ -1221,10 +1221,14 @@ function fixState(){
   Object.values(state.grades).forEach(g=>Object.values(g.groups||{}).forEach(grp=>{
     if(!grp.notes)grp.notes='';
     if(!grp.classes)grp.classes={};
-    Object.values(grp.classes||{}).forEach(cls=>{
+    // Remove null/undefined class entries (ghost classes)
+    Object.keys(grp.classes).forEach(k=>{
+      if(!grp.classes[k]||typeof grp.classes[k]!=='object')delete grp.classes[k];
+    });
+    Object.values(grp.classes).forEach(cls=>{
       if(!cls.resources)cls.resources={};
       if(!cls.status)cls.status='draft';
-      Object.values(cls.resources||{}).forEach(r=>{if(!r.comments)r.comments=[];});
+      if(!cls.id)cls.id=uid();
     });
   }));
 }
@@ -1250,6 +1254,8 @@ function bootApp(){
     else{av.textContent=name[0].toUpperCase();}
   }
   loadFromSB().then(()=>{
+    fixState();
+    saveToDB(); // Save cleaned state immediately
     renderSidebar();applyStoredTheme();applyStoredColor();applyStoredLogo();applyStoredSettings();renderRoleBadge();
     initCosmosCanvas();initLoginCanvas();
   });
@@ -1487,7 +1493,11 @@ function showWelcome(){
   renderSidebar();
 }
 function renderGroupView(){
-  const grade=state.grades[state.currentGrade];const grp=grade.groups[state.currentGroup];
+  // Always read fresh from state (prevents ghost classes)
+  const grade=state.grades[state.currentGrade];
+  if(!grade){showWelcome();return;}
+  const grp=grade.groups[state.currentGroup];
+  if(!grp){showWelcome();return;}
   hideAll();const gv=document.getElementById('grp-view');gv.style.display='flex';gv.style.flexDirection='column';
   const _tna=document.getElementById('tb-new-act');if(_tna)_tna.style.display='none';
 document.getElementById('tb-new-class').style.display='';
@@ -1817,6 +1827,7 @@ function editAct(id){
     });
 }
 
+let pendingResources={};
 /* ══ UNIFIED CLASS VIEW ══ */
 function renderUnifiedClasses(){
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
@@ -2212,16 +2223,26 @@ function openResEmbed(clsId,resId){
 function openClassModal2(clsId){
   const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
   const editing=clsId?grp.classes[clsId]:null;
+  if(!editing)pendingResources={};
+  else pendingResources=JSON.parse(JSON.stringify(editing.resources||{}));
+
+  function buildPendingList(){
+    const items=Object.values(pendingResources);
+    if(!items.length)return'<div style="font-size:12px;color:var(--tm);padding:4px 0">Sin recursos — usa el botón de abajo</div>';
+    return items.map(r=>{const info=getResInfo2(r.type);return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br)"><span>${info.icon}</span><span style="flex:1;font-size:12px;color:var(--tp)">${escH(r.title)}</span><span style="font-size:10px;color:var(--tm)">${info.label}</span><button onclick="removePendingRes('${r.id}')" style="border:none;background:transparent;color:var(--rd);cursor:pointer;font-size:14px;padding:0 4px">✕</button></div>`;}).join('');
+  }
+
+  const typeOpts=RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('');
+
   openModal(editing?'✏️ Editar Clase':'📖 Nueva Clase',`
     <div class="form-group"><label>Nombre de la clase</label>
       <input id="fc-title" value="${escQ(editing?.title||'')}" placeholder="Ej: Introducción a Scratch Jr" autofocus></div>
-    <div class="form-group"><label>🎯 Objetivo de aprendizaje</label>
+    <div class="form-group"><label>🎯 Objetivo</label>
       <input id="fc-obj" value="${escQ(editing?.objective||'')}" placeholder="Al finalizar, el estudiante podrá..."></div>
-    <div class="form-group"><label>📝 Descripción / Notas del profesor</label>
-      <textarea id="fc-desc" style="min-height:80px" placeholder="Materiales necesarios, metodología, contexto...">${escH(editing?.desc||'')}</textarea></div>
+    <div class="form-group"><label>📝 Descripción</label>
+      <textarea id="fc-desc" style="min-height:60px" placeholder="Notas, materiales...">${escH(editing?.desc||'')}</textarea></div>
     <div class="form-2col">
-      <div class="form-group"><label>📅 Fecha</label>
-        <input type="date" id="fc-date" value="${editing?.date||''}"></div>
+      <div class="form-group"><label>📅 Fecha</label><input type="date" id="fc-date" value="${editing?.date||''}"></div>
       <div class="form-group"><label>Estado</label>
         <select id="fc-status">
           <option value="draft"${(!editing||editing.status==='draft')?' selected':''}>📝 Borrador</option>
@@ -2230,46 +2251,90 @@ function openClassModal2(clsId){
         </select></div>
     </div>
     <div class="form-group"><label>👥 Grupos</label>
-      <div id="fc-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 14px;max-height:160px;overflow-y:auto;line-height:1.2">
-        ${buildGrpCheckboxes(editing?.groups?editing.groups.split(', '):[])}</div></div>`,
+      <div id="fc-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 14px;max-height:130px;overflow-y:auto">
+        ${buildGrpCheckboxes(editing?.groups?editing.groups.split(', '):[])}</div></div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span>📎 Recursos</span>
+        <button type="button" onclick="document.getElementById('cls-res-form').style.display=document.getElementById('cls-res-form').style.display==='none'?'block':'none'" style="padding:3px 12px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b)">+ Agregar</button>
+      </label>
+      <div id="pending-res-list" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;min-height:38px;margin-bottom:6px">${buildPendingList()}</div>
+      <div id="cls-res-form" style="display:none;background:var(--s2);border:1px solid var(--bra);border-radius:var(--r3);padding:12px">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <select id="ir-type" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 8px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)"
+            onchange="(function(t){const hints={slides:'Google Slides → Compartir → Copiar enlace',video:'URL del video de YouTube',pdf:'Google Drive → Obtener enlace',drive:'Google Drive → Compartir',canva:'Canva → Compartir → Enlace público',genially:'Genially → Publicar → Copiar',link:'Cualquier URL',image:'URL de imagen (.jpg .png)',html:'Código HTML completo'};document.getElementById('ir-hint').textContent='💡 '+(hints[t]||'URL');const w=document.getElementById('ir-url-wrap');if(t==='html'){w.innerHTML='<textarea id=ir-url style=width:100%;min-height:70px;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px;color:var(--tp);font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;resize:vertical placeholder=Código HTML...></textarea>';}else{w.innerHTML='<input id=ir-url style=width:100%;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;box-sizing:border-box placeholder=https://...>';};})(this.value)">
+            ${typeOpts}
+          </select>
+          <input id="ir-name" placeholder="Nombre del recurso" style="flex:1;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)">
+        </div>
+        <div id="ir-url-wrap" style="margin-bottom:6px">
+          <input id="ir-url" placeholder="https://..." style="width:100%;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b);box-sizing:border-box">
+        </div>
+        <div id="ir-hint" style="font-size:10px;color:var(--tm);margin-bottom:8px">💡 Google Slides → Compartir → Copiar enlace</div>
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button type="button" onclick="document.getElementById('cls-res-form').style.display='none'" style="padding:5px 12px;border-radius:var(--r2);border:1px solid var(--br);background:transparent;color:var(--tm);font-size:11px;cursor:pointer;font-family:var(--font-b)">Cancelar</button>
+          <button type="button" onclick="addPendingResInline()" style="padding:5px 14px;border-radius:var(--r2);border:none;background:var(--ac);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b)">✓ Agregar</button>
+        </div>
+      </div>
+    </div>`,
     ()=>{
       const title=document.getElementById('fc-title').value.trim();
       if(!title){showToast('El nombre es obligatorio');return;}
       if(editing){
-        editing.title=title;
-        editing.objective=document.getElementById('fc-obj').value;
-        editing.desc=document.getElementById('fc-desc').value;
-        editing.date=document.getElementById('fc-date').value;
-        editing.status=document.getElementById('fc-status').value;
-        editing.groups=getCheckedGroups('fc-grp-wrap');
-        // Merge pending resources
+        editing.title=title;editing.objective=document.getElementById('fc-obj').value;
+        editing.desc=document.getElementById('fc-desc').value;editing.date=document.getElementById('fc-date').value;
+        editing.status=document.getElementById('fc-status').value;editing.groups=getCheckedGroups('fc-grp-wrap');
         Object.assign(editing.resources,pendingResources);
       }else{
-        const id=uid();
-        if(!grp.classes)grp.classes={};
-        grp.classes[id]={
-          id,title,
-          objective:document.getElementById('fc-obj').value,
-          desc:document.getElementById('fc-desc').value,
-          date:document.getElementById('fc-date').value,
+        const id=uid();if(!grp.classes)grp.classes={};
+        grp.classes[id]={id,title,objective:document.getElementById('fc-obj').value,
+          desc:document.getElementById('fc-desc').value,date:document.getElementById('fc-date').value,
           status:document.getElementById('fc-status').value||'draft',
-          groups:getCheckedGroups('fc-grp-wrap'),
-          resources:{...pendingResources}
-        };
+          groups:getCheckedGroups('fc-grp-wrap'),resources:{...pendingResources}};
       }
-      pendingResources={};
-      clearTimeout(saveTimer);
-      saveToDB();
-      closeModal();
+      pendingResources={};clearTimeout(saveTimer);saveToDB();closeModal();
       currentTab='classes';
       document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
       document.getElementById('tab-btn-classes')?.classList.add('active');
       document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
       document.getElementById('panel-classes')?.classList.add('show');
       renderClasses2();
-      const freshCnt=Object.keys(grp.classes).length;
-      const tc=document.getElementById('tab-cnt-classes');if(tc)tc.textContent=freshCnt;
+      const cnt=Object.keys(grp.classes).length;
+      const tc=document.getElementById('tab-cnt-classes');if(tc)tc.textContent=cnt;
     });
+}
+
+function addPendingResInline(){
+  const name=(document.getElementById('ir-name')?.value||'').trim();
+  const type=document.getElementById('ir-type')?.value||'slides';
+  const url=(document.getElementById('ir-url')?.value||'').trim();
+  if(!name){showToast('Escribe el nombre del recurso');return;}
+  if(!url&&type!=='link'){showToast('Agrega la URL o contenido');return;}
+  const id=uid();
+  pendingResources[id]={id,type,title:name,url,desc:''};
+  const lst=document.getElementById('pending-res-list');
+  if(lst){
+    const info=getResInfo2(type);
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br)';
+    div.innerHTML=`<span>${info.icon}</span><span style="flex:1;font-size:12px;color:var(--tp)">${escH(name)}</span><span style="font-size:10px;color:var(--tm)">${info.label}</span><button onclick="removePendingRes('${id}')" style="border:none;background:transparent;color:var(--rd);cursor:pointer;font-size:14px;padding:0 4px">✕</button>`;
+    const empty=lst.querySelector('div');
+    if(empty&&empty.textContent.includes('Sin recursos'))empty.remove();
+    lst.appendChild(div);
+  }
+  const n=document.getElementById('ir-name');if(n)n.value='';
+  const u=document.getElementById('ir-url');if(u)u.value='';
+  document.getElementById('cls-res-form').style.display='none';
+  showToast(`✓ "${name}" agregado`);
+}
+
+function removePendingRes(id){
+  delete pendingResources[id];
+  const lst=document.getElementById('pending-res-list');if(!lst)return;
+  const items=Object.values(pendingResources);
+  lst.innerHTML=items.length
+    ?items.map(r=>{const i=getResInfo2(r.type);return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br)"><span>${i.icon}</span><span style="flex:1;font-size:12px;color:var(--tp)">${escH(r.title)}</span><span style="font-size:10px;color:var(--tm)">${i.label}</span><button onclick="removePendingRes('${r.id}')" style="border:none;background:transparent;color:var(--rd);cursor:pointer;font-size:14px;padding:0 4px">✕</button></div>`;}).join('')
+    :'<div style="font-size:12px;color:var(--tm);padding:4px 0">Sin recursos — usa el botón de abajo</div>';
 }
 
 /* ── Add resource modal ── */
