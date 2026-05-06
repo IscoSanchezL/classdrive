@@ -1388,11 +1388,35 @@ function getShareLink(uid,gid,cid){
 
 function copyShareLink(uid,gid,cid){
   const link=getShareLink(uid,gid,cid);
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(link).then(()=>showToast('🔗 Link copiado — compártelo con tus estudiantes'));
-  }else{
-    prompt('Copia este link:',link);
-  }
+  // Mostrar modal con el link siempre visible
+  const body=`
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ts);line-height:1.6">
+      Comparte este link con tus estudiantes.<br>
+      <strong style="color:var(--ac)">No necesitan cuenta — solo abrir el link.</strong>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="share-link-inp" value="${link}" readonly
+        style="flex:1;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);
+               padding:8px 12px;color:var(--ac);font-size:12px;outline:none;font-family:monospace;cursor:pointer"
+        onclick="this.select()">
+      <button onclick="
+        const i=document.getElementById('share-link-inp');i.select();
+        try{navigator.clipboard.writeText(i.value).then(()=>{this.textContent='✓ Copiado';this.style.background='var(--grd)';this.style.color='var(--gr)'});}
+        catch(e){document.execCommand('copy');this.textContent='✓ Copiado';}
+      " style="padding:8px 14px;border-radius:var(--r2);border:1px solid var(--bra);
+               background:var(--acd);color:var(--ac);font-size:12px;font-weight:700;
+               cursor:pointer;font-family:var(--font-b);white-space:nowrap;flex-shrink:0">
+        📋 Copiar
+      </button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--tm)">
+      💡 También puedes proyectarlo en el tablero o enviarlo por WhatsApp
+    </div>`;
+  openModal('🔗 Link de la actividad',body,()=>closeModal());
+  setTimeout(()=>{
+    document.getElementById('modal-save-btn').style.display='none';
+    document.getElementById('share-link-inp')?.select();
+  },60);
 }
 
 async function checkPublicRoute(){
