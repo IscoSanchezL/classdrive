@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#030712">
 <title>Class Drive</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════
@@ -1084,6 +1089,257 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
 .pub-back:hover{background:rgba(255,255,255,.13)}
 .pub-loading{opacity:.45;font-size:14px;margin-top:60px;text-align:center}
 .pub-error{color:#fca5a5;text-align:center;padding:40px;font-size:14px;line-height:1.7}
+
+/* ═══════════════════════════════════════════════
+   CLASS DRIVE 4.0 — AULAS PYP
+═══════════════════════════════════════════════ */
+#welcome .feat-grid{display:none}
+#wlc-dashboard{max-width:1040px!important}
+.cx-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r2);border:1px solid var(--brh);background:var(--s2);color:var(--tp);font:600 12px var(--font-b);cursor:pointer;transition:border-color .15s,background .15s;white-space:nowrap;text-decoration:none}
+.cx-btn:hover{border-color:var(--gc,var(--ac));background:var(--s3)}
+.cx-btn.primary{background:var(--gc,var(--ac));border-color:transparent;color:#fff}
+.cx-btn.primary:hover{filter:brightness(1.08);background:var(--gc,var(--ac))}
+.cx-btn:focus-visible,.cx-act:focus-visible,.cx-pub:focus-visible,.gt-secs button:focus-visible{outline:2px solid var(--gc,var(--ac));outline-offset:2px}
+.cx-muted{font-size:12px;color:var(--ts);line-height:1.55}
+.cx-mini{padding:3px 10px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font:700 10px var(--font-b);cursor:pointer}
+.cx-mini.solid{background:var(--ac);color:#fff;border-color:transparent;padding:6px 14px;font-size:11px}
+.cx-mini.ghost{background:transparent;color:var(--tm);border-color:var(--br);padding:6px 12px;font-size:11px}
+.cx-inp{width:100%;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 10px;color:var(--tp);font:12px var(--font-b);outline:none}
+.cx-inp:focus{border-color:var(--ac)}
+
+/* Inicio: tarjetas de grado */
+.gt-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:6px 0 14px;text-align:left}
+.gt-h{font-family:var(--font-d);font-size:24px;font-weight:900;letter-spacing:-.5px;color:var(--tp)}
+.gt-sub{font-size:13px;color:var(--ts);margin-top:2px}
+.gt-actions{display:flex;gap:8px;flex-wrap:wrap}
+.gt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.gt-tile{position:relative;text-align:left;border-radius:22px;padding:18px 18px 16px;background:linear-gradient(160deg,var(--gc) 0%,var(--gd) 100%);color:#fff;overflow:hidden;box-shadow:0 10px 30px -12px var(--gc)}
+.gt-tile::after{content:"";position:absolute;right:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.12)}
+.gt-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+.gt-num{font-family:var(--font-d);font-size:56px;font-weight:900;line-height:.9;letter-spacing:-3px}
+.gt-mascot{font-size:40px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2))}
+.gt-name{font-family:var(--font-d);font-size:17px;font-weight:800;margin-top:4px;position:relative;z-index:1}
+.gt-stats{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;opacity:.85;margin:4px 0 12px;position:relative;z-index:1}
+.gt-secs{display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1}
+.gt-secs button{padding:7px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.94);color:var(--gd);font:800 13px var(--font-b);cursor:pointer;transition:transform .12s}
+.gt-secs button:hover{transform:translateY(-2px)}
+
+/* Grupo */
+#grp-view{--gc:var(--ac)}
+#grp-view .grp-hero{border-top:4px solid var(--gc)}
+.grp-mascot{margin-right:10px}
+.grp-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.cx-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.cx-pills,.cx-tools{display:flex;gap:6px;flex-wrap:wrap}
+.cx-hint{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 18px;border-radius:var(--r4);border:1px dashed var(--gc);background:color-mix(in srgb,var(--gc) 8%,transparent);margin-bottom:18px;font-size:13px;color:var(--ts);line-height:1.5}
+.cx-hint strong{color:var(--tp)}
+.cx-hint-ico{font-size:28px}
+
+/* Unidades */
+.cx-unit{margin-bottom:26px}
+.cx-unit-head{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:var(--r4);background:color-mix(in srgb,var(--uc) 12%,var(--s1));border:1px solid color-mix(in srgb,var(--uc) 35%,transparent);margin-bottom:12px}
+.cx-unit-head.loose{background:var(--s2);border-style:dashed;border-color:var(--brh)}
+.cx-unit-num{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:var(--uc);color:#fff;display:grid;place-items:center;font:900 20px var(--font-d)}
+.cx-unit-head.loose .cx-unit-num{background:var(--s4);color:var(--ts)}
+.cx-unit-txt{flex:1;min-width:0}
+.cx-unit-theme{font-size:11px;font-weight:700;color:var(--uc);margin-bottom:2px}
+.cx-unit-title{font-family:var(--font-d);font-size:19px;font-weight:900;letter-spacing:-.4px;color:var(--tp)}
+.cx-unit-idea{font-size:13px;color:var(--ts);margin-top:4px;line-height:1.55}
+.cx-unit-lines{margin:6px 0 0 18px;font-size:12px;color:var(--ts);line-height:1.6}
+.cx-chip{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:color-mix(in srgb,var(--uc) 18%,transparent);color:var(--tp)}
+.cx-unit-side{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.cx-unit-count{font-size:11px;color:var(--tm);margin-right:4px}
+.cx-track{position:relative;display:flex;flex-direction:column;gap:10px;padding-left:34px}
+.cx-track::before{content:"";position:absolute;left:13px;top:6px;bottom:6px;border-left:2px dashed color-mix(in srgb,var(--uc) 55%,transparent)}
+.cx-unit-empty{font-size:12px;color:var(--tm);padding:10px 0}
+
+/* Tarjeta de clase */
+.cx-card{position:relative;overflow:visible!important}
+.cx-card>.cls-card2-head,.cx-card>.cls-card2-body{border-radius:inherit}
+.cx-step{position:absolute;left:-34px;top:16px;width:28px;height:28px;border-radius:50%;background:var(--s1);border:2px solid var(--uc);color:var(--tp);display:grid;place-items:center;font:800 12px var(--font-b);z-index:1}
+.cx-pub{padding:2px 10px;border-radius:999px;font:700 10px var(--font-b);cursor:pointer;border:1px solid rgba(148,163,184,.3);background:rgba(148,163,184,.12);color:#94a3b8}
+.cx-pub.on{background:var(--grd);color:var(--gr);border-color:rgba(16,185,129,.35)}
+.cx-act{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:var(--r2);border:1px solid var(--brh);background:var(--s2);color:var(--tp);font:700 11px var(--font-b);cursor:pointer;text-decoration:none;white-space:nowrap}
+.cx-act.proj{background:var(--gc);border-color:transparent;color:#fff}
+.cx-act:hover{filter:brightness(1.1)}
+.cx-canva{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--r3);overflow:hidden;background:#000;margin-bottom:14px;box-shadow:var(--sh-md)}
+.cx-canva iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.cx-canva-link{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:var(--r3);border:1px dashed var(--brh);color:var(--tp);text-decoration:none;font-weight:700;margin-bottom:14px}
+.cx-canva-link small{font-weight:400;color:var(--tm);font-size:11px}
+.cx-obj{font-size:13px;color:var(--tp);background:var(--s2);border-left:3px solid var(--gc);padding:10px 12px;border-radius:0 var(--r2) var(--r2) 0;margin-bottom:12px;line-height:1.55}
+.cx-obj span{display:block;font-size:11px;font-weight:700;color:var(--ts);margin-bottom:2px}
+
+/* Modales */
+.cx-field-msg{font-size:11px;color:var(--tm);margin-top:5px;line-height:1.45}
+.cx-field-msg.ok{color:var(--gr)}.cx-field-msg.warn{color:var(--am)}
+.cx-switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tp);cursor:pointer}
+.cx-switch input{width:16px;height:16px;accent-color:var(--gr)}
+.cx-pend-list{background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;min-height:38px;margin-bottom:6px}
+.cx-pend{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br);font-size:12px;color:var(--tp)}
+.cx-pend button{border:0;background:transparent;color:var(--rd);cursor:pointer;font-size:14px}
+.cx-res-form{background:var(--s2);border:1px solid var(--bra);border-radius:var(--r3);padding:12px}
+.cx-ulist{display:flex;flex-direction:column;gap:8px}
+.cx-urow{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r3);background:var(--s2);border-left:4px solid var(--uc)}
+.cx-urow-n{width:26px;height:26px;border-radius:8px;background:var(--uc);color:#fff;display:grid;place-items:center;font:800 12px var(--font-b);flex-shrink:0}
+.cx-urow-t{font-weight:700;font-size:13px;color:var(--tp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cx-urow-s{font-size:11px;color:var(--tm)}
+.cx-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.cx-sw{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.cx-sw.on{border-color:var(--tp);box-shadow:0 0 0 2px var(--s1) inset}
+.cx-ckgrade{margin-bottom:10px}
+.cx-ckhead{font-size:12px;font-weight:800;margin-bottom:6px}
+.cx-ckrow{display:flex;gap:6px;flex-wrap:wrap}
+.cx-ck{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--s3);border:1px solid var(--br);font-size:12px;color:var(--tp);cursor:pointer}
+.cx-ck input{accent-color:var(--ac)}
+.cx-access{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:var(--r3);background:color-mix(in srgb,var(--gc) 10%,var(--s2))}
+.cx-qr{width:160px;height:160px;background:#fff;border-radius:12px;padding:8px;display:grid;place-items:center;flex-shrink:0}
+.cx-qr img{width:100%;height:100%}
+.cx-code{font:900 32px var(--font-d);letter-spacing:5px;color:var(--gc)}
+
+/* Proyectar */
+#proj{position:fixed;inset:0;z-index:9500;background:#05070d;display:none;flex-direction:column;color:#fff;--gc:#6366f1}
+#proj.show{display:flex}
+.pj-top{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:3px solid var(--gc)}
+#proj-info{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.pj-badge{padding:6px 12px;border-radius:999px;background:var(--gc);font:800 14px var(--font-b);white-space:nowrap}
+.pj-titles{min-width:0}
+.pj-unit{font-size:12px;opacity:.6}
+.pj-title{font:900 20px var(--font-d);letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-count{font-size:12px;opacity:.55;white-space:nowrap}
+.pj-x{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font:700 12px var(--font-b);cursor:pointer}
+#proj-tabs{display:flex;gap:6px;padding:8px 18px 0;flex-wrap:wrap}
+#proj-tabs:empty{display:none}
+#proj-tabs button{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.75);font:600 12px var(--font-b);cursor:pointer}
+#proj-tabs button.on{background:#fff;color:#05070d;border-color:#fff}
+#proj-stage{flex:1;min-height:0;margin:12px 18px;border-radius:14px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+#proj-stage iframe{width:100%;height:100%;border:0}
+#proj-stage img{max-width:100%;max-height:100%;object-fit:contain}
+.pj-card{text-align:center;padding:40px;max-width:900px}
+.pj-card-m{font-size:90px}
+.pj-card-t{font:900 clamp(32px,5vw,64px) var(--font-d);letter-spacing:-1.5px;line-height:1.05}
+.pj-card-o{font-size:clamp(18px,2.2vw,28px);margin-top:20px;opacity:.85}
+.pj-card-d{font-size:18px;margin-top:14px;opacity:.6}
+.pj-open{display:inline-block;margin-top:22px;padding:14px 26px;border-radius:14px;background:var(--gc);color:#fff;text-decoration:none;font-weight:800;font-size:18px}
+.pj-bot{display:flex;align-items:center;gap:10px;padding:0 18px 14px;flex-wrap:wrap}
+.pj-nav{padding:10px 18px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;font:800 14px var(--font-b);cursor:pointer}
+.pj-nav:disabled{opacity:.3;cursor:default}
+.pj-timer{display:flex;align-items:center;gap:6px;margin-left:auto}
+.pj-timer button{padding:8px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font:700 12px var(--font-b);cursor:pointer}
+#pj-time{min-width:90px;text-align:center;font:900 26px var(--font-d);font-variant-numeric:tabular-nums}
+#pj-time.low{color:#fbbf24}#pj-time.done{color:#f87171;animation:pjblink .8s infinite}
+@keyframes pjblink{50%{opacity:.3}}
+
+@media (max-width:900px){.gt-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.gt-grid{grid-template-columns:1fr}.cls-head-right .cx-act:not(.proj){display:none}.pj-timer{margin-left:0}}
+
+/* ═══════════ PORTAL DE ESTUDIANTES ═══════════ */
+#aula{position:fixed;inset:0;z-index:9000;display:none;overflow-y:auto;background:#F5F7FC;color:#1B1F3B;font-family:'Nunito',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#aula.show{display:block}
+#aula button{font-family:inherit}
+#aula :focus-visible{outline:3px solid #1B1F3B;outline-offset:3px}
+.au-load{min-height:100vh;display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#4A5078;text-align:center;padding:24px}
+.au-load-dot{width:54px;height:54px;border-radius:50%;border:6px solid #D9DEF0;border-top-color:#6D55F0;animation:auspin 1s linear infinite}
+@keyframes auspin{to{transform:rotate(360deg)}}
+.au-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 20px;background:rgba(245,247,252,.9);backdrop-filter:blur(10px)}
+.au-brand{display:flex;align-items:center;gap:8px;font:800 17px 'Baloo 2',sans-serif}
+.au-brand-ico{width:34px;height:34px;border-radius:10px;background:#1B1F3B;display:grid;place-items:center;font-size:18px}
+.au-link{border:0;background:#fff;padding:9px 16px;border-radius:999px;font-weight:800;font-size:14px;color:#1B1F3B;cursor:pointer;box-shadow:0 2px 0 #D9DEF0}
+.au-btn{border:0;background:#1B1F3B;color:#fff;padding:14px 26px;border-radius:16px;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 4px 0 #000}
+.au-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+
+.au-home{max-width:980px;margin:0 auto;padding:18px 20px 60px}
+.au-h1{font:800 clamp(34px,6vw,58px) 'Baloo 2',sans-serif;line-height:1;letter-spacing:-1px;margin:12px 0 22px}
+.au-err{background:#FFE4DB;color:#9E2F16;border-radius:14px;padding:12px 16px;font-weight:700;margin-bottom:16px}
+.au-continue{display:inline-flex;align-items:center;gap:8px;border:0;background:var(--gc);color:#fff;font-weight:800;font-size:18px;padding:12px 22px;border-radius:999px;margin-bottom:20px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.au-grades{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.au-grade{position:relative;border:0;border-radius:28px;padding:22px 20px 18px;background:var(--gc);color:#fff;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 7px 0 var(--gd);transition:transform .12s,box-shadow .12s;min-height:170px;display:flex;flex-direction:column;justify-content:flex-end}
+.au-grade:hover{transform:translateY(-3px);box-shadow:0 10px 0 var(--gd)}
+.au-grade:active{transform:translateY(5px);box-shadow:0 2px 0 var(--gd)}
+.au-grade-m{position:absolute;right:14px;top:10px;font-size:62px;transform:rotate(8deg)}
+.au-grade-n{font:800 78px 'Baloo 2',sans-serif;line-height:.8;letter-spacing:-3px}
+.au-grade-t{font-weight:800;font-size:18px;opacity:.92}
+.au-pick{margin-top:22px;background:#fff;border-radius:26px;padding:22px;border:4px solid var(--gc)}
+.au-pick-t{font:800 28px 'Baloo 2',sans-serif;margin-bottom:12px}
+.au-secs{display:flex;gap:10px;flex-wrap:wrap}
+.au-secs button{border:3px solid var(--gc);background:#fff;color:#1B1F3B;font:800 26px 'Baloo 2',sans-serif;padding:8px 26px;border-radius:18px;cursor:pointer}
+.au-secs button.on{background:var(--gc);color:#fff}
+.au-code-l{display:block;font-weight:800;font-size:18px;margin:18px 0 8px}
+.au-code-row{display:flex;gap:10px;flex-wrap:wrap}
+#au-code-inp{flex:1;min-width:180px;font:800 30px 'Baloo 2',sans-serif;letter-spacing:6px;text-transform:uppercase;padding:10px 16px;border-radius:16px;border:3px solid #D9DEF0;outline:none;background:var(--gs)}
+#au-code-inp:focus{border-color:var(--gc)}
+.au-code-msg{min-height:24px;margin-top:8px;font-weight:700;color:#B4232C}
+.shake{animation:aushake .35s}
+@keyframes aushake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.au-hero{display:flex;align-items:center;gap:22px;width:min(980px,calc(100% - 32px));margin:6px auto 0;padding:26px 28px;border-radius:32px;background:var(--gc);color:#fff;box-shadow:0 8px 0 var(--gd);position:relative;overflow:hidden}
+.au-hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-90px;background:rgba(255,255,255,.14)}
+.au-hero-m{font-size:clamp(70px,12vw,120px);line-height:1;position:relative;z-index:1;animation:aubob 3s ease-in-out infinite}
+@keyframes aubob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.au-hero-txt{flex:1;position:relative;z-index:1}
+.au-hero-k{font-weight:800;font-size:15px;opacity:.85}
+.au-hero-h{font:800 clamp(34px,6vw,60px) 'Baloo 2',sans-serif;line-height:1;letter-spacing:-1px;margin:2px 0 14px}
+.au-prog-bar{height:18px;border-radius:999px;background:rgba(0,0,0,.2);overflow:hidden}
+.au-prog-bar span{display:block;height:100%;border-radius:999px;background:#FFD43B;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);transition:width .6s}
+.au-prog-t{font-weight:800;margin-top:6px;font-size:15px}
+.au-badges{display:flex;gap:14px;overflow-x:auto;max-width:980px;margin:22px auto 0;padding:4px 20px 6px}
+.au-badge{flex-shrink:0;width:92px;text-align:center}
+.au-badge span{display:grid;place-items:center;width:70px;height:70px;margin:0 auto 6px;border-radius:50%;background:#E6E9F4;color:#8A90B0;font:800 26px 'Baloo 2',sans-serif;border:4px dashed #C9CFE4}
+.au-badge.on span{background:var(--uc);color:#fff;border:4px solid #FFD43B;font-size:34px}
+.au-badge small{font-size:11px;font-weight:700;color:#4A5078;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.au-main{max-width:980px;margin:0 auto;padding:10px 20px 70px}
+.au-empty{background:#fff;border-radius:22px;padding:30px;text-align:center;font-weight:800;font-size:18px;color:#4A5078;margin-top:22px}
+.au-unit{margin-top:30px}
+.au-unit-h{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
+.au-unit-n{flex-shrink:0;width:52px;height:52px;border-radius:16px;background:var(--uc);color:#fff;display:grid;place-items:center;font:800 28px 'Baloo 2',sans-serif;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.au-unit-t{font:800 26px 'Baloo 2',sans-serif;line-height:1.1}
+.au-unit-i{font-size:15px;color:#4A5078;margin-top:4px;line-height:1.5;max-width:60ch}
+.au-unit-p{display:inline-block;margin-top:6px;font-size:13px;font-weight:800;background:#fff;border-radius:999px;padding:3px 12px}
+.au-path{list-style:none;position:relative;padding:8px 0 0;margin:0}
+.au-path::before{content:"";position:absolute;left:50%;top:26px;bottom:26px;border-left:6px dotted color-mix(in srgb,var(--uc) 50%,#fff);transform:translateX(-3px)}
+.au-node{position:relative;display:flex;margin:6px 0}
+.au-node:nth-child(odd){justify-content:flex-start}
+.au-node:nth-child(even){justify-content:flex-end}
+.au-node>button{display:flex;align-items:center;gap:12px;width:calc(50% + 30px);border:0;background:none;cursor:pointer;padding:0;text-align:left}
+.au-node:nth-child(odd)>button{flex-direction:row-reverse;text-align:right}
+.au-dot{flex-shrink:0;width:60px;height:60px;border-radius:50%;background:#fff;border:5px solid var(--uc);display:grid;place-items:center;font:800 26px 'Baloo 2',sans-serif;color:#1B1F3B;box-shadow:0 5px 0 color-mix(in srgb,var(--uc) 55%,#000);transition:transform .12s;position:relative;z-index:1}
+.au-node.done .au-dot{background:var(--uc);font-size:28px}
+.au-node>button:hover .au-dot{transform:scale(1.08)}
+.au-node-card{flex:1;background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 4px 0 #DCE1F0;display:flex;flex-direction:column;gap:3px}
+.au-node-t{font-weight:800;font-size:18px;line-height:1.2}
+.au-node-d{font-size:13px;color:#6A7094}
+.au-node-tag{font-size:12px;font-weight:800;color:var(--uc)}
+.au-cls{max-width:1100px;margin:0 auto;padding:10px 20px 70px}
+.au-cls-u{display:inline-block;font-weight:800;font-size:14px;color:#fff;background:var(--uc);border-radius:999px;padding:4px 14px}
+.au-cls-h{font:800 clamp(32px,5.5vw,56px) 'Baloo 2',sans-serif;line-height:1;letter-spacing:-1px;margin:10px 0 4px}
+.au-cls-d{color:#6A7094;font-weight:700}
+.au-goal{margin:18px 0;background:var(--gs);border-radius:20px;padding:16px 20px;font-size:20px;font-weight:700;line-height:1.4}
+.au-goal span{display:block;font-size:14px;font-weight:800;color:var(--gc);margin-bottom:2px}
+.au-stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:24px;overflow:hidden;background:#000;box-shadow:0 8px 0 #D5DAEA}
+.au-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.au-full{display:block;margin:14px auto 0;border:0;background:#fff;padding:10px 20px;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #D9DEF0}
+.au-bigbtn{display:block;text-align:center;background:var(--gc);color:#fff;text-decoration:none;font-weight:800;font-size:22px;padding:22px;border-radius:22px}
+.au-desc{font-size:18px;line-height:1.6;margin:20px 0 0;max-width:70ch}
+.au-res{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.au-res-b{display:flex;align-items:center;gap:12px;border:0;background:#fff;border-radius:18px;padding:16px 18px;font-weight:800;font-size:17px;cursor:pointer;text-align:left;box-shadow:0 4px 0 #DCE1F0;color:#1B1F3B}
+.au-res-b span{font-size:26px}
+.au-res-box:empty{display:none}
+.au-res-box iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#000}
+.au-res-box img{max-width:100%;border-radius:18px;display:block}
+.au-done{display:block;margin:30px auto 0;border:0;background:#FFD43B;color:#1B1F3B;font:800 26px 'Baloo 2',sans-serif;padding:16px 34px;border-radius:22px;cursor:pointer;box-shadow:0 6px 0 #D4A800}
+.au-done:active{transform:translateY(4px);box-shadow:0 2px 0 #D4A800}
+.au-done.on{background:#1F9D5C;color:#fff;box-shadow:0 6px 0 #0F5E36}
+.au-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1B1F3B;color:#fff;font-weight:800;font-size:18px;padding:14px 24px;border-radius:999px;z-index:9600;animation:autoast 2.6s ease forwards}
+@keyframes autoast{0%{opacity:0;transform:translate(-50%,20px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.au-confetti{position:fixed;inset:0;pointer-events:none;z-index:9700;overflow:hidden}
+.au-confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:aufall linear forwards}
+@keyframes aufall{to{top:105%;transform:rotate(720deg)}}
+@media (max-width:760px){.au-grades{grid-template-columns:repeat(2,1fr)}.au-hero{flex-direction:column;text-align:center;align-items:center}}
+@media (max-width:640px){
+  .au-path::before{left:30px}
+  .au-node,.au-node:nth-child(even){justify-content:flex-start}
+  .au-node>button,.au-node:nth-child(odd)>button{width:100%;flex-direction:row;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){.au-hero-m,.au-load-dot{animation:none}.au-grade,.au-dot,.gt-secs button{transition:none}}
 </style>
 </head>
 <body>
@@ -1225,6 +1481,7 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
           <div class="grp-hero">
             <div class="grp-hero-top">
               <div><div class="grp-h1" id="grp-title">Grupo</div><div class="grp-h2" id="grp-sub">—</div></div>
+              <div class="grp-actions" id="grp-actions"></div>
 
             </div>
             <div class="grp-stats" id="grp-stats"></div>
@@ -1333,6 +1590,23 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
 <!-- KB HINT -->
 <div class="kb-hint" id="kb-hint"></div>
 
+<!-- PORTAL DE ESTUDIANTES -->
+<div id="aula" role="main"></div>
+
+<!-- MODO PROYECTAR -->
+<div id="proj" role="dialog" aria-label="Proyectar clase">
+  <div class="pj-top"><div id="proj-info"></div>
+    <button class="pj-x" onclick="projFull()" title="Pantalla completa">⛶ Pantalla completa</button>
+    <button class="pj-x" onclick="closeProject()">✕ Salir</button></div>
+  <div id="proj-tabs"></div>
+  <div id="proj-stage"></div>
+  <div class="pj-bot">
+    <button class="pj-nav" id="pj-prev" onclick="projGo(-1)">← Clase anterior</button>
+    <button class="pj-nav" id="pj-next" onclick="projGo(1)">Siguiente clase →</button>
+    <div class="pj-timer"><button onclick="projTimer(5)">5 min</button><button onclick="projTimer(10)">10</button><button onclick="projTimer(15)">15</button><button onclick="projTimer(20)">20</button><span id="pj-time">—</span><button onclick="projTimerStop()" title="Detener">■</button></div>
+  </div>
+</div>
+
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -1352,6 +1626,8 @@ getRedirectResult(auth).catch(()=>{});
 // Si es ruta pública, mostrar sin login
 if(window.location.hash.startsWith('#/pub/')){
   checkPublicRoute();
+}else if(window.location.hash.startsWith('#/aula')){
+  const go=()=>typeof openAulaRoute==='function'?openAulaRoute():setTimeout(go,50);go();
 }else{
 onAuthStateChanged(auth,user=>{
   document.getElementById('loading').style.display='none';
@@ -1370,7 +1646,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 3.0 — APP LOGIC
+   CLASS DRIVE 4.0 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -2928,7 +3204,7 @@ function deleteClass2(clsId){
   clearTimeout(saveTimer);
   saveToDB();
   // Re-render with fresh state
-  renderClasses2();
+  renderSidebar();
   renderGroupView();
 }
 
@@ -4345,6 +4621,853 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(document.getElementById('rv').classList.contains('show')){closeRV();return;}closeModal();}
   if(e.key==='Enter'&&document.getElementById('overlay').classList.contains('show')&&document.activeElement.tagName!=='TEXTAREA'&&document.activeElement.tagName!=='BUTTON')doSave();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 4.0 — AULAS PYP
+   Grados 1°–6° con secciones, unidades de indagación, slides de
+   Canva incrustadas, planeaciones (solo docente), modo proyectar,
+   copiar clases, QR y portal de estudiantes con misiones.
+   Este bloque va al final del script y reemplaza las funciones
+   anteriores que tienen el mismo nombre.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Identidad visual por grado ── */
+const GRADE_THEME=[
+  {c:'#F2613F',s:'#FFE4DB',d:'#9E2F16',m:'🐣',n:'Primero'},
+  {c:'#E89B00',s:'#FFF1C9',d:'#8A5A00',m:'🦊',n:'Segundo'},
+  {c:'#1F9D5C',s:'#D6F4E3',d:'#0F5E36',m:'🐢',n:'Tercero'},
+  {c:'#1C84DB',s:'#D8ECFF',d:'#0D4E86',m:'🐬',n:'Cuarto'},
+  {c:'#6D55F0',s:'#E6E0FF',d:'#3B2A9E',m:'🦉',n:'Quinto'},
+  {c:'#D7336F',s:'#FFDDE9',d:'#861A42',m:'🚀',n:'Sexto'},
+];
+function gTheme(g){const n=typeof g==='number'?g:(parseInt(g?.number)||1);return GRADE_THEME[((n-1)%6+6)%6];}
+const PYP_THEMES=['Quiénes somos','Dónde nos encontramos en el tiempo y el espacio','Cómo nos expresamos','Cómo funciona el mundo','Cómo nos organizamos','Cómo compartimos el planeta'];
+const LEARNER_PROFILE=['Indagadores','Informados e instruidos','Pensadores','Buenos comunicadores','Íntegros','De mentalidad abierta','Solidarios','Audaces','Equilibrados','Reflexivos'];
+const UNIT_COLORS=['#F2613F','#E89B00','#1F9D5C','#1C84DB','#6D55F0','#D7336F','#0FA3A3','#6B7280'];
+
+function curGrade(){return state.grades?.[state.currentGrade];}
+function curGrp(){return curGrade()?.groups?.[state.currentGroup];}
+function sortedUnits(grade){return Object.values(grade?.units||{}).sort((a,b)=>(a.order||0)-(b.order||0)||String(a.title||'').localeCompare(String(b.title||'')));}
+function sortedGrades(){return Object.values(state.grades||{}).sort((a,b)=>(a.number||0)-(b.number||0));}
+function aulaLink(code){
+  const email=window.currentUser?.email||ADMIN;
+  return location.origin+location.pathname+'#/aula/'+encodeURIComponent(email)+(code?'/'+encodeURIComponent(code):'');
+}
+function plural(n,s,p){return n+' '+(n===1?s:(p||s+'s'));}
+
+/* ── Migración segura del estado (no borra nada existente) ── */
+function fixState(){
+  if(!state.grades)state.grades={};
+  Object.values(state.grades).forEach(g=>{
+    if(!g.groups)g.groups={};
+    if(!g.units||typeof g.units!=='object')g.units={};
+    const n=parseInt(g.number)||0;
+    // Secciones: 1° y 2° → A, B, C · 3° a 6° → A, B (solo se crean una vez)
+    if(n>=1&&n<=6&&!g.secFix){
+      (n<=2?['A','B','C']:['A','B']).forEach(l=>{
+        const name=n+'°'+l;
+        const has=Object.values(g.groups).some(x=>String(x.name||'').replace(/\s/g,'').toUpperCase()===name.toUpperCase());
+        if(!has){let id=g.id+l;if(g.groups[id])id=uid();g.groups[id]={id,name,code:genCode(),classes:{},notes:''};}
+      });
+      g.secFix=true;
+    }
+    Object.values(g.groups).forEach(grp=>{
+      if(!grp.notes)grp.notes='';
+      if(!grp.classes)grp.classes={};
+      if(!grp.code)grp.code=genCode();
+      Object.keys(grp.classes).forEach(k=>{
+        const cls=grp.classes[k];
+        if(!cls||typeof cls!=='object'||!cls.title){delete grp.classes[k];return;}
+        if(!cls.resources)cls.resources={};
+        if(!cls.status)cls.status='draft';
+        if(!cls.id)cls.id=k;
+        if(cls.unitId&&!g.units[cls.unitId])cls.unitId='';
+      });
+      delete grp.activities;
+    });
+  });
+}
+
+/* ── Canva: cualquier enlace → formato embed ── */
+function canvaEmbed(raw){
+  if(!raw)return'';
+  let u=String(raw).trim();
+  const src=u.match(/src=["']([^"']+)["']/i);if(src)u=src[1];
+  u=u.replace(/&amp;/g,'&');
+  if(!/canva\.com\/design\//i.test(u))return u;
+  const m=u.match(/canva\.com\/design\/([A-Za-z0-9_-]+)(?:\/([A-Za-z0-9_-]+))?\/(?:view|edit|watch|present)/i);
+  if(m)return`https://www.canva.com/design/${m[1]}/${m[2]?m[2]+'/':''}view?embed`;
+  const m2=u.match(/canva\.com\/design\/([A-Za-z0-9_-]+)/i);
+  return m2?`https://www.canva.com/design/${m2[1]}/view?embed`:u;
+}
+function canvaOk(raw){return /canva\.com\/design\//i.test(canvaEmbed(raw));}
+function canvaOpenUrl(raw){const e=canvaEmbed(raw);return /canva\.com\/design\//.test(e)?e.replace('?embed',''):String(raw||'').trim();}
+
+function detectResType(url){
+  if(!url)return'link';
+  const u=url.toLowerCase();
+  if(u.includes('docs.google.com/presentation')||u.includes('slides.google'))return'slides';
+  if(u.includes('youtube.com')||u.includes('youtu.be'))return'video';
+  if(u.includes('canva.com')||u.includes('canva.link'))return'canva';
+  if(u.includes('genially.com'))return'genially';
+  if(u.includes('drive.google.com'))return'drive';
+  if(/\.(pdf)($|\?)/.test(u))return'pdf';
+  if(/\.(jpg|jpeg|png|gif|webp|svg)($|\?)/.test(u))return'image';
+  if(u.startsWith('<')||u.includes('<html'))return'html';
+  return'link';
+}
+function buildEmbedUrl(url,type){
+  if(!url)return url;
+  if(type==='canva'||/canva\.com\/design\//i.test(url))return canvaEmbed(url);
+  if(type==='slides'){
+    let u=url.split('?')[0].replace('/edit','/embed').replace('/pub','/embed');
+    if(!u.includes('/embed'))u=u+'/embed';
+    return u+'?start=false&loop=false';
+  }
+  if(type==='video'){
+    const m=url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
+    return m?`https://www.youtube.com/embed/${m[1]}?rel=0`:url;
+  }
+  if(type==='drive'||(type==='pdf'&&url.includes('drive.google.com'))){
+    return url.replace('/view','/preview').replace('/edit','/preview');
+  }
+  return url;
+}
+
+/* ── Modal: restablece el botón en cada apertura ── */
+function openModal(title,body,onSave){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  saveHandler=onSave;
+  document.getElementById('overlay').classList.add('show');
+  const b=document.getElementById('modal-save-btn');b.style.display='';b.textContent='Guardar';
+  setTimeout(()=>{const f=document.querySelector('#modal-body input:not([type=checkbox]),#modal-body textarea,#modal-body select');if(f)f.focus();},80);
+}
+function setModalBtn(txt){const b=document.getElementById('modal-save-btn');if(b)b.textContent=txt;}
+
+/* ══════════ INICIO DOCENTE: tarjetas de grado ══════════ */
+function renderGradeTiles(){
+  const tiles=sortedGrades().map(g=>{
+    const t=gTheme(g);const grps=Object.values(g.groups||{});
+    let nc=0,np=0;grps.forEach(x=>Object.values(x.classes||{}).forEach(c=>{nc++;if(c.status==='published')np++;}));
+    const nu=Object.keys(g.units||{}).length;
+    return`<div class="gt-tile" style="--gc:${t.c};--gs:${t.s};--gd:${t.d}">
+      <div class="gt-top"><span class="gt-num">${g.number||''}°</span><span class="gt-mascot" aria-hidden="true">${t.m}</span></div>
+      <div class="gt-name">${escH(t.n)}</div>
+      <div class="gt-stats"><span>${plural(nu,'unidad','unidades')}</span><span>${plural(nc,'clase')}</span><span>${np} visibles</span></div>
+      <div class="gt-secs">${grps.map(x=>`<button onclick="selectGroup('${g.id}','${x.id}')">${escH(x.name)}</button>`).join('')}</div>
+    </div>`;
+  }).join('');
+  return`<div class="gt-head">
+      <div><div class="gt-h">Tus grados</div><div class="gt-sub">Entra a una sección para ver sus unidades, clases y presentaciones.</div></div>
+      <div class="gt-actions">
+        <button class="cx-btn" onclick="printAllQR()">🖨 Imprimir QR de grupos</button>
+        <button class="cx-btn" onclick="window.open(aulaLink(),'_blank')">🎒 Portal de estudiantes</button>
+      </div>
+    </div>
+    <div class="gt-grid">${tiles}</div>`;
+}
+function showWelcome(){
+  hideAll();document.getElementById('welcome').style.display='flex';
+  document.getElementById('breadcrumb').innerHTML='<span>Class Drive</span>';
+  state.currentGroup=null;state.currentClass=null;
+  document.querySelectorAll('.sb-item').forEach((el,i)=>{el.classList.toggle('active',i===0);});
+  renderSidebar();
+  const sub=document.querySelector('#welcome .wlc-sub');if(sub)sub.textContent='Tecnología de 1° a 6° organizada por unidades de indagación.';
+  const dash=document.getElementById('wlc-dashboard');
+  if(dash)dash.innerHTML=renderGradeTiles()+renderDashboard();
+}
+function openFirstGroup(tab){
+  const g=sortedGrades()[0];const grp=g&&Object.values(g.groups||{})[0];
+  if(!grp){showToast('Aún no hay grupos');return;}
+  selectGroup(g.id,grp.id);if(tab&&tab!=='activities')switchTab(tab);
+}
+
+/* ══════════ VISTA DE GRUPO ══════════ */
+function renderGroupView(){
+  const grade=curGrade();if(!grade){showWelcome();return;}
+  const grp=grade.groups[state.currentGroup];if(!grp){showWelcome();return;}
+  const t=gTheme(grade);
+  hideAll();const gv=document.getElementById('grp-view');gv.style.display='flex';gv.style.flexDirection='column';
+  gv.style.setProperty('--gc',t.c);gv.style.setProperty('--gs',t.s);
+  document.getElementById('tb-new-class').style.display='';
+  document.getElementById('breadcrumb').innerHTML=
+    `<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span>
+     <span>${t.m} ${escH(grade.name)}</span><span class="bc-s">›</span><span class="bc-a">${escH(grp.name)}</span>`;
+  document.getElementById('grp-title').innerHTML=`<span class="grp-mascot">${t.m}</span>${escH(grp.name)}`;
+  document.getElementById('grp-sub').textContent=`${t.n} · GI School`;
+  if(!grp.code)grp.code=genCode();
+  const gc=document.getElementById('grp-code');if(gc)gc.textContent=grp.code;
+  const classes=Object.values(grp.classes||{});
+  const pub=classes.filter(c=>c.status==='published').length;
+  const totalRes=classes.reduce((n,c)=>n+Object.keys(c.resources||{}).length+(c.canvaUrl?1:0),0);
+  document.getElementById('tab-cnt-classes').textContent=classes.length;
+  document.getElementById('grp-stats').innerHTML=`
+    <div class="stat-chip"><span class="sc-n">${Object.keys(grade.units||{}).length}</span> Unidades</div>
+    <div class="stat-chip"><span class="sc-n">${classes.length}</span> ${classes.length===1?'Clase':'Clases'}</div>
+    <div class="stat-chip"><span class="sc-n">${pub}</span> Visibles para estudiantes</div>
+    <div class="stat-chip"><span class="sc-n">${totalRes}</span> Recursos</div>`;
+  const ga=document.getElementById('grp-actions');
+  if(ga)ga.innerHTML=`
+    <button class="cx-btn" onclick="openUnitsModal()">🧭 Unidades PYP</button>
+    <button class="cx-btn" onclick="openGroupAccess()">📱 Acceso estudiantes</button>
+    <button class="cx-btn" onclick="window.open(aulaLink('${escA(grp.code)}'),'_blank')">🎒 Ver como estudiante</button>`;
+  renderQNotes();
+  if(currentTab==='activities')currentTab='classes';
+  document.querySelectorAll('.grp-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
+  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-'+currentTab)?.classList.add('show');
+  renderTab(currentTab);
+}
+
+/* ══════════ CLASES AGRUPADAS POR UNIDAD ══════════ */
+let clsStatusFilter='all';
+const openCards=new Set();
+function setClsFilter(f){clsStatusFilter=f;renderClasses2();}
+function renderClasses2(){
+  const grade=curGrade(),grp=curGrp();if(!grp)return;
+  const list=document.getElementById('cls-list2');if(!list)return;
+  const all=Object.values(grp.classes||{});
+  const pub=all.filter(c=>c.status==='published').length;
+  const fil=all.filter(c=>clsStatusFilter==='all'||(clsStatusFilter==='published'?c.status==='published':c.status!=='published'));
+  const units=sortedUnits(grade);
+  const byUnit=uid_=>fil.filter(c=>(c.unitId||'')===uid_).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999')||String(a.title).localeCompare(String(b.title)));
+  let html=`<div class="cx-toolbar">
+    <div class="cx-pills">
+      <button class="fpill${clsStatusFilter==='all'?' active':''}" onclick="setClsFilter('all')">Todas (${all.length})</button>
+      <button class="fpill${clsStatusFilter==='published'?' active':''}" onclick="setClsFilter('published')">Visibles (${pub})</button>
+      <button class="fpill${clsStatusFilter==='draft'?' active':''}" onclick="setClsFilter('draft')">Borradores (${all.length-pub})</button>
+    </div>
+    <div class="cx-tools">
+      <button class="cx-btn" onclick="openUnitsModal()">🧭 Unidades</button>
+      <button class="cx-btn primary" onclick="openClassModal2()">+ Nueva clase</button>
+    </div>
+  </div>`;
+  if(!units.length){
+    html+=`<div class="cx-hint"><div class="cx-hint-ico">🧭</div><div style="flex:1"><strong>Organiza este grado por unidades de indagación.</strong><br>Cada unidad agrupa sus clases como un mapa de misiones, igual para todas las secciones.</div><button class="cx-btn primary" onclick="openUnitModal()">Crear la primera unidad</button></div>`;
+  }
+  if(!all.length){
+    html+=`<div class="cls-empty2"><div class="cls-empty2-icon">📖</div><h3>Sin clases aún</h3>
+      <p>Crea una clase, pega el enlace de tu presentación de Canva y el de tu planeación.</p>
+      <button class="tb-btn tb-primary" onclick="openClassModal2()" style="display:inline-flex">✨ Crear primera clase</button></div>`;
+    list.innerHTML=html;return;
+  }
+  units.forEach((u,i)=>{html+=unitSection(u,byUnit(u.id),i);});
+  const loose=byUnit('');
+  if(loose.length)html+=unitSection(null,loose,-1);
+  if(!fil.length)html+=`<div class="cx-unit-empty">No hay clases con este filtro.</div>`;
+  list.innerHTML=html;
+}
+function unitSection(u,classes,i){
+  const grade=curGrade();const col=u?.color||gTheme(grade).c;
+  const lines=(u?.lines||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const head=u?`<div class="cx-unit-head" style="--uc:${col}">
+      <div class="cx-unit-num">${i+1}</div>
+      <div class="cx-unit-txt">
+        ${u.theme?`<div class="cx-unit-theme">${escH(u.theme)}</div>`:''}
+        <div class="cx-unit-title">${escH(u.title)}</div>
+        ${u.centralIdea?`<div class="cx-unit-idea">💡 ${escH(u.centralIdea)}</div>`:''}
+        ${lines.length?`<ul class="cx-unit-lines">${lines.map(l=>`<li>${escH(l)}</li>`).join('')}</ul>`:''}
+        ${u.profile?`<span class="cx-chip">🌱 ${escH(u.profile)}</span>`:''}
+      </div>
+      <div class="cx-unit-side">
+        <span class="cx-unit-count">${plural(classes.length,'clase')}</span>
+        <button class="icon-btn" onclick="openUnitModal('${u.id}')" title="Editar unidad">✏️</button>
+        <button class="icon-btn" onclick="openClassModal2(null,'${u.id}')" title="Agregar clase a esta unidad">＋</button>
+      </div>
+    </div>`
+    :`<div class="cx-unit-head loose"><div class="cx-unit-num">?</div><div class="cx-unit-txt"><div class="cx-unit-title">Sin unidad asignada</div><div class="cx-unit-idea">Edita cada clase para ubicarla en una unidad.</div></div><div class="cx-unit-side"><span class="cx-unit-count">${plural(classes.length,'clase')}</span></div></div>`;
+  const body=classes.length?classes.map((c,k)=>buildClassCard2(c,k+1)).join('')
+    :`<div class="cx-unit-empty">Aún no hay clases en esta unidad.</div>`;
+  return`<section class="cx-unit" style="--uc:${col}">${head}<div class="cx-track">${body}</div></section>`;
+}
+function buildClassCard2(cls,step){
+  const resources=Object.values(cls.resources||{});
+  const pub=cls.status==='published';
+  const isOpen=openCards.has(cls.id);
+  const emb=cls.canvaUrl?canvaEmbed(cls.canvaUrl):'';
+  const resTiles=resources.map(r=>{
+    const info=getResInfo2(r.type);
+    return`<div class="res-item" onclick="openResEmbed('${cls.id}','${r.id}')">
+      <div class="res-item-icon ${info.cls}">${info.icon}</div>
+      <div class="res-item-info"><div class="res-item-name" title="${escA(r.title)}">${escH(r.title)}</div><div class="res-item-type">${info.label}</div></div>
+      <div class="res-item-btns">
+        <button class="icon-btn" onclick="event.stopPropagation();editRes2('${cls.id}','${r.id}')" title="Editar">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();delRes2('${cls.id}','${r.id}')" title="Eliminar">🗑</button>
+      </div></div>`;
+  }).join('');
+  const canvaBlock=cls.canvaUrl?(canvaOk(cls.canvaUrl)
+    ?`<div class="cx-canva"><iframe ${isOpen?'src':'data-src'}="${escA(emb)}" loading="lazy" allowfullscreen allow="fullscreen" title="Presentación de Canva"></iframe></div>`
+    :`<a class="cx-canva-link" href="${escA(cls.canvaUrl)}" target="_blank" rel="noopener">🎨 Abrir presentación de Canva ↗<small>Este enlace no se puede incrustar. Usa Compartir → Más → Insertar en Canva.</small></a>`):'';
+  return`<article class="cls-card2 cx-card${isOpen?' open':''}" id="clsc-${cls.id}">
+    ${step?`<div class="cx-step" aria-hidden="true">${step}</div>`:''}
+    <div class="cls-card2-head" onclick="toggleClsCard2('${cls.id}')">
+      <div class="cls-head-left">
+        <div class="cls-name">${escH(cls.title)}</div>
+        <div class="cls-meta-row">
+          <button class="cx-pub${pub?' on':''}" onclick="event.stopPropagation();togglePublish('${cls.id}')" title="${pub?'Ocultar a estudiantes':'Mostrar a estudiantes'}">${pub?'● Visible':'○ Borrador'}</button>
+          ${cls.date?`<span class="cls-meta-item">📅 ${escH(cls.date)}</span>`:''}
+          ${cls.canvaUrl?'<span class="cls-meta-item">🎨 Canva</span>':''}
+          ${cls.planUrl?'<span class="cls-meta-item">📋 Planeación</span>':''}
+          ${resources.length?`<span class="cls-meta-item">📎 ${resources.length}</span>`:''}
+        </div>
+      </div>
+      <div class="cls-head-right">
+        <button class="cx-act proj" onclick="event.stopPropagation();openProject('${cls.id}')" title="Proyectar en el aula">▶ Proyectar</button>
+        ${cls.planUrl?`<a class="cx-act" href="${escA(cls.planUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Solo tú ves la planeación">📋 Planeación</a>`:''}
+        <button class="icon-btn" onclick="event.stopPropagation();openCopyModal('${cls.id}')" title="Copiar a otras secciones">⧉</button>
+        <button class="icon-btn" onclick="event.stopPropagation();openClassModal2('${cls.id}')" title="Editar clase">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();deleteClass2('${cls.id}')" title="Eliminar">🗑</button>
+        <span class="cls-chevron">›</span>
+      </div>
+    </div>
+    <div class="cls-card2-body" id="cls-body2-${cls.id}">
+      ${canvaBlock}
+      ${cls.objective?`<div class="cx-obj"><span>🎯 Objetivo</span>${escH(cls.objective)}</div>`:''}
+      ${cls.desc?`<div class="cls-desc-txt">${escH(cls.desc)}</div>`:''}
+      <div class="res-section-title">Recursos extra
+        <button onclick="openAddResModal('${cls.id}')" class="cx-mini">+ Agregar</button></div>
+      ${resources.length?`<div class="res-grid">${resTiles}</div>`:`<div class="cx-muted" style="padding:6px 0 10px">Videos, PDFs, Genially, HTML interactivo o enlaces.</div>`}
+      <div id="embed-area-${cls.id}"></div>
+    </div>
+  </article>`;
+}
+function toggleClsCard2(id){
+  const c=document.getElementById('clsc-'+id);if(!c)return;
+  c.classList.toggle('open');
+  if(c.classList.contains('open')){openCards.add(id);c.querySelectorAll('iframe[data-src]').forEach(f=>{f.src=f.dataset.src;f.removeAttribute('data-src');});}
+  else openCards.delete(id);
+}
+function togglePublish(id){
+  const cls=curGrp()?.classes?.[id];if(!cls)return;
+  cls.status=cls.status==='published'?'draft':'published';
+  saveState();renderSidebar();renderGroupView();
+  showToast(cls.status==='published'?'Visible para estudiantes ✓':'Oculta para estudiantes');
+}
+
+/* ══════════ MODAL DE CLASE (Canva + planeación + unidad) ══════════ */
+function openClassModal2(clsId,presetUnit){
+  const grade=curGrade(),grp=curGrp();if(!grp){showToast('Primero entra a una sección');return;}
+  const editing=clsId?grp.classes[clsId]:null;
+  pendingResources=editing?JSON.parse(JSON.stringify(editing.resources||{})):{};
+  const units=sortedUnits(grade);
+  const selUnit=editing?(editing.unitId||''):(presetUnit||'');
+  const unitOpts=`<option value="">Sin unidad</option>`+units.map((u,i)=>`<option value="${u.id}"${u.id===selUnit?' selected':''}>${i+1}. ${escH(u.title)}</option>`).join('');
+  const pendingHtml=()=>{const items=Object.values(pendingResources);
+    if(!items.length)return'<div class="cx-muted" style="padding:4px 0">Sin recursos extra</div>';
+    return items.map(r=>{const info=getResInfo2(r.type);return`<div class="cx-pend"><span>${info.icon}</span><span style="flex:1">${escH(r.title)}</span><span class="cx-muted">${info.label}</span><button onclick="removePendingRes('${r.id}')">✕</button></div>`;}).join('');};
+  const typeOpts=RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('');
+  openModal(editing?'✏️ Editar clase':'📖 Nueva clase',`
+    <div class="form-group"><label>Nombre de la clase</label>
+      <input id="fc-title" value="${escQ(editing?.title||'')}" placeholder="Ej: Conozco el teclado"></div>
+    <div class="form-2col">
+      <div class="form-group"><label>Unidad PYP</label><select id="fc-unit">${unitOpts}</select></div>
+      <div class="form-group"><label>Fecha</label><input type="date" id="fc-date" value="${escQ(editing?.date||'')}"></div>
+    </div>
+    <div class="form-group"><label>🎨 Presentación de Canva</label>
+      <input id="fc-canva" value="${escQ(editing?.canvaUrl||'')}" placeholder="Pega el enlace o el código de inserción de Canva" oninput="cxCanvaCheck(this.value)">
+      <div id="fc-canva-msg" class="cx-field-msg"></div></div>
+    <div class="form-group"><label>📋 Planeación de clase (solo tú la ves)</label>
+      <input id="fc-plan" value="${escQ(editing?.planUrl||'')}" placeholder="https://docs.google.com/... o enlace de Drive"></div>
+    <div class="form-group"><label>🎯 Objetivo</label>
+      <input id="fc-obj" value="${escQ(editing?.objective||'')}" placeholder="Al finalizar, el estudiante podrá..."></div>
+    <div class="form-group"><label>📝 Descripción para estudiantes</label>
+      <textarea id="fc-desc" style="min-height:60px" placeholder="Qué vamos a hacer hoy, materiales...">${escH(editing?.desc||'')}</textarea></div>
+    <label class="cx-switch"><input type="checkbox" id="fc-pub" ${editing?.status==='published'?'checked':''}> Visible para estudiantes</label>
+    <div class="form-group" style="margin-top:14px">
+      <label style="display:flex;align-items:center;justify-content:space-between"><span>📎 Recursos extra</span>
+        <button type="button" class="cx-mini" onclick="const f=document.getElementById('cls-res-form');f.style.display=f.style.display==='none'?'block':'none'">+ Agregar</button></label>
+      <div id="pending-res-list" class="cx-pend-list">${pendingHtml()}</div>
+      <div id="cls-res-form" class="cx-res-form" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <select id="ir-type" class="cx-inp" style="width:auto">${typeOpts}</select>
+          <input id="ir-name" class="cx-inp" placeholder="Nombre del recurso" style="flex:1">
+        </div>
+        <div id="ir-url-wrap" style="margin-bottom:6px"><input id="ir-url" class="cx-inp" placeholder="https://..."></div>
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button type="button" class="cx-mini ghost" onclick="document.getElementById('cls-res-form').style.display='none'">Cancelar</button>
+          <button type="button" class="cx-mini solid" onclick="addPendingResInline()">✓ Agregar</button>
+        </div>
+      </div>
+    </div>`,
+  ()=>{
+    const title=document.getElementById('fc-title').value.trim();
+    if(!title){showToast('El nombre es obligatorio');return;}
+    const data={title,unitId:document.getElementById('fc-unit').value,date:document.getElementById('fc-date').value,
+      canvaUrl:document.getElementById('fc-canva').value.trim(),planUrl:document.getElementById('fc-plan').value.trim(),
+      objective:document.getElementById('fc-obj').value,desc:document.getElementById('fc-desc').value,
+      status:document.getElementById('fc-pub').checked?'published':'draft'};
+    if(editing){
+      if(editing.status==='archived'&&data.status==='draft')data.status='archived';
+      Object.assign(editing,data);editing.resources={...pendingResources};
+    }else{
+      const id=uid();grp.classes[id]={id,...data,resources:{...pendingResources}};openCards.add(id);
+    }
+    pendingResources={};clearTimeout(saveTimer);saveToDB();closeModal();
+    currentTab='classes';renderSidebar();renderGroupView();
+  });
+  setTimeout(()=>cxCanvaCheck(editing?.canvaUrl||''),40);
+}
+function cxCanvaCheck(v){
+  const m=document.getElementById('fc-canva-msg');if(!m)return;
+  if(!v.trim()){m.className='cx-field-msg';m.textContent='En Canva: Compartir → Más → Insertar, o copia el enlace de "Ver".';return;}
+  if(canvaOk(v)){m.className='cx-field-msg ok';m.textContent='✓ Se mostrará incrustada. Recuerda: "Cualquier persona con el enlace puede ver".';}
+  else{m.className='cx-field-msg warn';m.textContent='Este enlace se abrirá en una pestaña nueva. Para incrustarla usa el enlace completo canva.com/design/…';}
+}
+
+/* ══════════ UNIDADES PYP ══════════ */
+function openUnitsModal(){
+  const g=curGrade();if(!g){showToast('Primero entra a una sección');return;}
+  const units=sortedUnits(g);
+  const rows=units.map((u,i)=>`<div class="cx-urow" style="--uc:${u.color||gTheme(g).c}">
+      <span class="cx-urow-n">${i+1}</span>
+      <div style="flex:1;min-width:0"><div class="cx-urow-t">${escH(u.title)}</div><div class="cx-urow-s">${escH(u.theme||'Sin tema transdisciplinario')}</div></div>
+      <button class="icon-btn" onclick="moveUnit('${u.id}',-1)" title="Subir">↑</button>
+      <button class="icon-btn" onclick="moveUnit('${u.id}',1)" title="Bajar">↓</button>
+      <button class="icon-btn" onclick="openUnitModal('${u.id}')" title="Editar">✏️</button>
+      <button class="icon-btn danger" onclick="delUnit('${u.id}')" title="Eliminar">🗑</button>
+    </div>`).join('')||'<div class="cx-muted">Aún no hay unidades en este grado.</div>';
+  openModal(`🧭 Unidades de ${gTheme(g).n}`,`
+    <div class="cx-muted" style="margin-bottom:12px">Las unidades se comparten entre todas las secciones del grado. El orden es el del año escolar.</div>
+    <div class="cx-ulist">${rows}</div>
+    <button class="cx-btn primary" style="margin-top:14px;width:100%;justify-content:center" onclick="openUnitModal()">+ Nueva unidad</button>`,()=>closeModal());
+  setModalBtn('Listo');
+}
+function openUnitModal(unitId){
+  const g=curGrade();if(!g)return;
+  const u=unitId?g.units[unitId]:null;
+  const col=u?.color||gTheme(g).c;
+  openModal(u?'✏️ Editar unidad':'🧭 Nueva unidad',`
+    <div class="form-group"><label>Título de la unidad</label><input id="fu-title" value="${escQ(u?.title||'')}" placeholder="Ej: Las máquinas que nos ayudan"></div>
+    <div class="form-group"><label>Tema transdisciplinario</label><select id="fu-theme"><option value="">—</option>${PYP_THEMES.map(t=>`<option${u?.theme===t?' selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Idea central</label><textarea id="fu-idea" style="min-height:56px" placeholder="Las personas usan la tecnología para...">${escH(u?.centralIdea||'')}</textarea></div>
+    <div class="form-group"><label>Líneas de indagación (una por línea)</label><textarea id="fu-lines" style="min-height:70px">${escH(u?.lines||'')}</textarea></div>
+    <div class="form-group"><label>Atributo del perfil de la comunidad de aprendizaje</label><select id="fu-profile"><option value="">—</option>${LEARNER_PROFILE.map(t=>`<option${u?.profile===t?' selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Color</label><div class="cx-swatches" id="fu-colors">${UNIT_COLORS.map(c=>`<button type="button" class="cx-sw${c===col?' on':''}" style="background:${c}" data-c="${c}" onclick="document.querySelectorAll('#fu-colors .cx-sw').forEach(b=>b.classList.remove('on'));this.classList.add('on')" aria-label="Color ${c}"></button>`).join('')}</div></div>`,
+  ()=>{
+    const title=document.getElementById('fu-title').value.trim();if(!title){showToast('Escribe el título');return;}
+    const data={title,theme:document.getElementById('fu-theme').value,centralIdea:document.getElementById('fu-idea').value.trim(),
+      lines:document.getElementById('fu-lines').value.trim(),profile:document.getElementById('fu-profile').value,
+      color:document.querySelector('#fu-colors .cx-sw.on')?.dataset.c||col};
+    if(u)Object.assign(u,data);
+    else{const id=uid();g.units[id]={id,order:Object.keys(g.units).length,...data};}
+    saveState();closeModal();renderGroupView();openUnitsModal();
+  });
+}
+function moveUnit(id,dir){
+  const g=curGrade();const us=sortedUnits(g);const i=us.findIndex(u=>u.id===id);const j=i+dir;
+  if(i<0||j<0||j>=us.length)return;[us[i],us[j]]=[us[j],us[i]];us.forEach((u,k)=>u.order=k);
+  saveState();renderGroupView();openUnitsModal();
+}
+function delUnit(id){
+  const g=curGrade();const u=g?.units?.[id];if(!u)return;
+  if(!confirm(`¿Eliminar la unidad "${u.title}"?\nSus clases no se borran: quedan sin unidad.`))return;
+  Object.values(g.groups).forEach(grp=>Object.values(grp.classes||{}).forEach(c=>{if(c.unitId===id)c.unitId='';}));
+  delete g.units[id];sortedUnits(g).forEach((x,k)=>x.order=k);
+  saveState();renderGroupView();openUnitsModal();
+}
+
+/* ══════════ COPIAR CLASE A OTRAS SECCIONES ══════════ */
+function openCopyModal(clsId){
+  const src=curGrp()?.classes?.[clsId];if(!src)return;
+  const blocks=sortedGrades().map(g=>{
+    const t=gTheme(g);
+    const items=Object.values(g.groups||{}).filter(x=>!(g.id===state.currentGrade&&x.id===state.currentGroup))
+      .map(x=>`<label class="cx-ck"><input type="checkbox" value="${g.id}|${x.id}"${g.id===state.currentGrade?' checked':''}> ${escH(x.name)}</label>`).join('');
+    return items?`<div class="cx-ckgrade"><div class="cx-ckhead" style="color:${t.c}">${t.m} ${escH(t.n)}</div><div class="cx-ckrow">${items}</div></div>`:'';
+  }).join('');
+  openModal('⧉ Copiar clase',`<div class="cx-muted" style="margin-bottom:12px">Se copia "${escH(src.title)}" con su Canva, planeación y recursos. Las otras secciones del mismo grado ya vienen marcadas.</div><div id="cx-copy-wrap">${blocks}</div>`,()=>{
+    const sel=[...document.querySelectorAll('#cx-copy-wrap input:checked')].map(i=>i.value);
+    if(!sel.length){showToast('Elige al menos un grupo');return;}
+    sel.forEach((v,n)=>{
+      const [gid,grpId]=v.split('|');const grp=state.grades[gid]?.groups?.[grpId];if(!grp)return;
+      const c=JSON.parse(JSON.stringify(src));c.id=uid()+n;const res={};
+      Object.values(c.resources||{}).forEach((r,k)=>{const nid=uid()+n+k;res[nid]={...r,id:nid};});c.resources=res;
+      if(gid!==state.currentGrade)c.unitId='';
+      grp.classes[c.id]=c;
+    });
+    saveState();closeModal();renderSidebar();showToast(`Copiada a ${plural(sel.length,'grupo')} ✓`);
+  });
+  setModalBtn('Copiar');
+}
+
+/* ══════════ MODO PROYECTAR ══════════ */
+const proj={list:[],i:0,res:null,left:0,total:0,int:null};
+function projList(){
+  const g=curGrade(),grp=curGrp();const order={};sortedUnits(g).forEach((u,i)=>order[u.id]=i);
+  return Object.values(grp?.classes||{}).sort((a,b)=>((order[a.unitId]??999)-(order[b.unitId]??999))||(a.date||'9999').localeCompare(b.date||'9999')||String(a.title).localeCompare(String(b.title)));
+}
+function projSources(cls){
+  const s=[];
+  if(cls.canvaUrl)s.push({id:'__canva',title:'Presentación',type:'canva',url:cls.canvaUrl});
+  Object.values(cls.resources||{}).forEach(r=>{if(r.type!=='plan')s.push(r);});
+  return s;
+}
+function openProject(clsId){
+  proj.list=projList();proj.i=Math.max(0,proj.list.findIndex(c=>c.id===clsId));proj.res=null;
+  const el=document.getElementById('proj');el.classList.add('show');
+  const t=gTheme(curGrade());el.style.setProperty('--gc',t.c);
+  renderProject();
+}
+function closeProject(){
+  document.getElementById('proj').classList.remove('show');document.getElementById('proj-stage').innerHTML='';
+  if(document.fullscreenElement)document.exitFullscreen?.();
+}
+function projGo(d){const j=proj.i+d;if(j<0||j>=proj.list.length)return;proj.i=j;proj.res=null;renderProject();}
+function projPick(id){proj.res=id;renderProject();}
+function renderProject(){
+  const cls=proj.list[proj.i];if(!cls)return;
+  const g=curGrade(),grp=curGrp(),t=gTheme(g),unit=g.units?.[cls.unitId];
+  const src=projSources(cls);const cur=src.find(x=>x.id===proj.res)||src[0];proj.res=cur?.id||null;
+  document.getElementById('proj-info').innerHTML=`<span class="pj-badge">${t.m} ${escH(grp.name)}</span>
+    <div class="pj-titles">${unit?`<div class="pj-unit">${escH(unit.title)}</div>`:''}<div class="pj-title">${escH(cls.title)}</div></div>
+    <span class="pj-count">${proj.i+1} / ${proj.list.length}</span>`;
+  document.getElementById('proj-tabs').innerHTML=src.length>1?src.map(s=>`<button class="${s.id===proj.res?'on':''}" onclick="projPick('${s.id}')">${getResInfo2(s.type).icon} ${escH(s.title)}</button>`).join(''):'';
+  const st=document.getElementById('proj-stage');
+  if(!cur){
+    st.innerHTML=`<div class="pj-card"><div class="pj-card-m">${t.m}</div><div class="pj-card-t">${escH(cls.title)}</div>${cls.objective?`<div class="pj-card-o">Hoy vamos a: ${escH(cls.objective)}</div>`:''}${cls.desc?`<div class="pj-card-d">${escH(cls.desc)}</div>`:''}</div>`;
+  }else if(cur.type==='link'||(cur.type==='canva'&&!canvaOk(cur.url))){
+    st.innerHTML=`<div class="pj-card"><div class="pj-card-t">${escH(cur.title)}</div><a class="pj-open" href="${escA(cur.type==='canva'?canvaOpenUrl(cur.url):cur.url)}" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a></div>`;
+  }else if(cur.type==='image'){
+    st.innerHTML=`<img src="${escA(cur.url)}" alt="${escA(cur.title)}">`;
+  }else if(cur.type==='html'&&!/^https?:/i.test(cur.url)){
+    st.innerHTML=`<iframe srcdoc="${escA(cur.url)}" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
+  }else{
+    st.innerHTML=`<iframe src="${escA(buildEmbedUrl(cur.url,cur.type))}" allowfullscreen allow="fullscreen;autoplay;encrypted-media"></iframe>`;
+  }
+  document.getElementById('pj-prev').disabled=proj.i===0;
+  document.getElementById('pj-next').disabled=proj.i>=proj.list.length-1;
+}
+function projFull(){const el=document.getElementById('proj');if(document.fullscreenElement)document.exitFullscreen?.();else el.requestFullscreen?.().catch(()=>{});}
+function projTimer(min){
+  clearInterval(proj.int);proj.total=proj.left=min*60;
+  const d=document.getElementById('pj-time');d.classList.remove('done','low');
+  const tick=()=>{
+    const m=Math.floor(proj.left/60),s=proj.left%60;d.textContent=`${m}:${String(s).padStart(2,'0')}`;
+    d.classList.toggle('low',proj.left<=60&&proj.left>0);
+    if(proj.left<=0){clearInterval(proj.int);d.classList.add('done');d.textContent='¡Tiempo!';cxBeep();return;}
+    proj.left--;
+  };tick();proj.int=setInterval(tick,1000);
+}
+function projTimerStop(){clearInterval(proj.int);const d=document.getElementById('pj-time');d.textContent='—';d.classList.remove('done','low');}
+function cxBeep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(t=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.2,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t+.2);o.start(a.currentTime+t);o.stop(a.currentTime+t+.22);});}catch(e){}}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('proj')?.classList.contains('show'))return;
+  if(e.key==='Escape'){if(!document.fullscreenElement)closeProject();e.stopImmediatePropagation();return;}
+  if(e.key==='ArrowRight'){projGo(1);e.preventDefault();e.stopImmediatePropagation();return;}
+  if(e.key==='ArrowLeft'){projGo(-1);e.preventDefault();e.stopImmediatePropagation();return;}
+  e.stopImmediatePropagation();
+},true);
+
+/* ══════════ QR Y ACCESO DE ESTUDIANTES ══════════ */
+function loadQR(){
+  if(window.QRCode)return Promise.resolve();
+  return new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+}
+function qrDataUrl(text,size){
+  const tmp=document.createElement('div');tmp.style.cssText='position:fixed;left:-9999px';document.body.appendChild(tmp);
+  new QRCode(tmp,{text,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
+  const c=tmp.querySelector('canvas');const url=c?c.toDataURL('image/png'):(tmp.querySelector('img')?.src||'');
+  tmp.remove();return url;
+}
+function openGroupAccess(){
+  const g=curGrade(),grp=curGrp();if(!grp)return;const t=gTheme(g);const link=aulaLink(grp.code);
+  openModal(`📱 Acceso de ${grp.name}`,`
+    <div class="cx-access" style="--gc:${t.c};--gs:${t.s}">
+      <div class="cx-qr" id="cx-qr"><div class="cx-muted">Generando QR…</div></div>
+      <div style="flex:1;min-width:0">
+        <div class="cx-muted">Código del grupo</div>
+        <div class="cx-code">${escH(grp.code)}</div>
+        <div class="cx-muted" style="margin-top:10px">Enlace directo</div>
+        <div style="display:flex;gap:6px;margin-top:4px"><input class="cx-inp" id="cx-link" value="${escA(link)}" readonly onclick="this.select()"><button class="cx-mini solid" onclick="navigator.clipboard?.writeText(document.getElementById('cx-link').value);showToast('Enlace copiado ✓')">Copiar</button></div>
+      </div>
+    </div>
+    <div class="cx-muted" style="margin-top:12px">Solo se ve lo marcado como "Visible". Las planeaciones nunca aparecen.</div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="cx-btn" onclick="window.open('${escA(link)}','_blank')">🎒 Abrir vista estudiante</button>
+      <button class="cx-btn" onclick="regenCode()">↻ Cambiar código</button>
+      <button class="cx-btn" onclick="printAllQR()">🖨 Imprimir todos</button>
+    </div>`,()=>closeModal());
+  setModalBtn('Listo');
+  loadQR().then(()=>{const b=document.getElementById('cx-qr');if(b)b.innerHTML=`<img src="${qrDataUrl(link,220)}" alt="QR de ${escA(grp.name)}">`;}).catch(()=>{const b=document.getElementById('cx-qr');if(b)b.innerHTML='<div class="cx-muted">Sin conexión para generar el QR</div>';});
+}
+function regenCode(){
+  const grp=curGrp();if(!grp)return;
+  if(!confirm('El código y el QR anteriores dejarán de funcionar. ¿Continuar?'))return;
+  grp.code=genCode();saveState();closeModal();openGroupAccess();renderGroupView();
+}
+function printAllQR(){
+  const w=window.open('','_blank');if(!w){showToast('Permite las ventanas emergentes para imprimir');return;}
+  w.document.write('<p style="font-family:sans-serif;padding:20px">Generando códigos QR…</p>');
+  loadQR().then(()=>{
+    const cards=sortedGrades().map(g=>{const t=gTheme(g);return Object.values(g.groups||{}).map(grp=>`
+      <div class="card" style="--c:${t.c};--s:${t.s}">
+        <div class="top"><span class="m">${t.m}</span><span class="n">${escH(grp.name)}</span></div>
+        <img src="${qrDataUrl(aulaLink(grp.code),300)}" alt="">
+        <div class="lbl">Código</div><div class="code">${escH(grp.code)}</div>
+        <div class="ins">Escanea con la cámara para entrar a tu aula de Tecnología</div>
+      </div>`).join('');}).join('');
+    w.document.open();
+    w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>QR de grupos</title>
+      <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+      <style>*{box-sizing:border-box;margin:0}body{font-family:Nunito,system-ui,sans-serif;padding:14mm;background:#fff}
+      h1{font-family:'Baloo 2',sans-serif;font-size:22px;margin-bottom:10mm}
+      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}
+      .card{border:3px solid var(--c);border-radius:18px;padding:14px;text-align:center;break-inside:avoid;background:linear-gradient(var(--s),#fff 38%)}
+      .top{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}.m{font-size:30px}
+      .n{font-family:'Baloo 2',sans-serif;font-size:34px;font-weight:800;color:var(--c);line-height:1}
+      img{width:100%;max-width:190px;display:block;margin:0 auto 8px}
+      .lbl{font-size:11px;color:#667}.code{font-family:'Baloo 2',sans-serif;font-size:26px;letter-spacing:4px;font-weight:800;color:#1b1b2f}
+      .ins{font-size:11px;color:#556;margin-top:6px}
+      @media print{body{padding:8mm}.np{display:none}}</style></head>
+      <body><h1>Aulas de Tecnología · códigos de acceso</h1><div class="grid">${cards}</div>
+      <p class="np" style="margin-top:10mm"><button onclick="print()" style="font:inherit;padding:10px 18px;border-radius:10px;border:0;background:#1b1b2f;color:#fff;cursor:pointer">🖨 Imprimir</button></p>
+      <script>setTimeout(()=>print(),700)<\/script></body></html>`);
+    w.document.close();
+  }).catch(()=>{w.document.body.innerHTML='<p style="font-family:sans-serif;padding:20px">No se pudo cargar el generador de QR. Revisa la conexión.</p>';});
+}
+
+/* ══════════ PUBLICACIÓN PARA ESTUDIANTES (sin planeaciones) ══════════ */
+function sanitizeForStudents(st,settings){
+  const out={v:1,appName:settings?.appName||'Class Drive',updated:new Date().toISOString(),grades:[]};
+  Object.values(st?.grades||{}).sort((a,b)=>(a.number||0)-(b.number||0)).forEach(g=>{
+    const units=Object.values(g.units||{}).sort((a,b)=>(a.order||0)-(b.order||0))
+      .map(u=>({id:u.id,title:u.title,theme:u.theme||'',centralIdea:u.centralIdea||'',lines:u.lines||'',profile:u.profile||'',color:u.color||'',order:u.order||0}));
+    const groups=Object.values(g.groups||{}).map(grp=>({id:grp.id,name:grp.name,code:grp.code||'',
+      classes:Object.values(grp.classes||{}).filter(c=>c&&c.title&&c.status==='published').map(c=>({
+        id:c.id,title:c.title,objective:c.objective||'',desc:c.desc||'',date:c.date||'',unitId:c.unitId||'',canva:c.canvaUrl||'',
+        resources:Object.values(c.resources||{}).filter(r=>r&&r.type!=='plan').map(r=>({id:r.id,type:r.type,title:r.title,url:r.url}))}))}));
+    out.grades.push({id:g.id,number:g.number,name:g.name,units,groups});
+  });
+  return out;
+}
+async function publishSnapshot(){
+  if(!sb||!window.currentUser?.email)return;
+  try{
+    const data=sanitizeForStudents(state,{appName:localStorage.getItem('cd-app-name')});
+    const{error}=await sb.from('aula_publica').upsert({user_email:window.currentUser.email,data,updated_at:new Date().toISOString()},{onConflict:'user_email'});
+    if(error&&!window._aulaWarned){window._aulaWarned=1;console.warn('aula_publica (ejecuta el SQL de la versión 4.0):',error.message);}
+  }catch(e){}
+}
+async function saveToDB(){
+  initSB();if(!sb||!window.currentUser?.email){saveLocal();return;}
+  try{
+    const trash=localStorage.getItem('cd-trash');
+    await sb.from('user_data').upsert({
+      user_email:window.currentUser.email,state,
+      trash:trash?JSON.parse(trash):{},
+      settings:{
+        appName:localStorage.getItem('cd-app-name')||'Class Drive',
+        appSub:localStorage.getItem('cd-app-sub')||'GI School · Tecnología · PYP',
+        theme:localStorage.getItem('cd-theme')||'dark',
+        accent:localStorage.getItem('cd-accent')||'#6366f1',
+        aiProvider:localStorage.getItem('cd-ai-provider')||'claude',
+        aiKey:localStorage.getItem('cd-ai-key')||'',
+      }
+    },{onConflict:'user_email'});
+  }catch(e){console.error('SB save:',e);saveLocal();}
+  publishSnapshot();
+}
+
+/* Enlaces públicos antiguos (#/pub/…): nunca muestran planeaciones */
+function renderPublicClass(cls,grpName){
+  const ICONS={slides:'📊',video:'🎬',pdf:'📄',drive:'📁',canva:'🎨',genially:'✨',html:'🌐',link:'🔗',image:'🖼️',actividad:'✏️',evaluacion:'📝',presentacion:'📊'};
+  const resources=[];
+  if(cls.canvaUrl)resources.push({type:'canva',title:'Presentación',url:cls.canvaUrl});
+  Object.values(cls.resources||{}).forEach(r=>{if(r&&r.type!=='plan')resources.push(r);});
+  const resHtml=resources.length?resources.map((r,i)=>`
+    <button class="pub-res-btn" onclick="pubToggleEmbed(${i})"><span class="pri">${ICONS[r.type]||'📎'}</span>
+      <div><div>${escH(r.title||'Recurso')}</div><div class="prt">${escH(getResInfo2(r.type).label)}</div></div>
+      <span style="margin-left:auto;font-size:12px;opacity:.4">▶</span></button>
+    <div class="pub-embed-box" id="pub-emb-${i}" style="display:none"></div>`).join(''):'<div class="pub-empty">Sin recursos adjuntos en esta clase.</div>';
+  document.getElementById('pub-content').innerHTML=`<div class="pub-card">
+      <div class="pub-cls-title">📖 ${escH(cls.title)}</div>
+      <div class="pub-cls-meta">${grpName?'<span>👥 '+escH(grpName)+'</span>':''}${cls.date?'<span>📅 '+escH(cls.date)+'</span>':''}</div>
+      ${cls.objective?`<div class="pub-cls-obj"><strong>🎯 Objetivo</strong>${escH(cls.objective)}</div>`:''}
+      ${cls.desc?`<div class="pub-cls-desc">${escH(cls.desc)}</div>`:''}
+      <div class="pub-res-title">📎 Recursos (${resources.length})</div><div id="pub-res-list">${resHtml}</div></div>`;
+  window._pubResources=resources;
+}
+
+/* ══════════ PORTAL DE ESTUDIANTES  #/aula/{correo}/{código}/{clase} ══════════ */
+const aula={email:null,data:null,loading:null};
+function aulaParse(){
+  const m=location.hash.match(/^#\/aula\/([^\/]+)(?:\/([^\/]+))?(?:\/([^\/]+))?/);
+  return m?{email:decodeURIComponent(m[1]),code:m[2]?decodeURIComponent(m[2]):'',cls:m[3]?decodeURIComponent(m[3]):''}:null;
+}
+function aulaHash(email,code,cls){return'#/aula/'+encodeURIComponent(email)+(code?'/'+encodeURIComponent(code):'')+(cls?'/'+encodeURIComponent(cls):'');}
+async function fetchAula(email){
+  const h={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/aula_publica?user_email=eq.'+encodeURIComponent(email)+'&select=data',{headers:h});
+    if(r.ok){const rows=await r.json();if(rows?.[0]?.data?.grades)return rows[0].data;}
+  }catch(e){}
+  const r2=await fetch(SB_URL+'/rest/v1/user_data?user_email=eq.'+encodeURIComponent(email)+'&select=state,settings',{headers:h});
+  const rows=await r2.json();
+  if(!Array.isArray(rows)||!rows[0]?.state)throw new Error('No encontramos esta aula.');
+  return sanitizeForStudents(rows[0].state,rows[0].settings);
+}
+function aulaFind(code){
+  const c=String(code||'').toUpperCase();
+  for(const g of aula.data?.grades||[])for(const grp of g.groups||[])if(String(grp.code).toUpperCase()===c)return{g,grp};
+  return null;
+}
+function aulaDoneKey(grp){return'aula-done-'+aula.email+'-'+grp.id;}
+function aulaDone(grp){try{return new Set(JSON.parse(localStorage.getItem(aulaDoneKey(grp))||'[]'));}catch(e){return new Set();}}
+function aulaSetDone(grp,set){try{localStorage.setItem(aulaDoneKey(grp),JSON.stringify([...set]));}catch(e){}}
+async function openAulaRoute(){
+  const p=aulaParse();if(!p)return false;
+  const el=document.getElementById('aula');el.classList.add('show');
+  document.getElementById('loading').style.display='none';
+  document.getElementById('public-view')?.classList.remove('active');
+  if(!aula.data||aula.email!==p.email){
+    el.innerHTML='<div class="au-load"><div class="au-load-dot"></div>Cargando tu aula…</div>';
+    try{aula.email=p.email;aula.data=await fetchAula(p.email);}
+    catch(e){el.innerHTML=`<div class="au-load">😕 ${escH(e.message||'No se pudo cargar el aula')}<button class="au-btn" onclick="location.reload()">Intentar de nuevo</button></div>`;return true;}
+  }
+  if(p.code){
+    const f=aulaFind(p.code);
+    if(!f){try{localStorage.removeItem('aula-last-'+p.email);}catch(e){}aulaHome('Ese código no existe o cambió. Pídele el nuevo a tu profe.');return true;}
+    try{localStorage.setItem('aula-last-'+p.email,f.grp.code);}catch(e){}
+    if(p.cls)aulaClass(f.g,f.grp,p.cls);else aulaGroup(f.g,f.grp);
+  }else aulaHome();
+  el.scrollTop=0;return true;
+}
+function aulaTop(extra){
+  const name=aula.data?.appName||'Class Drive';
+  return`<header class="au-top"><div class="au-brand"><span class="au-brand-ico">🎓</span>${escH(name)}</div><div style="flex:1"></div>${extra||''}</header>`;
+}
+function aulaHome(err){
+  const el=document.getElementById('aula');
+  let last='';try{last=localStorage.getItem('aula-last-'+aula.email)||'';}catch(e){}
+  const lf=last&&aulaFind(last);
+  const tiles=(aula.data.grades||[]).map(g=>{const t=gTheme(g);return`<button class="au-grade" style="--gc:${t.c};--gs:${t.s};--gd:${t.d}" onclick="aulaPickGrade('${escA(g.id)}')">
+      <span class="au-grade-m">${t.m}</span><span class="au-grade-n">${g.number}°</span><span class="au-grade-t">${escH(t.n)}</span></button>`;}).join('');
+  el.innerHTML=aulaTop()+`<main class="au-home">
+      <h1 class="au-h1">¿En qué grado estás?</h1>
+      ${err?`<div class="au-err">${escH(err)}</div>`:''}
+      ${lf?`<button class="au-continue" style="--gc:${gTheme(lf.g).c}" onclick="location.hash='${aulaHash(aula.email,lf.grp.code)}'">${gTheme(lf.g).m} Seguir en ${escH(lf.grp.name)}</button>`:''}
+      <div class="au-grades">${tiles}</div>
+      <div id="au-pick"></div>
+    </main>`;
+}
+function aulaPickGrade(gid){
+  const g=(aula.data.grades||[]).find(x=>x.id===gid);if(!g)return;const t=gTheme(g);
+  const box=document.getElementById('au-pick');
+  box.innerHTML=`<div class="au-pick" style="--gc:${t.c};--gs:${t.s}">
+      <div class="au-pick-t">${t.m} ¿Cuál es tu salón?</div>
+      <div class="au-secs">${(g.groups||[]).map(grp=>`<button onclick="aulaAskCode('${escA(g.id)}','${escA(grp.id)}')">${escH(grp.name)}</button>`).join('')}</div>
+      <div id="au-code"></div></div>`;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function aulaAskCode(gid,grpId){
+  const g=aula.data.grades.find(x=>x.id===gid);const grp=g?.groups.find(x=>x.id===grpId);if(!grp)return;
+  document.querySelectorAll('.au-secs button').forEach(b=>b.classList.toggle('on',b.textContent===grp.name));
+  document.getElementById('au-code').innerHTML=`<label class="au-code-l" for="au-code-inp">Escribe el código de ${escH(grp.name)}</label>
+    <div class="au-code-row"><input id="au-code-inp" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC123"
+      onkeydown="if(event.key==='Enter')aulaCheckCode('${escA(gid)}','${escA(grpId)}')">
+    <button class="au-btn" onclick="aulaCheckCode('${escA(gid)}','${escA(grpId)}')">Entrar</button></div>
+    <div id="au-code-msg" class="au-code-msg"></div>`;
+  setTimeout(()=>document.getElementById('au-code-inp')?.focus(),60);
+}
+function aulaCheckCode(gid,grpId){
+  const g=aula.data.grades.find(x=>x.id===gid);const grp=g?.groups.find(x=>x.id===grpId);
+  const v=(document.getElementById('au-code-inp')?.value||'').trim().toUpperCase();
+  if(grp&&v&&v===String(grp.code).toUpperCase()){location.hash=aulaHash(aula.email,grp.code);return;}
+  const m=document.getElementById('au-code-msg');if(m)m.textContent='Ese código no es. Revisa las letras o pregúntale a tu profe.';
+  const i=document.getElementById('au-code-inp');if(i){i.classList.remove('shake');void i.offsetWidth;i.classList.add('shake');}
+}
+function aulaGroup(g,grp){
+  const t=gTheme(g);const el=document.getElementById('aula');
+  const done=aulaDone(grp);const classes=grp.classes||[];
+  const total=classes.length;const nDone=classes.filter(c=>done.has(c.id)).length;
+  const pct=total?Math.round(nDone/total*100):0;
+  const units=(g.units||[]).filter(u=>classes.some(c=>c.unitId===u.id));
+  const loose=classes.filter(c=>!c.unitId||!(g.units||[]).some(u=>u.id===c.unitId));
+  const sortC=a=>[...a].sort((x,y)=>(x.date||'9999').localeCompare(y.date||'9999')||String(x.title).localeCompare(String(y.title)));
+  const badges=units.map((u,i)=>{const cs=classes.filter(c=>c.unitId===u.id);const ok=cs.length&&cs.every(c=>done.has(c.id));
+    return`<div class="au-badge${ok?' on':''}" style="--uc:${u.color||t.c}" title="${escA(u.title)}"><span>${ok?'🏅':i+1}</span><small>${escH(u.title)}</small></div>`;}).join('');
+  const path=(list,col)=>`<ol class="au-path" style="--uc:${col}">${sortC(list).map((c,k)=>{const d=done.has(c.id);
+      return`<li class="au-node${d?' done':''}"><button onclick="location.hash='${aulaHash(aula.email,grp.code,c.id)}'">
+        <span class="au-dot">${d?'⭐':k+1}</span>
+        <span class="au-node-card"><span class="au-node-t">${escH(c.title)}</span>${c.date?`<span class="au-node-d">${escH(fmtDate(c.date))}</span>`:''}${c.canva?'<span class="au-node-tag">🎨 Presentación</span>':''}</span>
+      </button></li>`;}).join('')}</ol>`;
+  const sections=units.map((u,i)=>`<section class="au-unit">
+      <div class="au-unit-h" style="--uc:${u.color||t.c}"><span class="au-unit-n">${i+1}</span><div><div class="au-unit-t">${escH(u.title)}</div>${u.centralIdea?`<div class="au-unit-i">${escH(u.centralIdea)}</div>`:''}${u.profile?`<div class="au-unit-p">🌱 Hoy somos ${escH(u.profile.toLowerCase())}</div>`:''}</div></div>
+      ${path(classes.filter(c=>c.unitId===u.id),u.color||t.c)}</section>`).join('')
+    +(loose.length?`<section class="au-unit"><div class="au-unit-h" style="--uc:${t.c}"><span class="au-unit-n">✦</span><div><div class="au-unit-t">Más misiones</div></div></div>${path(loose,t.c)}</section>`:'');
+  el.innerHTML=aulaTop(`<button class="au-link" onclick="location.hash='${aulaHash(aula.email)}'">Cambiar de salón</button>`)+`
+    <div class="au-hero" style="--gc:${t.c};--gs:${t.s};--gd:${t.d}">
+      <div class="au-hero-m" aria-hidden="true">${t.m}</div>
+      <div class="au-hero-txt"><div class="au-hero-k">Tecnología</div><h1 class="au-hero-h">¡Hola, ${escH(grp.name)}!</h1>
+        <div class="au-prog"><div class="au-prog-bar"><span style="width:${pct}%"></span></div><div class="au-prog-t">${total?`Llevas ${nDone} de ${total} misiones`:'Muy pronto verás aquí tus misiones'}</div></div>
+      </div>
+    </div>
+    ${badges?`<div class="au-badges">${badges}</div>`:''}
+    <main class="au-main" style="--gc:${t.c}">${sections||'<div class="au-empty">Tu profe todavía no ha publicado clases. ¡Vuelve pronto!</div>'}</main>`;
+}
+function fmtDate(d){try{const t=new Date(d+'T12:00:00').toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});return t.charAt(0).toUpperCase()+t.slice(1);}catch(e){return d;}}
+function aulaClass(g,grp,clsId){
+  const t=gTheme(g);const el=document.getElementById('aula');
+  const cls=(grp.classes||[]).find(c=>c.id===clsId);
+  if(!cls){location.hash=aulaHash(aula.email,grp.code);return;}
+  const unit=(g.units||[]).find(u=>u.id===cls.unitId);const done=aulaDone(grp).has(cls.id);
+  const res=cls.resources||[];
+  const stage=cls.canva?(canvaOk(cls.canva)
+    ?`<div class="au-stage" id="au-stage"><iframe src="${escA(canvaEmbed(cls.canva))}" allowfullscreen allow="fullscreen" title="Presentación"></iframe></div>
+      <button class="au-full" onclick="document.getElementById('au-stage').requestFullscreen?.()">⛶ Ver en pantalla completa</button>`
+    :`<a class="au-bigbtn" href="${escA(canvaOpenUrl(cls.canva))}" target="_blank" rel="noopener">🎨 Abrir la presentación</a>`):'';
+  el.innerHTML=aulaTop(`<button class="au-link" onclick="location.hash='${aulaHash(aula.email,grp.code)}'">← Mis misiones</button>`)+`
+    <main class="au-cls" style="--gc:${t.c};--gs:${t.s};--uc:${unit?.color||t.c}">
+      ${unit?`<div class="au-cls-u">${escH(unit.title)}</div>`:''}
+      <h1 class="au-cls-h">${escH(cls.title)}</h1>
+      ${cls.date?`<div class="au-cls-d">${escH(fmtDate(cls.date))}</div>`:''}
+      ${cls.objective?`<div class="au-goal"><span>Hoy vamos a…</span>${escH(cls.objective)}</div>`:''}
+      ${stage}
+      ${cls.desc?`<p class="au-desc">${escH(cls.desc)}</p>`:''}
+      ${res.length?`<div class="au-res">${res.map((r,i)=>`<button class="au-res-b" onclick="aulaToggleRes(${i})"><span>${getResInfo2(r.type).icon}</span>${escH(r.title)}</button><div class="au-res-box" id="au-res-${i}"></div>`).join('')}</div>`:''}
+      <button class="au-done${done?' on':''}" onclick="aulaMark('${escA(grp.code)}','${escA(cls.id)}')">${done?'✓ ¡Misión cumplida!':'⭐ ¡Terminé esta misión!'}</button>
+    </main>`;
+  window._aulaRes=res;
+}
+function aulaToggleRes(i){
+  const box=document.getElementById('au-res-'+i);const r=window._aulaRes?.[i];if(!box||!r)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  if(r.type==='link'){window.open(r.url,'_blank','noopener');return;}
+  if(r.type==='image'){box.innerHTML=`<img src="${escA(r.url)}" alt="${escA(r.title)}">`;return;}
+  if(r.type==='html'&&!/^https?:/i.test(r.url)){box.innerHTML=`<iframe srcdoc="${escA(r.url)}" sandbox="allow-scripts allow-same-origin"></iframe>`;return;}
+  box.innerHTML=`<iframe src="${escA(buildEmbedUrl(r.url,r.type))}" allowfullscreen allow="fullscreen;autoplay;encrypted-media"></iframe>`;
+}
+function aulaMark(code,clsId){
+  const f=aulaFind(code);if(!f)return;const set=aulaDone(f.grp);
+  if(set.has(clsId))set.delete(clsId);else{set.add(clsId);cxConfetti(gTheme(f.g).c);}
+  aulaSetDone(f.grp,set);
+  const unitId=(f.grp.classes.find(c=>c.id===clsId)||{}).unitId;
+  const cs=f.grp.classes.filter(c=>c.unitId&&c.unitId===unitId);
+  const unitDone=unitId&&cs.length&&cs.every(c=>set.has(c.id));
+  aulaClass(f.g,f.grp,clsId);
+  if(set.has(clsId))aulaToast(unitDone?'🏅 ¡Ganaste la insignia de esta unidad!':'⭐ ¡Misión cumplida!');
+}
+function aulaToast(msg){const t=document.createElement('div');t.className='au-toast';t.textContent=msg;document.getElementById('aula').appendChild(t);setTimeout(()=>t.remove(),2600);}
+function cxConfetti(c){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const cols=[c,'#FFC93C','#2EC4B6','#FF6B6B','#7B61FF'];const host=document.createElement('div');host.className='au-confetti';
+  for(let i=0;i<60;i++){const s=document.createElement('i');s.style.left=Math.random()*100+'%';s.style.background=cols[i%cols.length];
+    s.style.animationDelay=Math.random()*.4+'s';s.style.animationDuration=1.4+Math.random()*1.2+'s';s.style.transform=`rotate(${Math.random()*360}deg)`;host.appendChild(s);}
+  document.body.appendChild(host);setTimeout(()=>host.remove(),3200);
+}
+window.addEventListener('hashchange',()=>{
+  if(location.hash.startsWith('#/aula'))openAulaRoute();
+  else{const a=document.getElementById('aula');if(a&&a.classList.contains('show')){a.classList.remove('show');a.innerHTML='';
+    if(!window.currentUser)location.reload();}}
+});
+
+/* ══════════ PWA ══════════ */
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
+
 </script>
 </body>
 </html>
