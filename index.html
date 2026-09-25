@@ -1470,6 +1470,100 @@ table.pl th.pl-c,table.pl td.pl-c{text-align:center;width:46px}
 #data-banner button{border:0;border-radius:9px;padding:6px 12px;font:700 12px var(--font-b);cursor:pointer;background:#fff;color:#111}
 .bk-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--br)}
 .bk-i{font-size:20px}.bk-t{font-weight:700;color:var(--tp);font-size:13px}
+/* ═══ CLASS DRIVE 5.0 — CONSOLA ADMIN ═══ */
+body.is-admin #tb-new-class,body.is-admin #bk-btn,body.is-admin .sb-foot .sb-foot-row:first-child .sb-fb:not(#admin-cp-btn),body.is-admin .sb-foot .sb-foot-row:nth-child(2) .sb-fb:first-child{display:none!important}
+body.is-blocked #sidebar .sb-nav,body.is-blocked #timer-fab{display:none}
+.ad-blocked{padding:26px;border-radius:18px;background:var(--rdd);color:var(--rd);font-weight:800;font-size:15px;text-align:center}
+#admin-panel{max-width:1320px}
+.ad-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.ad-title{font:900 28px var(--font-d);letter-spacing:-.8px;color:var(--tp)}
+.ad-sub{font-size:13px;color:var(--ts);margin-top:2px}
+.ad-tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--br);margin-bottom:18px}
+.ad-tab{border:0;background:transparent;color:var(--ts);font:700 13px var(--font-b);padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.ad-tab.on{color:var(--tp);border-bottom-color:var(--ac)}
+.ad-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.ad-kpi{background:var(--s1);border:1px solid var(--br);border-radius:16px;padding:16px 18px}
+.ad-kpi b{display:block;font:900 30px var(--font-d);color:var(--tp);letter-spacing:-1px}
+.ad-kpi span{font-size:12px;color:var(--ts)}
+.ad-card{background:var(--s1);border:1px solid var(--br);border-radius:18px;padding:18px;margin-bottom:16px}
+.ad-card-h{font:900 16px var(--font-d);color:var(--tp);margin-bottom:12px}
+.ad-info{font-size:13px;color:var(--ts);line-height:1.6;background:var(--acd);border-color:var(--bra)}
+.ad-info b{color:var(--tp)}
+.ad-mx-wrap{overflow-x:auto}
+table.ad-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5px;color:var(--tp)}
+.ad-mx th{text-align:left;font-size:11px;color:var(--ts);padding:8px;border-bottom:2px solid var(--br);white-space:nowrap}
+.ad-mx th[style]{border-bottom-color:var(--gc)}
+.ad-mx td{padding:8px;border-bottom:1px solid var(--br);vertical-align:middle}
+.ad-who{display:flex;align-items:center;gap:10px}
+.ad-nm{font-weight:800;color:var(--tp);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-em{font-size:11px;color:var(--tm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-av,.ad-av-s{border-radius:50%;object-fit:cover;background:var(--ac);color:#fff;display:inline-grid;place-items:center;font-weight:800;flex-shrink:0}
+.ad-av{width:42px;height:42px;font-size:16px}.ad-av-s{width:24px;height:24px;font-size:11px}
+.ad-cell{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;width:100%;min-width:90px;border:1px solid var(--br);background:var(--s2);border-radius:10px;padding:6px 8px;cursor:pointer;color:var(--tp);font-family:var(--font-b)}
+.ad-cell:hover{border-color:var(--gc)}
+.ad-cell span{font-weight:900;font-size:14px;grid-row:1/3}
+.ad-cell i{height:6px;border-radius:6px;background:var(--s4);overflow:hidden;display:block}
+.ad-cell em{display:block;height:100%;background:var(--gc)}
+.ad-cell small{font-size:10px;color:var(--ts);text-align:left}
+.ad-empty{color:var(--tm);text-align:center}
+.ad-when{font-size:11px;color:var(--tm);white-space:nowrap}
+.ad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.ad-tc{background:var(--s1);border:1px solid var(--br);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.ad-tc-top{display:flex;gap:10px;align-items:center}
+.ad-role{background:var(--s3);border:1px solid var(--br);border-radius:10px;color:var(--tp);font:700 12px var(--font-b);padding:6px 8px;cursor:pointer}
+.ad-tc-stats{display:flex;gap:14px;font-size:12px;color:var(--ts)}
+.ad-tc-stats b{color:var(--tp);font-size:15px}
+.ad-tc-bar{height:6px;border-radius:6px;background:var(--s4);overflow:hidden}
+.ad-tc-bar i{display:block;height:100%;background:var(--gr)}
+.ad-tc-act{display:flex;gap:6px;flex-wrap:wrap}
+.ad-sb-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-sb-empty{font-size:12px;color:var(--tm);padding:8px 16px}
+#grades-list .grp-row .ad-av-s{margin-right:4px}
+.ad-plan-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.ad-sel{width:auto;min-width:240px;font-size:13px;padding:9px 10px}
+.ad-gtabs{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.ad-gtabs button{border:1px solid var(--br);background:var(--s2);color:var(--tp);border-radius:999px;padding:7px 12px;font:800 12px var(--font-b);cursor:pointer}
+.ad-gtabs button.on{background:var(--gc);border-color:var(--gc);color:#fff}
+.ad-gtabs small{opacity:.7;font-weight:700}
+.ad-ro td{padding:7px 8px}
+.ad-t{font-weight:800}
+.ad-ok{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--gc);color:#fff;font-weight:900;font-size:12px}
+.ad-no{color:var(--tm)}
+.ad-portal{text-decoration:none;font-size:14px;grid-column:3;grid-row:1}
+.ad-pf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ad-logo-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ad-logo-row img{width:56px;height:56px;object-fit:contain;border-radius:12px;background:#030712}
+.ad-color{display:flex;gap:8px;align-items:center}
+.ad-color input[type=color]{width:44px;height:36px;border:0;background:none;padding:0;cursor:pointer}
+.ad-presets{display:flex;gap:4px;flex-wrap:wrap}
+.ad-presets button{width:20px;height:20px;border-radius:50%;border:2px solid var(--s1);cursor:pointer}
+.ad-grow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.ad-gnum{width:40px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font:900 14px var(--font-d);flex-shrink:0}
+.ad-grow input[type=color]{width:40px;height:34px;border:0;background:none;padding:0;cursor:pointer;flex-shrink:0}
+.ad-emo{width:60px!important;text-align:center;font-size:18px}
+.ad-save{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.ad-bk{border-top:1px solid var(--br);padding:6px 0}
+.ad-bk summary{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 0;color:var(--tp);font-size:13px;list-style:none}
+.ad-bk summary::-webkit-details-marker{display:none}
+.ad-bk .bk-row{padding-left:34px}
+@media (max-width:900px){.ad-pf{grid-template-columns:1fr}}
+/* ═══ CLASS DRIVE 5.1 — ROLES ═══ */
+.ad-add{display:grid;grid-template-columns:1.3fr 1fr auto auto;gap:8px}
+.ad-badge{font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--s3);color:var(--tp);white-space:nowrap}
+.ad-pend{font-size:12px;color:var(--am);background:var(--amd);border-radius:10px;padding:8px 10px}
+.ad-dt{display:block;font-size:9.5px;color:var(--ts);margin-top:2px;white-space:nowrap}
+.ad-last{grid-column:2/4;font-size:11px;color:var(--gc);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-day{margin-bottom:16px}
+.ad-day-h{font:900 15px var(--font-d);color:var(--tp);margin:4px 0 8px}
+.ad-ev{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--s1);border:1px solid var(--br);border-left:4px solid var(--gc);margin-bottom:6px}
+.ad-ev-sec{font:900 14px var(--font-d);color:var(--gc);min-width:64px;white-space:nowrap}
+.ad-rico{font-size:28px;width:42px;text-align:center}
+.ad-perms{display:flex;flex-wrap:wrap;gap:5px}
+.ad-perms span{font-size:11px;padding:4px 8px;border-radius:999px;background:var(--s3);color:var(--tm);text-decoration:line-through}
+.ad-perms span.on{background:var(--grd);color:var(--gr);text-decoration:none;font-weight:700}
+.ld-date{font-size:10px;color:var(--ts);margin-left:4px}
+.gl-date{font-size:11px;color:var(--gr);font-weight:700;white-space:nowrap}
+@media (max-width:760px){.ad-add{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1787,7 +1881,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 4.2 — APP LOGIC
+   CLASS DRIVE 5.1 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -6392,6 +6486,635 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(t&&!document.getElementById('bk-btn')){const b=document.createElement('button');b.className='sb-fb';b.id='bk-btn';b.textContent='🛟 Respaldos';b.onclick=openBackups;t.appendChild(b);}
 });
 if(document.readyState!=='loading')document.dispatchEvent(new Event('DOMContentLoaded'));
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 5.0 — CONSOLA DE ADMINISTRACIÓN
+   El administrador no tiene grupos: supervisa profesores y sus
+   planeaciones, gestiona roles, personaliza la plataforma para
+   todos y hace respaldos generales.
+═══════════════════════════════════════════════════════════════ */
+const adminData={loaded:false,list:[],byEmail:{}};
+const adminView={tab:'resumen',email:null,grade:null};
+function isAdminUser(){return window.currentUser?.email===ADMIN||window.userRole==='admin';}
+function roleLabel(r){return r==='admin'?'⚡ Admin':r==='blocked'?'⛔ Bloqueado':'👨‍🏫 Profe';}
+function timeAgo(t){if(!t)return'—';const s=(Date.now()-new Date(t).getTime())/1000;
+  if(s<90)return'hace un momento';if(s<3600)return'hace '+Math.round(s/60)+' min';if(s<86400)return'hace '+Math.round(s/3600)+' h';
+  const d=Math.round(s/86400);return d===1?'ayer':'hace '+d+' días';}
+function fmtDT(t){return new Date(t).toLocaleString('es-CO',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function mixHex(a,b,p){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=h(a),B=h(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*p).toString(16).padStart(2,'0')).join('');}
+function avatarHtml(t,cls){return t.photo?`<img class="${cls}" src="${escA(t.photo)}" alt="" referrerpolicy="no-referrer">`:`<span class="${cls}">${escH((t.name||t.email||'?')[0].toUpperCase())}</span>`;}
+
+/* ── Rol y aspecto del menú ── */
+function renderRoleBadge(){
+  const r=window.currentUser?.email===ADMIN?'admin':(window.userRole||'teacher');window.userRole=r;
+  const a=r==='admin';
+  const roleEl=document.getElementById('sb-role');
+  if(roleEl){roleEl.textContent=roleLabel(r);roleEl.className='sb-role '+(a?'admin':'teacher');}
+  ['admin-nav','admin-panel-btn','admin-cp-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=a?'':'none';});
+  document.body.classList.toggle('is-admin',a);document.body.classList.toggle('is-blocked',r==='blocked');
+  const lbl=[...document.querySelectorAll('.sb-sec-lbl')].find(x=>/grupos|profesores/i.test(x.textContent));
+  if(lbl)lbl.textContent=a?'Profesores':'Mis Grupos';
+  const an=document.getElementById('admin-nav');if(an)an.innerHTML='<span class="sb-item-icon">⚡</span>Consola admin';
+}
+
+/* ── Plataforma: marca, colores y grados para todos ── */
+async function loadPlatform(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/plataforma?id=eq.1&select=config,updated_at',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(r.ok){const rows=await r.json();if(rows?.[0]?.config){window._platform=rows[0].config;window._platformAt=rows[0].updated_at;applyPlatform(window._platform);}}
+  }catch(e){}
+}
+function applyPlatform(cfg){
+  if(!cfg)return;
+  if(cfg.appName)localStorage.setItem('cd-app-name',cfg.appName);
+  if(cfg.appSub)localStorage.setItem('cd-app-sub',cfg.appSub);
+  if(cfg.accent)localStorage.setItem('cd-accent',cfg.accent);
+  if(cfg.logoImg){localStorage.setItem('cd-logo-img',cfg.logoImg);localStorage.removeItem('cd-logo-emoji');}
+  else if(cfg.logoImg==='')localStorage.removeItem('cd-logo-img');
+  if(cfg.theme&&!localStorage.getItem('cd-theme-own'))localStorage.setItem('cd-theme',cfg.theme);
+  (cfg.grades||[]).forEach((g,i)=>{const t=GRADE_THEME[i];if(!t||!g)return;
+    if(g.c&&/^#[0-9a-f]{6}$/i.test(g.c)){t.c=g.c;t.s=mixHex(g.c,'#ffffff',.82);t.d=mixHex(g.c,'#000000',.4);}
+    if(g.m)t.m=g.m;if(g.n)t.n=g.n;});
+}
+const _applyStoredSettingsBase=applyStoredSettings;
+applyStoredSettings=function(){
+  applyPlatform(window._platform);applyStoredTheme();applyStoredColor();applyStoredLogo();_applyStoredSettingsBase();
+  if(document.getElementById('app')?.classList.contains('show'))renderSidebar();
+};
+const _toggleThemeBase=toggleTheme;
+toggleTheme=function(){localStorage.setItem('cd-theme-own','1');_toggleThemeBase();};
+const _bootBase=bootApp;
+bootApp=function(){loadPlatform().finally(()=>_bootBase());};
+const _openAulaBase=openAulaRoute;
+openAulaRoute=async function(){if(!window._platform)await loadPlatform();return _openAulaBase();};
+
+/* ── El admin no tiene grupos: inicio = consola ── */
+const _showWelcomeBase=showWelcome;
+showWelcome=function(){
+  if(window.userRole==='blocked'){
+    hideAll();const w=document.getElementById('welcome');w.style.display='flex';
+    const d=document.getElementById('wlc-dashboard');if(d)d.innerHTML='<div class="ad-blocked">⛔ Tu cuenta está desactivada. Pide al administrador que la habilite.</div>';
+    window._loadOK=false;return;
+  }
+  if(isAdminUser()){openAdminPanel();return;}
+  _showWelcomeBase();
+};
+const _renderSidebarBase=renderSidebar;
+renderSidebar=function(){
+  if(!isAdminUser())return _renderSidebarBase();
+  const list=document.getElementById('grades-list');if(!list)return;
+  const q=(document.getElementById('sb-search')?.value||'').toLowerCase();
+  const rows=adminData.list.filter(t=>!q||(t.name+' '+t.email).toLowerCase().includes(q));
+  list.innerHTML=adminData.loaded?(rows.map(t=>`<div class="grp-row${adminView.email===t.email&&adminView.tab==='plan'?' active':''}" onclick="adminOpenPlan('${escA(t.email)}')" title="${escA(t.email)}">
+      ${avatarHtml(t,'ad-av-s')}<span class="ad-sb-name">${escH(t.name)}</span><span class="grp-cnt">${t.lessons}</span></div>`).join('')||'<div class="ad-sb-empty">Sin profesores</div>')
+    :'<div class="ad-sb-empty">Cargando profesores…</div>';
+};
+const _addLessonRowBase=addLessonRow;
+addLessonRow=function(){if(isAdminUser()){showToast('El administrador no tiene grupos propios');return;}_addLessonRowBase();};
+
+/* ── Datos de todos los profesores ── */
+function migrateCopy(st){
+  const saved=state;
+  try{state=JSON.parse(JSON.stringify(st&&st.grades?st:{grades:{}}));fixState();return state;}
+  catch(e){return{grades:{}};}finally{state=saved;}
+}
+function teacherStats(st){
+  let lessons=0,groups=0,done=0,slots=0;const byGrade={};
+  Object.values(st.grades||{}).forEach(g=>{
+    const ls=Object.values(g.lessons||{});const gr=Object.values(g.groups||{});
+    let d=0;ls.forEach(l=>gr.forEach(x=>{if(l.done?.[x.id])d++;}));
+    lessons+=ls.length;groups+=gr.length;done+=d;slots+=ls.length*gr.length;
+    byGrade[g.number]={id:g.id,lessons:ls.length,pct:ls.length&&gr.length?Math.round(d/(ls.length*gr.length)*100):0};
+  });
+  return{lessons,groups,pct:slots?Math.round(done/slots*100):0,byGrade};
+}
+async function loadAdminData(force){
+  if(adminData.loaded&&!force)return adminData;
+  initSB();if(!sb)throw new Error('Sin conexión con la base de datos');
+  const[p,u]=await Promise.all([sb.from('profiles').select('*'),sb.from('user_data').select('user_email,state,updated_at')]);
+  if(u.error)throw u.error;
+  const profiles=p.data||[];const map={};
+  profiles.forEach(pr=>{map[pr.email]={email:pr.email,name:pr.name||pr.email.split('@')[0],photo:pr.photo_url||'',role:pr.role||'teacher',created_at:pr.created_at,hasProfile:true};});
+  (u.data||[]).forEach(r=>{
+    const t=map[r.user_email]||(map[r.user_email]={email:r.user_email,name:r.user_email.split('@')[0],photo:'',role:'teacher',hasProfile:false});
+    t.state=migrateCopy(r.state);t.updated_at=r.updated_at;Object.assign(t,teacherStats(t.state));
+  });
+  if(map[ADMIN])map[ADMIN].role='admin';
+  adminData.byEmail=map;
+  adminData.list=Object.values(map).filter(t=>!(t.email===ADMIN&&!t.lessons)).map(t=>({lessons:0,groups:0,pct:0,byGrade:{},...t}))
+    .sort((a,b)=>(b.lessons-a.lessons)||String(a.name).localeCompare(String(b.name)));
+  adminData.loaded=true;renderSidebar();return adminData;
+}
+
+/* ══════════ CONSOLA ══════════ */
+function openAdminPanel(){
+  if(!isAdminUser()){showToast('Solo el administrador puede acceder.');return;}
+  hideAll();const p=document.getElementById('admin-panel');p.style.display='block';p.classList.add('show');
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('admin-nav')?.classList.add('active');
+  renderAdminPanel();
+}
+function renderAdminPanel(){
+  const p=document.getElementById('admin-panel');
+  const tabs=[['resumen','📊 Resumen'],['profes','👨‍🏫 Profesores'],['plan','📋 Planeaciones'],['plataforma','🎨 Plataforma'],['respaldos','🛟 Respaldos']];
+  document.getElementById('breadcrumb').innerHTML=`<span>Class Drive</span><span class="bc-s">›</span><span class="bc-a">⚡ Consola admin</span>`;
+  p.innerHTML=`<div class="ad-head"><div><div class="ad-title">Consola de administración</div>
+      <div class="ad-sub">Supervisa a los profesores, sus planeaciones y la plataforma completa.</div></div>
+      <button class="cx-btn" onclick="adminRefresh()">↻ Actualizar datos</button></div>
+    <div class="ad-tabs">${tabs.map(([k,l])=>`<button class="ad-tab${adminView.tab===k?' on':''}" onclick="adminGo('${k}')">${l}</button>`).join('')}</div>
+    <div id="admin-content"><div class="cx-muted" style="padding:20px">Cargando…</div></div>`;
+  loadAdminTab(adminView.tab);
+}
+function adminGo(tab){adminView.tab=tab;renderAdminPanel();renderSidebar();}
+function adminTab(tab){adminGo(tab);}
+async function adminRefresh(){adminData.loaded=false;renderSidebar();renderAdminPanel();}
+function adminOpenPlan(email,gradeNum){
+  adminView.email=email;if(gradeNum)adminView.grade=gradeNum;adminView.tab='plan';
+  if(!document.getElementById('admin-panel')?.classList.contains('show'))openAdminPanel();else renderAdminPanel();
+  renderSidebar();
+}
+async function loadAdminTab(tab){
+  const c=document.getElementById('admin-content');if(!c)return;
+  try{await loadAdminData();}catch(e){c.innerHTML=`<div class="im-err">No se pudieron cargar los datos: ${escH(e.message||e)}</div>`;return;}
+  if(tab==='resumen')c.innerHTML=adminResumen();
+  else if(tab==='profes')c.innerHTML=adminProfes();
+  else if(tab==='plan')c.innerHTML=adminPlan();
+  else if(tab==='plataforma'){c.innerHTML=adminPlataforma();}
+  else if(tab==='respaldos'){c.innerHTML='<div class="cx-muted">Cargando respaldos…</div>';c.innerHTML=await adminRespaldos();}
+}
+
+/* ── Resumen ── */
+function adminResumen(){
+  const L=adminData.list;const total=L.reduce((n,t)=>n+t.lessons,0);
+  const act=L.filter(t=>t.updated_at&&Date.now()-new Date(t.updated_at)<7*864e5).length;
+  const avg=L.filter(t=>t.lessons).length?Math.round(L.filter(t=>t.lessons).reduce((n,t)=>n+t.pct,0)/L.filter(t=>t.lessons).length):0;
+  const nums=[1,2,3,4,5,6];
+  return`<div class="ad-kpis">
+      <div class="ad-kpi"><b>${L.length}</b><span>Profesores</span></div>
+      <div class="ad-kpi"><b>${total}</b><span>Clases planeadas</span></div>
+      <div class="ad-kpi"><b>${avg}%</b><span>Avance promedio</span></div>
+      <div class="ad-kpi"><b>${act}</b><span>Activos esta semana</span></div>
+    </div>
+    <div class="ad-card"><div class="ad-card-h">Avance por profesor y grado</div>
+      <div class="ad-mx-wrap"><table class="ad-mx"><thead><tr><th>Profesor</th>${nums.map(n=>`<th style="--gc:${gTheme(n).c}">${gTheme(n).m} ${n}°</th>`).join('')}<th>Último cambio</th></tr></thead>
+      <tbody>${L.map(t=>`<tr><td><div class="ad-who">${avatarHtml(t,'ad-av-s')}<div><div class="ad-nm">${escH(t.name)}</div><div class="ad-em">${escH(t.email)}</div></div></div></td>
+        ${nums.map(n=>{const b=t.byGrade?.[n];return b&&b.lessons?`<td><button class="ad-cell" style="--gc:${gTheme(n).c}" onclick="adminOpenPlan('${escA(t.email)}',${n})"><span>${b.lessons}</span><i><em style="width:${b.pct}%"></em></i><small>${b.pct}%</small></button></td>`:'<td class="ad-empty">—</td>';}).join('')}
+        <td class="ad-when">${timeAgo(t.updated_at)}</td></tr>`).join('')||`<tr><td colspan="8" class="cx-muted" style="padding:16px">Aún no hay profesores registrados.</td></tr>`}</tbody></table></div>
+      <div class="cx-muted" style="margin-top:8px">Número = clases planeadas del grado · barra = porcentaje dado en todas sus secciones. Toca una celda para abrir esa planeación.</div></div>`;
+}
+
+/* ── Profesores y roles ── */
+function adminProfes(){
+  return`<div class="ad-card ad-info">Cualquier profesor entra en <b>${escH(location.origin)}</b> con su cuenta de Google y aparece aquí. Usa <b>Bloqueado</b> para quitarle el acceso sin borrar su trabajo.</div>
+    <div class="ad-grid">${adminData.list.map(t=>{const me=t.email===ADMIN;return`<div class="ad-tc">
+      <div class="ad-tc-top">${avatarHtml(t,'ad-av')}<div style="flex:1;min-width:0"><div class="ad-nm">${escH(t.name)}</div><div class="ad-em">${escH(t.email)}</div></div>
+        <select class="ad-role" ${me?'disabled title="Administrador principal"':''} onchange="adminSetRole('${escA(t.email)}',this.value)">
+          ${['teacher','admin','blocked'].map(r=>`<option value="${r}"${t.role===r?' selected':''}>${roleLabel(r)}</option>`).join('')}</select></div>
+      <div class="ad-tc-stats"><span><b>${t.lessons}</b> clases</span><span><b>${t.groups}</b> grupos</span><span><b>${t.pct}%</b> dado</span></div>
+      <div class="ad-tc-bar"><i style="width:${t.pct}%"></i></div>
+      <div class="ad-when">Último cambio: ${timeAgo(t.updated_at)}</div>
+      <div class="ad-tc-act">
+        <button class="cx-btn" onclick="adminOpenPlan('${escA(t.email)}')">📋 Ver planeación</button>
+        <button class="cx-btn" onclick="adminBackupOne('${escA(t.email)}')">🛟 Respaldar</button>
+        <button class="cx-btn" onclick="adminDownloadOne('${escA(t.email)}')" title="Descargar copia">⬇</button>
+      </div></div>`;}).join('')}</div>`;
+}
+async function adminSetRole(email,role){
+  const t=adminData.byEmail[email];if(!t)return;
+  if(!confirm(`¿Cambiar a ${t.name} a ${roleLabel(role)}?`)){renderAdminPanel();return;}
+  try{
+    const r=t.hasProfile?await sb.from('profiles').update({role}).eq('email',email)
+      :await sb.from('profiles').insert({email,name:t.name,role});
+    if(r.error)throw r.error;t.role=role;t.hasProfile=true;showToast('Rol actualizado ✓');
+  }catch(e){showToast('No se pudo cambiar el rol: '+(e.message||e));}
+  renderAdminPanel();
+}
+
+/* ── Planeaciones (solo lectura) ── */
+function adminPlan(){
+  const L=adminData.list.filter(t=>t.lessons||t.groups);
+  if(!L.length)return'<div class="cx-muted">Todavía no hay planeaciones.</div>';
+  if(!adminView.email||!adminData.byEmail[adminView.email])adminView.email=L[0].email;
+  const t=adminData.byEmail[adminView.email];const grades=Object.values(t.state?.grades||{}).sort((a,b)=>a.number-b.number);
+  if(!adminView.grade||!grades.some(g=>g.number==adminView.grade))adminView.grade=(grades.find(g=>Object.keys(g.lessons||{}).length)||grades[0])?.number;
+  const g=grades.find(x=>x.number==adminView.grade);const th=gTheme(g||1);
+  const ls=Object.values(g?.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0));const grps=Object.values(g?.groups||{}).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true}));
+  let prev=null;const cols=8+grps.length;
+  const rows=ls.map(l=>{let sep='';if((l.period||'')!==prev){prev=l.period||'';if(prev)sep=`<tr class="pl-per" style="--pc:${periodColor(prev)}"><td colspan="${cols}"><span class="pl-per-b">${escH(prev)}</span>${escH(periodLabel(prev))}</td></tr>`;}
+    const ti=themeInfo(l.theme);
+    return sep+`<tr><td class="pl-n">${l.n}</td><td>${escH(l.period||'')}</td><td class="ad-t">${escH(l.title||'')}</td><td>${escH(l.desc||'')}</td><td>${escH(l.objective||'')}</td>
+      ${grps.map(x=>`<td class="pl-c">${l.done?.[x.id]?'<span class="ad-ok">✓</span>':'<span class="ad-no">○</span>'}</td>`).join('')}
+      <td class="pl-r">${l.canvaUrl?`<a href="${escA(canvaOpenUrl(l.canvaUrl))}" target="_blank" rel="noopener">🎨 Canva</a>`:''}${(l.links||[]).map(k=>k.url?`<a href="${escA(k.url)}" target="_blank" rel="noopener">${escH(k.label||'Enlace')}</a>`:`<span>${escH(k.label)}</span>`).join('')}${l.planUrl?`<a href="${escA(l.planUrl)}" target="_blank" rel="noopener">📋 Planeación</a>`:''}</td>
+      <td>${ti?`${ti.e} ${escH(ti.k)}`:escH(l.theme||'')}</td><td>${escH(l.standard||'')}</td></tr>`;}).join('');
+  const secs=grps.map(x=>{const d=ls.filter(l=>l.done?.[x.id]).length;const nx=ls.find(l=>!l.done?.[x.id]);
+    return`<div class="pl-sec" style="cursor:default"><span class="pl-sec-n">${escH(x.name)}</span><span class="pl-sec-bar"><i style="width:${ls.length?Math.round(d/ls.length*100):0}%"></i></span>
+      <span class="pl-sec-t">${nx?'Próxima: '+escH(nx.title||''):(ls.length?'Completa':'Sin clases')}</span><span class="pl-sec-c">${d}/${ls.length}</span>
+      <a class="ad-portal" href="${escA(location.origin+location.pathname+'#/aula/'+encodeURIComponent(t.email)+'/'+encodeURIComponent(x.code||''))}" target="_blank" rel="noopener" title="Ver portal de estudiantes">🎒</a></div>`;}).join('');
+  return`<div class="ad-plan-top">
+      <select class="cx-inp ad-sel" onchange="adminView.email=this.value;adminView.grade=null;loadAdminTab('plan');renderSidebar()">
+        ${L.map(x=>`<option value="${escA(x.email)}"${x.email===t.email?' selected':''}>${escH(x.name)} (${x.lessons} clases)</option>`).join('')}</select>
+      <div class="ad-gtabs">${grades.map(x=>`<button class="${x.number==adminView.grade?'on':''}" style="--gc:${gTheme(x).c}" onclick="adminView.grade=${x.number};loadAdminTab('plan')">${gTheme(x).m} ${x.number}° <small>${Object.keys(x.lessons||{}).length}</small></button>`).join('')}</div>
+      <button class="cx-btn" onclick="adminExportPlanCSV()">⬇ Exportar a Excel</button>
+    </div>
+    <div id="grade-view-ro" style="--gc:${th.c};--gs:${th.s};--gd:${th.d}">
+      <div class="pl-secs">${secs}</div>
+      ${ls.length?`<div class="pl-wrap"><table class="pl ad-ro"><thead><tr><th class="pl-n">#</th><th class="pl-p">Período</th><th class="pl-t">Tema / actividad</th><th class="pl-d">Descripción</th><th class="pl-o">Objetivo</th>
+        ${grps.map(x=>`<th class="pl-c">${escH(String(x.name).replace(/°/g,''))}</th>`).join('')}<th class="pl-r">Recursos</th><th class="pl-u">Unidad PYP</th><th class="pl-s">Estándar</th></tr></thead><tbody>${rows}</tbody></table></div>`
+        :'<div class="pl-empty"><div class="pl-empty-i">📋</div><h3>Sin clases en este grado</h3></div>'}
+    </div>`;
+}
+function adminExportPlanCSV(){
+  const t=adminData.byEmail[adminView.email];if(!t)return;
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const out=[];
+  Object.values(t.state.grades||{}).sort((a,b)=>a.number-b.number).forEach(g=>{
+    const grps=Object.values(g.groups||{}).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true}));
+    out.push([q(g.number+'°'),'','','','',...grps.map(()=>''),'','',''].join(';'));
+    out.push(['#','Período','Tema / actividad','Descripción','Objetivo de aprendizaje',...grps.map(x=>x.name),'Recursos','Unidad PYP','Dominio / estándar'].map(q).join(';'));
+    Object.values(g.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0)).forEach(l=>out.push([l.n,l.period,l.title,l.desc,l.objective,...grps.map(x=>l.done?.[x.id]?'Sí':''),
+      [l.canvaUrl,...(l.links||[]).map(k=>k.url?k.label+': '+k.url:k.label)].filter(Boolean).join(' | '),l.theme,l.standard].map(q).join(';')));
+    out.push('');
+  });
+  downloadBlob('\ufeff'+out.join('\n'),'planeacion-'+t.email.split('@')[0]+'.csv','text/csv;charset=utf-8');
+}
+function downloadBlob(content,name,type){const b=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+
+/* ── Plataforma ── */
+function adminPlataforma(){
+  const cfg=window._platform||{};
+  const name=cfg.appName||localStorage.getItem('cd-app-name')||'Class Drive';const sub=cfg.appSub||localStorage.getItem('cd-app-sub')||'GI School · Tecnología · PYP';
+  const acc=cfg.accent||localStorage.getItem('cd-accent')||'#6366f1';
+  window._pfLogo=cfg.logoImg;
+  return`<div class="ad-card ad-info">Estos ajustes se aplican a <b>todos</b> los profesores y al portal de estudiantes.${window._platformAt?' Última actualización: '+fmtDT(window._platformAt)+'.':''}</div>
+    <div class="ad-pf">
+      <div class="ad-card"><div class="ad-card-h">Identidad</div>
+        <div class="form-group"><label>Nombre de la plataforma</label><input id="pf-name" value="${escA(name)}"></div>
+        <div class="form-group"><label>Subtítulo</label><input id="pf-sub" value="${escA(sub)}"></div>
+        <div class="form-group"><label>Logo</label><div class="ad-logo-row"><img id="pf-logo-prev" src="${escA(cfg.logoImg||document.getElementById('sb-logo')?.src||'')}" alt="">
+          <label class="cx-btn">📂 Subir imagen<input type="file" accept="image/*" style="display:none" onchange="pfLogo(event)"></label>
+          <button class="cx-btn" onclick="window._pfLogo='';document.getElementById('pf-logo-prev').src='';showToast('Se usará el logo original')">Logo original</button></div></div>
+        <div class="form-2col"><div class="form-group"><label>Color principal</label><div class="ad-color"><input type="color" id="pf-acc" value="${escA(acc)}"><div class="ad-presets">${ACCENT_PRESETS.map(c=>`<button style="background:${c}" onclick="document.getElementById('pf-acc').value='${c}'" aria-label="${c}"></button>`).join('')}</div></div></div>
+          <div class="form-group"><label>Tema por defecto</label><select id="pf-theme"><option value="dark"${cfg.theme!=='light'?' selected':''}>🌙 Oscuro</option><option value="light"${cfg.theme==='light'?' selected':''}>☀️ Claro</option></select></div></div>
+      </div>
+      <div class="ad-card"><div class="ad-card-h">Grados</div>
+        <div class="cx-muted" style="margin-bottom:10px">Color, mascota y nombre de cada grado en las planeaciones y en el portal.</div>
+        ${GRADE_THEME.map((t,i)=>`<div class="ad-grow"><span class="ad-gnum" style="background:${t.c}" id="pf-gn-${i}">${i+1}°</span>
+          <input type="color" id="pf-gc-${i}" value="${t.c}" oninput="document.getElementById('pf-gn-${i}').style.background=this.value">
+          <input class="cx-inp ad-emo" id="pf-gm-${i}" value="${escA(t.m)}" maxlength="4" aria-label="Mascota">
+          <input class="cx-inp" id="pf-gt-${i}" value="${escA(t.n)}" aria-label="Nombre"></div>`).join('')}
+      </div>
+    </div>
+    <div class="ad-save"><button class="cx-btn" onclick="pfReset()">Restablecer valores originales</button><button class="cx-btn primary" onclick="pfSave()">Guardar para toda la plataforma</button></div>`;
+}
+function pfLogo(e){
+  const f=e.target.files?.[0];if(!f)return;const r=new FileReader();
+  r.onload=ev=>{const img=new Image();img.onload=()=>{const s=Math.min(1,256/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=img.width*s;c.height=img.height*s;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);window._pfLogo=c.toDataURL('image/png');document.getElementById('pf-logo-prev').src=window._pfLogo;};img.src=ev.target.result;};
+  r.readAsDataURL(f);
+}
+async function pfSave(){
+  const cfg={appName:document.getElementById('pf-name').value.trim()||'Class Drive',appSub:document.getElementById('pf-sub').value.trim(),
+    accent:document.getElementById('pf-acc').value,theme:document.getElementById('pf-theme').value,logoImg:window._pfLogo??(window._platform?.logoImg||''),
+    grades:GRADE_THEME.map((t,i)=>({c:document.getElementById('pf-gc-'+i).value,m:document.getElementById('pf-gm-'+i).value.trim()||t.m,n:document.getElementById('pf-gt-'+i).value.trim()||t.n}))};
+  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;}
+  catch(e){showToast('No se pudo guardar: '+(e.message||e)+'. ¿Ejecutaste el SQL de la versión 5.0?');return;}
+  window._platform=cfg;window._platformAt=new Date().toISOString();localStorage.removeItem('cd-theme-own');
+  applyStoredSettings();applyAccent(cfg.accent);setTheme(cfg.theme);renderAdminPanel();showToast('Plataforma actualizada para todos ✓');
+}
+async function pfReset(){
+  if(!confirm('¿Volver al nombre, colores y logo originales para todos?'))return;
+  const orig=[['#F2613F','🐣','Primero'],['#E89B00','🦊','Segundo'],['#1F9D5C','🐢','Tercero'],['#1C84DB','🐬','Cuarto'],['#6D55F0','🦉','Quinto'],['#D7336F','🚀','Sexto']];
+  const cfg={appName:'Class Drive',appSub:'GI School · Tecnología · PYP',accent:'#6366f1',theme:'dark',logoImg:'',grades:orig.map(([c,m,n])=>({c,m,n}))};
+  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;}
+  catch(e){showToast('No se pudo guardar: '+(e.message||e));return;}
+  window._platform=cfg;localStorage.removeItem('cd-logo-img');applyStoredSettings();applyAccent(cfg.accent);renderAdminPanel();showToast('Valores originales restablecidos ✓');
+}
+
+/* ── Respaldos de toda la plataforma ── */
+async function adminRespaldos(){
+  let rows=[];try{const{data,error}=await sb.from('respaldos').select('id,user_email,created_at,lessons,label').order('created_at',{ascending:false}).limit(300);if(!error)rows=data||[];}catch(e){}
+  const gen=rows.filter(r=>/general/i.test(r.label||''));const lastGen=gen[0];
+  const byT={};rows.forEach(r=>{(byT[r.user_email]=byT[r.user_email]||[]).push(r);});
+  return`<div class="ad-kpis">
+      <div class="ad-kpi"><b>${lastGen?timeAgo(lastGen.created_at):'Nunca'}</b><span>Último respaldo general</span></div>
+      <div class="ad-kpi"><b>${rows.length}</b><span>Respaldos guardados</span></div>
+      <div class="ad-kpi"><b>${Object.keys(byT).length}</b><span>Profesores con respaldo</span></div></div>
+    <div class="ad-card"><div class="ad-card-h">Respaldo general</div>
+      <div class="cx-muted" style="margin-bottom:12px">Guarda en la nube una copia de la planeación de cada profesor y descarga un archivo con toda la plataforma para guardarlo en tu Drive.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="cx-btn primary" onclick="adminBackupAll()">🛟 Respaldar toda la plataforma ahora</button>
+        <label class="cx-btn">⬆ Restaurar desde un archivo<input type="file" accept=".json" style="display:none" onchange="adminRestoreFile(event)"></label></div>
+      <div id="ad-file-res"></div></div>
+    <div class="ad-card"><div class="ad-card-h">Respaldos por profesor</div>
+      ${Object.entries(byT).map(([email,list])=>{const t=adminData.byEmail[email]||{name:email,email};return`<details class="ad-bk"><summary>${avatarHtml(t,'ad-av-s')}<b>${escH(t.name)}</b><span class="cx-muted">${plural(list.length,'respaldo')} · último ${timeAgo(list[0].created_at)}</span></summary>
+        ${list.slice(0,12).map(r=>`<div class="bk-row"><span class="bk-i">☁️</span><div style="flex:1"><div class="bk-t">${fmtDT(r.created_at)}</div><div class="cx-muted">${plural(r.lessons||0,'clase')} · ${escH(r.label||'')}</div></div>
+          <button class="cx-mini solid" onclick="adminRestore('${escA(email)}','${r.id}')">Restaurar</button></div>`).join('')}</details>`;}).join('')||'<div class="cx-muted">Aún no hay respaldos.</div>'}
+    </div>`;
+}
+async function adminBackupAll(){
+  showToast('Creando respaldo general…');
+  try{
+    const{data,error}=await sb.from('user_data').select('user_email,state,settings,updated_at');if(error)throw error;
+    const rows=(data||[]).filter(r=>r.state&&Object.keys(r.state).length);
+    const label='Respaldo general '+new Date().toLocaleDateString('es-CO');
+    for(let i=0;i<rows.length;i+=5){
+      const chunk=rows.slice(i,i+5).map(r=>({user_email:r.user_email,state:r.state,lessons:stateLessons(r.state),label}));
+      const{error:e2}=await sb.from('respaldos').insert(chunk);if(e2)throw e2;
+    }
+    const profiles=(await sb.from('profiles').select('*')).data||[];
+    const file={app:'Class Drive',version:'5.0',exportedAt:new Date().toISOString(),platform:window._platform||null,profiles,
+      users:rows.map(r=>({user_email:r.user_email,updated_at:r.updated_at,state:r.state,settings:{...(r.settings||{}),aiKey:undefined}}))};
+    downloadBlob(JSON.stringify(file),'classdrive-plataforma-'+new Date().toISOString().slice(0,10)+'.json','application/json');
+    showToast(`Respaldo general listo ✓ ${plural(rows.length,'profesor','profesores')}`);loadAdminTab('respaldos');
+  }catch(e){showToast('No se pudo completar el respaldo: '+(e.message||e));}
+}
+async function adminBackupOne(email){
+  try{const{data,error}=await sb.from('user_data').select('state').eq('user_email',email).single();if(error)throw error;
+    const r=await sb.from('respaldos').insert({user_email:email,state:data.state,lessons:stateLessons(data.state),label:'Respaldo del administrador'});if(r.error)throw r.error;
+    showToast('Respaldo creado ✓');}catch(e){showToast('No se pudo respaldar: '+(e.message||e));}
+}
+async function adminDownloadOne(email){
+  try{const{data,error}=await sb.from('user_data').select('user_email,state,updated_at').eq('user_email',email).single();if(error)throw error;
+    downloadBlob(JSON.stringify({app:'Class Drive',exportedAt:new Date().toISOString(),users:[data]}),'classdrive-'+email.split('@')[0]+'-'+new Date().toISOString().slice(0,10)+'.json','application/json');}
+  catch(e){showToast('No se pudo descargar: '+(e.message||e));}
+}
+async function adminWriteState(email,st,why){
+  const cur=await sb.from('user_data').select('state').eq('user_email',email).single();
+  if(cur.data?.state)await sb.from('respaldos').insert({user_email:email,state:cur.data.state,lessons:stateLessons(cur.data.state),label:'Antes de restaurar (admin)'});
+  const rev=Date.now();const ns={...st,_rev:rev};
+  let r=await sb.from('user_data').update({state:ns,rev}).eq('user_email',email);
+  if(r.error&&/rev/.test(r.error.message||''))r=await sb.from('user_data').update({state:ns}).eq('user_email',email);
+  if(r.error)throw r.error;
+  if(email===window.currentUser?.email){state=ns;fixState();window._baseRev=rev;}
+}
+async function adminRestore(email,id){
+  const t=adminData.byEmail[email]||{name:email};
+  try{const{data,error}=await sb.from('respaldos').select('state,created_at,lessons').eq('id',id).single();if(error)throw error;
+    if(!confirm(`¿Restaurar la planeación de ${t.name} al ${fmtDT(data.created_at)} (${plural(data.lessons||0,'clase')})?\nLo que tiene ahora se guarda antes como respaldo.`))return;
+    await adminWriteState(email,data.state);showToast('Planeación restaurada ✓');adminData.loaded=false;loadAdminTab('respaldos');}
+  catch(e){showToast('No se pudo restaurar: '+(e.message||e));}
+}
+function adminRestoreFile(e){
+  const f=e.target.files?.[0];if(!f)return;const rd=new FileReader();
+  rd.onload=ev=>{try{const d=JSON.parse(ev.target.result);const users=d.users||(d.grades?[{user_email:window.currentUser.email,state:d}]:[]);
+    if(!users.length)throw new Error('vacío');window._adFile=users;
+    document.getElementById('ad-file-res').innerHTML=`<div class="im-prev" style="margin-top:12px"><div class="im-t">Archivo del ${d.exportedAt?fmtDT(d.exportedAt):'—'}</div>
+      ${users.map((u,i)=>`<div class="bk-row"><span class="bk-i">📄</span><div style="flex:1"><div class="bk-t">${escH(adminData.byEmail[u.user_email]?.name||u.user_email)}</div><div class="cx-muted">${plural(stateLessons(u.state),'clase')}</div></div>
+        <button class="cx-mini solid" onclick="adminRestoreFromFile(${i})">Restaurar</button></div>`).join('')}</div>`;}
+    catch(err){showToast('Ese archivo no es un respaldo de Class Drive');}};
+  rd.readAsText(f);e.target.value='';
+}
+async function adminRestoreFromFile(i){
+  const u=window._adFile?.[i];if(!u)return;
+  if(!confirm(`¿Restaurar la planeación de ${adminData.byEmail[u.user_email]?.name||u.user_email} desde el archivo?`))return;
+  try{await adminWriteState(u.user_email,u.state);showToast('Restaurado ✓');adminData.loaded=false;}catch(e){showToast('No se pudo restaurar: '+(e.message||e));}
+}
+document.getElementById('sb-search')?.addEventListener('input',()=>{if(isAdminUser())renderSidebar();});
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 5.1 — ROLES Y PERMISOS
+   👑 Super admin (franksanlo@gmail.com): todo.
+   ⚡ Admin: solo ve planeaciones y avance de todos, con fechas.
+   Roles nuevos: los crea el super admin con los permisos que elija.
+═══════════════════════════════════════════════════════════════ */
+const PERMS=[
+  ['resumen','Ver resumen y avance general'],
+  ['planeaciones','Ver planeaciones de todos, con fechas'],
+  ['profesores','Ver la lista de profesores'],
+  ['gestionar','Agregar profesores y cambiar roles'],
+  ['plataforma','Configurar nombre, logo y colores'],
+  ['respaldos','Hacer y restaurar respaldos'],
+  ['ensenar','Tiene grupos y planeación propios'],
+];
+const BUILTIN_ROLES={
+  superadmin:{name:'Super admin',icon:'👑',perms:PERMS.map(p=>p[0]).filter(p=>p!=='ensenar'),fixed:true},
+  admin:{name:'Admin',icon:'⚡',perms:['resumen','planeaciones'],fixed:true},
+  teacher:{name:'Profe',icon:'👨‍🏫',perms:['ensenar'],fixed:true},
+  blocked:{name:'Bloqueado',icon:'⛔',perms:[],fixed:true,blocked:true},
+};
+function allRoles(){return{...BUILTIN_ROLES,...(window._platform?.roles||{})};}
+function roleDef(r){return allRoles()[r]||BUILTIN_ROLES.teacher;}
+function myRole(){return window.currentUser?.email===ADMIN?'superadmin':(window.userRole||'teacher');}
+function isSuper(){return myRole()==='superadmin';}
+function can(p){if(isSuper())return p!=='ensenar';return(roleDef(myRole()).perms||[]).includes(p);}
+function hasConsole(){return['resumen','planeaciones','profesores','gestionar','plataforma','respaldos'].some(can);}
+function isAdminUser(){return hasConsole()&&!can('ensenar');}
+function roleLabel(r){const d=roleDef(r);return d.icon+' '+d.name;}
+function shortDate(t){try{return new Date(t).toLocaleDateString('es-CO',{day:'numeric',month:'short'});}catch(e){return'';}}
+
+function renderRoleBadge(){
+  const r=myRole();if(r!=='superadmin')window.userRole=r;
+  const d=roleDef(r);const blocked=!!d.blocked;
+  const roleEl=document.getElementById('sb-role');
+  if(roleEl){roleEl.textContent=d.icon+' '+d.name;roleEl.className='sb-role '+(hasConsole()?'admin':'teacher');}
+  const con=hasConsole();
+  ['admin-nav','admin-panel-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=con?'':'none';});
+  const cp=document.getElementById('admin-cp-btn');if(cp)cp.style.display=can('plataforma')?'':'none';
+  document.body.classList.toggle('is-admin',isAdminUser());document.body.classList.toggle('is-blocked',blocked);
+  const lbl=[...document.querySelectorAll('.sb-sec-lbl')].find(x=>/grupos|profesores/i.test(x.textContent));
+  if(lbl)lbl.textContent=isAdminUser()?'Profesores':'Mis Grupos';
+  const an=document.getElementById('admin-nav');if(an)an.innerHTML=`<span class="sb-item-icon">${isSuper()?'👑':'⚡'}</span>Consola`;
+  if(blocked)window._loadOK=false;
+}
+/* Bloqueo según el rol (incluye roles personalizados) */
+const _showWelcomeRoles=showWelcome;
+showWelcome=function(){
+  if(roleDef(myRole()).blocked){
+    hideAll();document.getElementById('welcome').style.display='flex';
+    const d=document.getElementById('wlc-dashboard');if(d)d.innerHTML='<div class="ad-blocked">⛔ Tu cuenta está desactivada. Pide al administrador que la habilite.</div>';
+    window._loadOK=false;return;
+  }
+  _showWelcomeRoles();
+};
+
+/* ── Fecha en que se dio cada clase en cada sección ── */
+const _setDoneRoles=setDone;
+setDone=function(id,grpId,val){
+  const l=curGrade()?.lessons?.[id];
+  if(l){l.doneAt=l.doneAt||{};if(val)l.doneAt[grpId]=l.doneAt[grpId]||new Date().toISOString();else delete l.doneAt[grpId];}
+  _setDoneRoles(id,grpId,val);
+};
+const _openLessonRoles=openLesson;
+openLesson=function(id,focus){
+  _openLessonRoles(id,focus);
+  const g=curGrade(),l=g?.lessons?.[id];if(!l)return;
+  const grps=sortedGroups(g);
+  document.querySelectorAll('#lesson-drawer .ld-chips label').forEach((lb,i)=>{const x=grps[i];const t=x&&l.doneAt?.[x.id];
+    if(t&&l.done?.[x.id]){const s=document.createElement('small');s.className='ld-date';s.textContent=shortDate(t);lb.appendChild(s);}});
+};
+const _renderClassesRoles=renderClasses2;
+renderClasses2=function(){
+  _renderClassesRoles();
+  const g=curGrade(),grp=curGrp();if(!g||!grp)return;
+  document.querySelectorAll('#cls-list2 .gl-row').forEach(row=>{
+    const m=row.querySelector('.gl-main')?.getAttribute('onclick')?.match(/openLesson\('([^']+)'/);const l=m&&g.lessons?.[m[1]];
+    const t=l?.doneAt?.[grp.id];if(t&&l.done?.[grp.id]){const s=document.createElement('span');s.className='gl-date';s.textContent='Dada el '+shortDate(t);row.querySelector('.gl-main')?.after(s);}
+  });
+};
+
+/* ══════════ CONSOLA SEGÚN PERMISOS ══════════ */
+const CONSOLE_TABS=[['resumen','📊 Resumen','resumen'],['profes','👨‍🏫 Profesores','profesores'],['plan','📋 Planeaciones','planeaciones'],
+  ['fechas','📅 Por fechas','planeaciones'],['plataforma','🎨 Plataforma','plataforma'],['respaldos','🛟 Respaldos','respaldos'],['roles','🔑 Roles','__super']];
+function tabAllowed(t){const p=CONSOLE_TABS.find(x=>x[0]===t)?.[2];return p==='__super'?isSuper():can(p);}
+function openAdminPanel(){
+  if(!hasConsole()){showToast('No tienes acceso a la consola.');return;}
+  hideAll();const p=document.getElementById('admin-panel');p.style.display='block';p.classList.add('show');
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('admin-nav')?.classList.add('active');
+  renderAdminPanel();
+}
+function renderAdminPanel(){
+  const p=document.getElementById('admin-panel');
+  const tabs=CONSOLE_TABS.filter(t=>tabAllowed(t[0]));
+  if(!tabAllowed(adminView.tab))adminView.tab=tabs[0]?.[0];
+  const d=roleDef(myRole());
+  document.getElementById('breadcrumb').innerHTML=`<span>Class Drive</span><span class="bc-s">›</span><span class="bc-a">${d.icon} Consola</span>`;
+  p.innerHTML=`<div class="ad-head"><div><div class="ad-title">${isSuper()?'Consola del super admin':'Consola de supervisión'}</div>
+      <div class="ad-sub">${isSuper()?'Control total: profesores, roles, planeaciones, plataforma y respaldos.':'Planeaciones y avance de todos los profesores, con las fechas en que se dio cada clase.'}</div></div>
+      <button class="cx-btn" onclick="adminRefresh()">↻ Actualizar datos</button></div>
+    <div class="ad-tabs">${tabs.map(([k,l])=>`<button class="ad-tab${adminView.tab===k?' on':''}" onclick="adminGo('${k}')">${l}</button>`).join('')}</div>
+    <div id="admin-content"><div class="cx-muted" style="padding:20px">Cargando…</div></div>`;
+  loadAdminTab(adminView.tab);
+}
+async function loadAdminTab(tab){
+  const c=document.getElementById('admin-content');if(!c)return;
+  if(!tabAllowed(tab)){c.innerHTML='<div class="im-err">No tienes permiso para ver esta sección.</div>';return;}
+  try{await loadAdminData();}catch(e){c.innerHTML=`<div class="im-err">No se pudieron cargar los datos: ${escH(e.message||e)}</div>`;return;}
+  if(tab==='resumen')c.innerHTML=adminResumen();
+  else if(tab==='profes')c.innerHTML=adminProfes();
+  else if(tab==='plan')c.innerHTML=adminPlan();
+  else if(tab==='fechas')c.innerHTML=adminFechas();
+  else if(tab==='plataforma')c.innerHTML=adminPlataforma();
+  else if(tab==='respaldos'){c.innerHTML='<div class="cx-muted">Cargando respaldos…</div>';c.innerHTML=await adminRespaldos();}
+  else if(tab==='roles')c.innerHTML=adminRoles();
+}
+function adminOpenPlan(email,gradeNum){
+  if(!can('planeaciones')){showToast('Tu rol no permite ver planeaciones');return;}
+  adminView.email=email;if(gradeNum)adminView.grade=gradeNum;adminView.tab='plan';
+  if(!document.getElementById('admin-panel')?.classList.contains('show'))openAdminPanel();else renderAdminPanel();
+  renderSidebar();
+}
+
+/* ── Profesores: roles y alta manual ── */
+function roleOptions(sel){return Object.entries(allRoles()).filter(([k])=>k!=='superadmin').map(([k,d])=>`<option value="${k}"${k===sel?' selected':''}>${d.icon} ${escH(d.name)}</option>`).join('');}
+function adminProfes(){
+  const g=can('gestionar');
+  return`${g?`<div class="ad-card"><div class="ad-card-h">Agregar profesor manualmente</div>
+      <div class="cx-muted" style="margin-bottom:10px">Queda registrado con su rol. Cuando entre por primera vez con ese correo de Google, ya tendrá su acceso listo.</div>
+      <div class="ad-add"><input class="cx-inp" id="nt-email" type="email" placeholder="correo@gischool.edu.co"><input class="cx-inp" id="nt-name" placeholder="Nombre completo">
+        <select class="ad-role" id="nt-role">${roleOptions('teacher')}</select><button class="cx-btn primary" onclick="adminAddTeacher()">+ Agregar</button></div></div>`:''}
+    <div class="ad-grid">${adminData.list.map(t=>{const me=t.email===ADMIN;const pend=!t.state;return`<div class="ad-tc">
+      <div class="ad-tc-top">${avatarHtml(t,'ad-av')}<div style="flex:1;min-width:0"><div class="ad-nm">${escH(t.name)}</div><div class="ad-em">${escH(t.email)}</div></div>
+        ${me?'<span class="ad-badge">👑 Super admin</span>':g?`<select class="ad-role" onchange="adminSetRole('${escA(t.email)}',this.value)">${roleOptions(t.role)}</select>`:`<span class="ad-badge">${roleLabel(t.role)}</span>`}</div>
+      ${pend?'<div class="ad-pend">⏳ Aún no ha entrado a la plataforma</div>':`<div class="ad-tc-stats"><span><b>${t.lessons}</b> clases</span><span><b>${t.groups}</b> grupos</span><span><b>${t.pct}%</b> dado</span></div>
+      <div class="ad-tc-bar"><i style="width:${t.pct}%"></i></div><div class="ad-when">Último cambio: ${timeAgo(t.updated_at)}</div>`}
+      <div class="ad-tc-act">
+        ${can('planeaciones')&&!pend?`<button class="cx-btn" onclick="adminOpenPlan('${escA(t.email)}')">📋 Ver planeación</button>`:''}
+        ${can('respaldos')&&!pend?`<button class="cx-btn" onclick="adminBackupOne('${escA(t.email)}')">🛟 Respaldar</button><button class="cx-btn" onclick="adminDownloadOne('${escA(t.email)}')" title="Descargar copia">⬇</button>`:''}
+        ${g&&!me&&pend?`<button class="cx-btn" onclick="adminRemoveInvite('${escA(t.email)}')">✕ Quitar</button>`:''}
+      </div></div>`;}).join('')}</div>`;
+}
+async function adminAddTeacher(){
+  const email=(document.getElementById('nt-email').value||'').trim().toLowerCase();const name=document.getElementById('nt-name').value.trim();const role=document.getElementById('nt-role').value;
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){showToast('Escribe un correo válido');return;}
+  if(adminData.byEmail[email]){showToast('Ese correo ya está registrado');return;}
+  try{const{error}=await sb.from('profiles').insert({email,name:name||email.split('@')[0],role,created_at:new Date().toISOString()});if(error)throw error;
+    showToast('Profesor agregado ✓');adminData.loaded=false;renderAdminPanel();}
+  catch(e){showToast('No se pudo agregar: '+(e.message||e));}
+}
+async function adminRemoveInvite(email){
+  if(!confirm('¿Quitar a '+email+' de la lista? Aún no ha entrado, así que no tiene datos.'))return;
+  try{const{error}=await sb.from('profiles').delete().eq('email',email);if(error)throw error;adminData.loaded=false;renderAdminPanel();showToast('Quitado ✓');}
+  catch(e){showToast('No se pudo quitar: '+(e.message||e));}
+}
+async function adminSetRole(email,role){
+  if(!can('gestionar'))return;
+  const t=adminData.byEmail[email];if(!t)return;
+  if(!confirm(`¿Cambiar a ${t.name} a ${roleLabel(role)}?`)){renderAdminPanel();return;}
+  try{const r=t.hasProfile?await sb.from('profiles').update({role}).eq('email',email):await sb.from('profiles').insert({email,name:t.name,role});
+    if(r.error)throw r.error;t.role=role;t.hasProfile=true;showToast('Rol actualizado ✓');}
+  catch(e){showToast('No se pudo cambiar el rol: '+(e.message||e));}
+  renderAdminPanel();
+}
+
+/* ── Planeaciones con fechas ── */
+const _adminPlanBase=adminPlan;
+adminPlan=function(){
+  let html=_adminPlanBase();
+  const t=adminData.byEmail[adminView.email];if(!t)return html;
+  const g=Object.values(t.state?.grades||{}).find(x=>x.number==adminView.grade);if(!g)return html;
+  const grps=Object.values(g.groups||{}).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true}));
+  const ls=Object.values(g.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0));
+  // fechas dentro de las casillas
+  let i=0;const cells=[];ls.forEach(l=>grps.forEach(x=>cells.push(l.done?.[x.id]&&l.doneAt?.[x.id]?shortDate(l.doneAt[x.id]):'')));
+  html=html.replace(/<span class="ad-ok">✓<\/span>|<span class="ad-no">○<\/span>/g,m=>{const d=cells[i++];return m.includes('ad-ok')&&d?`<span class="ad-ok">✓</span><small class="ad-dt">${d}</small>`:m;});
+  // última clase dada por sección
+  const last=grps.map(x=>{let best=null;ls.forEach(l=>{const d=l.done?.[x.id]&&l.doneAt?.[x.id];if(d&&(!best||d>best.d))best={d,l};});return best;});
+  let k=0;html=html.replace(/<span class="pl-sec-c">/g,m=>{const b=last[k++];return(b?`<span class="ad-last">Última: ${escH(b.l.title||'')} · ${shortDate(b.d)}</span>`:'')+m;});
+  return html;
+};
+function adminFechas(){
+  const L=adminData.list.filter(t=>t.state);
+  if(!L.length)return'<div class="cx-muted">Todavía no hay planeaciones.</div>';
+  if(!adminView.email||!adminData.byEmail[adminView.email]?.state)adminView.email=L[0].email;
+  const t=adminData.byEmail[adminView.email];const ev=[];let sinFecha=0;
+  Object.values(t.state.grades||{}).forEach(g=>Object.values(g.groups||{}).forEach(x=>Object.values(g.lessons||{}).forEach(l=>{
+    if(!l.done?.[x.id])return;if(l.doneAt?.[x.id])ev.push({d:l.doneAt[x.id],g,x,l});else sinFecha++;})));
+  ev.sort((a,b)=>b.d.localeCompare(a.d));
+  const byDay={};ev.forEach(e=>{const k=e.d.slice(0,10);(byDay[k]=byDay[k]||[]).push(e);});
+  return`<div class="ad-plan-top"><select class="cx-inp ad-sel" onchange="adminView.email=this.value;loadAdminTab('fechas')">
+      ${L.map(x=>`<option value="${escA(x.email)}"${x.email===t.email?' selected':''}>${escH(x.name)}</option>`).join('')}</select>
+      <span class="cx-muted">${plural(ev.length,'clase dada','clases dadas')} con fecha${sinFecha?` · ${sinFecha} marcadas antes de guardar fechas`:''}</span></div>
+    ${Object.entries(byDay).map(([day,list])=>`<div class="ad-day"><div class="ad-day-h">${escH(fmtDate(day))}</div>
+      ${list.map(e=>{const th=gTheme(e.g);return`<div class="ad-ev" style="--gc:${th.c}"><span class="ad-ev-sec">${th.m} ${escH(e.x.name)}</span>
+        <div style="flex:1;min-width:0"><div class="ad-nm">${e.l.n}. ${escH(e.l.title||'')}</div>${e.l.objective?`<div class="ad-em">${escH(e.l.objective)}</div>`:''}</div>
+        <span class="ad-when">${new Date(e.d).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span></div>`;}).join('')}</div>`).join('')
+      ||'<div class="ad-card cx-muted">Aún no hay clases con fecha. Las fechas se guardan desde ahora cada vez que el profe marca una clase como dada.</div>'}`;
+}
+
+/* ── Roles (solo super admin) ── */
+function adminRoles(){
+  const roles=allRoles();
+  return`<div class="ad-card ad-info">Los roles definen qué puede hacer cada persona. Los integrados no se pueden borrar. Los nuevos roles aparecen al asignar el rol de cada profesor.</div>
+    <div class="ad-grid">${Object.entries(roles).map(([k,d])=>`<div class="ad-tc">
+      <div class="ad-tc-top"><span class="ad-rico">${d.icon}</span><div style="flex:1"><div class="ad-nm">${escH(d.name)}</div><div class="ad-em">${d.fixed?'Integrado':'Personalizado'} · ${adminData.list.filter(t=>t.role===k||(k==='superadmin'&&t.email===ADMIN)).length} persona(s)</div></div>
+        ${d.fixed?'':`<button class="icon-btn" onclick="roleEdit('${k}')" title="Editar">✏️</button><button class="icon-btn danger" onclick="roleDelete('${k}')" title="Eliminar">🗑</button>`}</div>
+      <div class="ad-perms">${PERMS.map(([p,l])=>`<span class="${k==='superadmin'&&p!=='ensenar'||(d.perms||[]).includes(p)?'on':''}">${escH(l)}</span>`).join('')}</div></div>`).join('')}</div>
+    <div class="ad-save"><button class="cx-btn primary" onclick="roleEdit()">+ Crear rol nuevo</button></div>`;
+}
+function roleEdit(key){
+  const d=key?allRoles()[key]:{name:'',icon:'🧑‍💼',perms:['resumen','planeaciones']};
+  openModal(key?'✏️ Editar rol':'🔑 Nuevo rol',`
+    <div class="form-2col"><div class="form-group"><label>Nombre</label><input id="rl-name" value="${escA(d.name)}" placeholder="Ej: Coordinador académico"></div>
+      <div class="form-group"><label>Ícono</label><input id="rl-icon" value="${escA(d.icon)}" maxlength="4"></div></div>
+    <div class="form-group"><label>Permisos</label>${PERMS.map(([p,l])=>`<label class="cx-switch" style="margin:6px 0"><input type="checkbox" value="${p}"${(d.perms||[]).includes(p)?' checked':''}> ${escH(l)}</label>`).join('')}</div>
+    <div class="cx-muted">"Tiene grupos y planeación propios" hace que la persona también trabaje como profe. Sin ese permiso, entra directo a la consola.</div>`,
+  async()=>{
+    const name=document.getElementById('rl-name').value.trim();if(!name){showToast('Escribe el nombre del rol');return;}
+    const perms=[...document.querySelectorAll('#modal-body input[type=checkbox]:checked')].map(i=>i.value);
+    let k=key||normTxt(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,30)||('rol_'+Date.now());
+    if(!key&&allRoles()[k])k=k+'_'+Math.random().toString(36).slice(2,5);
+    const cfg={...(window._platform||{})};cfg.roles={...(cfg.roles||{}),[k]:{name,icon:document.getElementById('rl-icon').value.trim()||'🧑‍💼',perms}};
+    if(await savePlatformCfg(cfg)){closeModal();renderAdminPanel();showToast('Rol guardado ✓');}
+  });
+}
+async function roleDelete(key){
+  const d=allRoles()[key];const n=adminData.list.filter(t=>t.role===key).length;
+  if(!confirm(`¿Eliminar el rol "${d.name}"?${n?`\n${n} persona(s) con este rol pasarán a Profe.`:''}`))return;
+  for(const t of adminData.list.filter(t=>t.role===key))await sb.from('profiles').update({role:'teacher'}).eq('email',t.email);
+  const cfg={...(window._platform||{})};const r={...(cfg.roles||{})};delete r[key];cfg.roles=r;
+  if(await savePlatformCfg(cfg)){adminData.loaded=false;renderAdminPanel();showToast('Rol eliminado');}
+}
+async function savePlatformCfg(cfg){
+  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;
+    window._platform=cfg;window._platformAt=new Date().toISOString();return true;}
+  catch(e){showToast('No se pudo guardar: '+(e.message||e));return false;}
+}
+/* pfSave conserva los roles creados */
+const _pfSaveRoles=pfSave;
+pfSave=async function(){const roles=window._platform?.roles;await _pfSaveRoles();
+  if(roles&&!window._platform?.roles){await savePlatformCfg({...window._platform,roles});}};
+const _pfResetRoles=pfReset;
+pfReset=async function(){const roles=window._platform?.roles;await _pfResetRoles();if(roles)await savePlatformCfg({...window._platform,roles});};
 
 </script>
 </body>
