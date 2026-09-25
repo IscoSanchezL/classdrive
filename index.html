@@ -1564,6 +1564,34 @@ table.ad-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5px
 .ld-date{font-size:10px;color:var(--ts);margin-left:4px}
 .gl-date{font-size:11px;color:var(--gr);font-weight:700;white-space:nowrap}
 @media (max-width:760px){.ad-add{grid-template-columns:1fr}}
+/* ═══ CLASS DRIVE 5.2 — COORDINACIÓN ═══ */
+.pl-pd{font-size:10.5px;font-weight:700;color:var(--ts);margin-top:3px;white-space:nowrap}
+.pl-pd.late{color:var(--rd)}
+.gl-plan{font-size:11px;font-weight:700;color:var(--ts);white-space:nowrap}
+.gl-plan.late{color:var(--rd)}
+.ad-kpi.warn{border-color:rgba(239,68,68,.45);background:color-mix(in srgb,var(--rd) 8%,var(--s1))}
+.ad-kpi.warn b{color:var(--rd)}
+.wk-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.wk-title{display:flex;flex-direction:column;padding:0 8px}
+.wk-title b{font:900 20px var(--font-d);color:var(--tp)}
+.wk-title span{font-size:12px;color:var(--ts)}
+.wk-th{display:flex;align-items:center;gap:10px;margin-bottom:10px;color:var(--tp)}
+.wk-t{width:100%;border-collapse:collapse;font-size:12.5px;color:var(--tp)}
+.wk-t th{text-align:left;font-size:11px;color:var(--ts);padding:6px 8px;border-bottom:1px solid var(--br)}
+.wk-t td{padding:8px;border-bottom:1px solid var(--br);vertical-align:top}
+.wk-sec{font:900 14px var(--font-d);color:var(--gc);white-space:nowrap}
+.wk-chip{display:inline-block;margin:2px 4px 2px 0;padding:3px 8px;border-radius:8px;font-size:11.5px;font-weight:700;background:var(--s3);color:var(--tp)}
+.wk-chip small{font-weight:600;color:var(--ts)}
+.wk-chip.ok{background:var(--grd);color:var(--gr)}
+.wk-chip.late{background:var(--rdd);color:var(--rd)}
+.wk-st{font-size:11.5px;font-weight:800;color:var(--tm);white-space:nowrap}
+.wk-st.ok{color:var(--gr)}.wk-st.bad{color:var(--rd)}
+.al-row{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:9px 10px;border-radius:10px;border:0;background:transparent;color:var(--ts);font:13px var(--font-b);cursor:pointer;line-height:1.45}
+.al-row:hover{background:var(--s2)}
+.al-row b{color:var(--tp)}
+.al-row.l2{color:var(--rd)}.al-row.l1{color:var(--am)}
+.ad-del{display:block;margin:4px auto 0;border:0;background:transparent;cursor:pointer;opacity:.55;font-size:12px}
+.ad-del:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -1881,7 +1909,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 5.1 — APP LOGIC
+   CLASS DRIVE 5.2 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -7115,6 +7143,263 @@ pfSave=async function(){const roles=window._platform?.roles;await _pfSaveRoles()
   if(roles&&!window._platform?.roles){await savePlatformCfg({...window._platform,roles});}};
 const _pfResetRoles=pfReset;
 pfReset=async function(){const roles=window._platform?.roles;await _pfResetRoles();if(roles)await savePlatformCfg({...window._platform,roles});};
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 5.2 — COORDINACIÓN
+   Vista semanal (qué se da y qué se dio), fechas planeadas por
+   clase, alertas de avance, edición de clases por el super admin
+   y roles integrados editables.
+═══════════════════════════════════════════════════════════════ */
+PERMS.splice(PERMS.length-1,0,['editar','Editar o borrar clases de los profesores']);
+CONSOLE_TABS.splice(1,0,['semana','📆 Semana','planeaciones']);
+function isoDay(d){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
+function weekStart(d){const x=new Date(d);x.setHours(0,0,0,0);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return x;}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function dayLbl(d){return new Date(d+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});}
+function todayIso(){return isoDay(new Date());}
+
+/* ── Botones del menú para el super admin ── */
+function fixAdminButtons(){
+  const pb=document.getElementById('admin-panel-btn');
+  if(pb){pb.textContent=isSuper()?'🔑 Roles':'📆 Semana';pb.onclick=()=>{adminView.tab=isSuper()?'roles':'semana';openAdminPanel();};}
+  const cp=document.getElementById('admin-cp-btn');
+  if(cp&&isAdminUser()){cp.onclick=()=>{adminView.tab='plataforma';openAdminPanel();};cp.title='Colores de la plataforma';}
+}
+const _renderRoleBadgeCoord=renderRoleBadge;
+renderRoleBadge=function(){_renderRoleBadgeCoord();fixAdminButtons();};
+function adminGo(tab){adminView.tab=tab;if(!document.getElementById('admin-panel')?.classList.contains('show'))openAdminPanel();else renderAdminPanel();renderSidebar();}
+
+/* ── Roles integrados editables (menos Super admin y Bloqueado) ── */
+function roleLocked(k){return k==='superadmin'||k==='blocked';}
+function adminRoles(){
+  const roles=allRoles();const custom=window._platform?.roles||{};
+  return`<div class="ad-card ad-info">Define qué puede hacer cada persona. <b>Admin</b> y <b>Profe</b> se pueden ajustar; los roles nuevos se pueden editar y borrar. Asigna los roles en la pestaña Profesores.</div>
+    <div class="ad-grid">${Object.entries(roles).map(([k,d])=>{const n=adminData.list.filter(t=>t.role===k||(k==='superadmin'&&t.email===ADMIN)).length;const builtin=!!BUILTIN_ROLES[k];
+      return`<div class="ad-tc"><div class="ad-tc-top"><span class="ad-rico">${d.icon}</span><div style="flex:1"><div class="ad-nm">${escH(d.name)}</div>
+        <div class="ad-em">${roleLocked(k)?'Fijo':builtin?(custom[k]?'Integrado · modificado':'Integrado'):'Personalizado'} · ${n} persona(s)</div></div>
+        ${roleLocked(k)?'':`<button class="icon-btn" onclick="roleEdit('${k}')" title="Editar permisos">✏️</button>`}
+        ${!builtin?`<button class="icon-btn danger" onclick="roleDelete('${k}')" title="Eliminar">🗑</button>`:''}
+        ${builtin&&custom[k]?`<button class="icon-btn" onclick="roleResetBuiltin('${k}')" title="Volver a los permisos originales">↺</button>`:''}</div>
+        <div class="ad-perms">${PERMS.map(([p,l])=>`<span class="${(k==='superadmin'?p!=='ensenar':(d.perms||[]).includes(p))?'on':''}">${escH(l)}</span>`).join('')}</div></div>`;}).join('')}</div>
+    <div class="ad-save"><button class="cx-btn primary" onclick="roleEdit()">+ Crear rol nuevo</button></div>`;
+}
+function roleEdit(key){
+  if(key&&roleLocked(key))return;
+  const d=key?allRoles()[key]:{name:'',icon:'🧑‍💼',perms:['resumen','planeaciones']};
+  openModal(key?`✏️ Editar rol: ${d.name}`:'🔑 Nuevo rol',`
+    <div class="form-2col"><div class="form-group"><label>Nombre</label><input id="rl-name" value="${escA(d.name)}" placeholder="Ej: Coordinador académico"></div>
+      <div class="form-group"><label>Ícono</label><input id="rl-icon" value="${escA(d.icon)}" maxlength="4"></div></div>
+    <div class="form-group"><label>Permisos</label>${PERMS.map(([p,l])=>`<label class="cx-switch" style="margin:7px 0"><input type="checkbox" value="${p}"${(d.perms||[]).includes(p)?' checked':''}> ${escH(l)}</label>`).join('')}</div>
+    <div class="cx-muted">Con "Tiene grupos y planeación propios", la persona trabaja como profe y además ve la consola si tiene otros permisos. Sin él, entra directo a la consola.</div>`,
+  async()=>{
+    const name=document.getElementById('rl-name').value.trim();if(!name){showToast('Escribe el nombre del rol');return;}
+    const perms=[...document.querySelectorAll('#modal-body input[type=checkbox]:checked')].map(i=>i.value);
+    let k=key||normTxt(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,30)||('rol_'+Date.now());
+    if(!key&&allRoles()[k])k=k+'_'+Math.random().toString(36).slice(2,5);
+    const cfg={...(window._platform||{})};cfg.roles={...(cfg.roles||{}),[k]:{name,icon:document.getElementById('rl-icon').value.trim()||'🧑‍💼',perms}};
+    if(await savePlatformCfg(cfg)){closeModal();renderAdminPanel();showToast('Rol guardado ✓');}
+  });
+  setModalBtn('Guardar rol');
+}
+async function roleResetBuiltin(k){
+  if(!confirm(`¿Devolver "${BUILTIN_ROLES[k].name}" a sus permisos originales?`))return;
+  const cfg={...(window._platform||{})};const r={...(cfg.roles||{})};delete r[k];cfg.roles=r;
+  if(await savePlatformCfg(cfg)){renderAdminPanel();showToast('Rol restablecido ✓');}
+}
+
+/* ══════════ FECHAS PLANEADAS (lado del profe) ══════════ */
+const _openLessonCoord=openLesson;
+openLesson=function(id,focus){
+  _openLessonCoord(id,focus);
+  const l=curGrade()?.lessons?.[id];const body=document.querySelector('#lesson-drawer .ld-body');if(!l||!body)return;
+  const box=document.createElement('div');box.className='form-group';
+  box.innerHTML=`<label>📅 Fecha planeada</label><input type="date" value="${escA(l.planDate||'')}" oninput="setLessonField('${id}','planDate',this.value)">
+    <div class="cx-muted" style="margin-top:4px">La coordinación ve en su vista semanal qué clase toca cada semana.</div>`;
+  const first=body.querySelector('.form-2col');if(first)first.before(box);else body.appendChild(box);
+};
+const _renderGradePlanCoord=renderGradePlan;
+renderGradePlan=function(){
+  _renderGradePlanCoord();
+  const g=curGrade();const v=document.getElementById('grade-view');if(!g||!v)return;
+  const a=v.querySelector('.pl-banner-a');
+  if(a&&!a.querySelector('.pl-sched')){const b=document.createElement('button');b.className='cx-btn pl-sched';b.textContent='📅 Programar fechas';b.onclick=openScheduler;a.prepend(b);}
+  const today=todayIso();
+  v.querySelectorAll('tr.pl-row').forEach(tr=>{const l=g.lessons?.[tr.dataset.id];if(!l?.planDate)return;
+    const late=l.planDate<today&&!Object.keys(l.done||{}).length;
+    const s=document.createElement('div');s.className='pl-pd'+(late?' late':'');s.textContent='📅 '+dayLbl(l.planDate);s.title=late?'Fecha pasada y sin darse':'Fecha planeada';
+    tr.querySelector('td.pl-p')?.appendChild(s);});
+};
+const _renderClassesCoord=renderClasses2;
+renderClasses2=function(){
+  _renderClassesCoord();
+  const g=curGrade(),grp=curGrp();if(!g||!grp)return;
+  document.querySelectorAll('#cls-list2 .gl-row').forEach(row=>{
+    const m=row.querySelector('.gl-main')?.getAttribute('onclick')?.match(/openLesson\('([^']+)'/);const l=m&&g.lessons?.[m[1]];
+    if(l?.planDate&&!l.done?.[grp.id]){const s=document.createElement('span');s.className='gl-plan'+(l.planDate<todayIso()?' late':'');s.textContent='📅 '+dayLbl(l.planDate);row.querySelector('.gl-main')?.after(s);}
+  });
+};
+function openScheduler(){
+  const g=curGrade();if(!g)return;const ls=lessonsOf(g);
+  const nm=isoDay(weekStart(addDays(new Date(),7)));
+  openModal('📅 Programar fechas de '+gTheme(g).n,`
+    <div class="cx-muted" style="margin-bottom:12px">Asigna una fecha a cada clase, en orden. La coordinación la verá en su vista semanal. Luego puedes ajustar cualquier fecha en la ficha de la clase.</div>
+    <div class="form-2col"><div class="form-group"><label>Primera clase</label><input type="date" id="sc-start" value="${nm}"></div>
+      <div class="form-group"><label>Cada cuánto</label><select id="sc-step"><option value="7">1 vez por semana</option><option value="3.5">2 veces por semana</option><option value="14">Cada 2 semanas</option></select></div></div>
+    <div class="form-group"><label>Semanas sin clase (vacaciones, festivos) — una fecha por línea</label><textarea id="sc-skip" placeholder="2026-10-05&#10;2026-10-12" style="min-height:60px"></textarea></div>
+    <label class="cx-switch"><input type="checkbox" id="sc-only" checked> Solo clases que aún no tienen fecha</label>
+    <label class="cx-switch" style="margin-top:6px"><input type="checkbox" id="sc-pend" checked> Saltar las que ya se dieron en todas las secciones</label>
+    <div class="cx-muted" style="margin-top:10px">${plural(ls.length,'clase')} · ${plural(ls.filter(l=>l.planDate).length,'clase')} con fecha</div>
+    <button class="cx-mini ghost" style="margin-top:10px" onclick="if(confirm('¿Quitar todas las fechas planeadas de este grado?')){lessonsOf(curGrade()).forEach(l=>delete l.planDate);saveState();closeModal();renderGradePlan();showToast('Fechas borradas')}">Borrar todas las fechas</button>`,
+  ()=>{
+    const start=document.getElementById('sc-start').value;if(!start){showToast('Elige la fecha de la primera clase');return;}
+    const step=parseFloat(document.getElementById('sc-step').value);const only=document.getElementById('sc-only').checked;const pend=document.getElementById('sc-pend').checked;
+    const skip=new Set(document.getElementById('sc-skip').value.split(/\s+/).filter(Boolean).map(s=>isoDay(weekStart(new Date(s+'T12:00:00')))));
+    const grps=sortedGroups(g);let cur=new Date(start+'T12:00:00');let k=0,n=0;
+    const nextDate=()=>{let d;do{d=addDays(new Date(start+'T12:00:00'),Math.round(k*step));k++;}while(skip.has(isoDay(weekStart(d)))&&k<500);return isoDay(d);};
+    lessonsOf(g).forEach(l=>{
+      if(pend&&grps.length&&grps.every(x=>l.done?.[x.id]))return;
+      if(only&&l.planDate)return;
+      l.planDate=nextDate();n++;
+    });
+    saveState();closeModal();renderGradePlan();showToast(`${plural(n,'clase')} programadas ✓`);
+  });
+  setModalBtn('Programar');
+}
+
+/* ══════════ VISTA SEMANAL (coordinación) ══════════ */
+adminView.week=0;
+function weekRange(off){const s=addDays(weekStart(new Date()),off*7);return{s,e:addDays(s,4),si:isoDay(s),ei:isoDay(addDays(s,6))};}
+function weekData(off){
+  const w=weekRange(off);const today=todayIso();const rows=[];
+  const tot={given:0,planned:0,late:0,stalled:0};
+  adminData.list.filter(t=>t.state).forEach(t=>{
+    Object.values(t.state.grades||{}).sort((a,b)=>a.number-b.number).forEach(g=>{
+      const ls=Object.values(g.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0));if(!ls.length)return;
+      Object.values(g.groups||{}).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true})).forEach(x=>{
+        const given=ls.filter(l=>l.done?.[x.id]&&l.doneAt?.[x.id]&&isoDay(l.doneAt[x.id])>=w.si&&isoDay(l.doneAt[x.id])<=w.ei);
+        const planned=ls.filter(l=>l.planDate&&l.planDate>=w.si&&l.planDate<=w.ei);
+        const late=ls.filter(l=>l.planDate&&l.planDate<today&&!l.done?.[x.id]);
+        const next=ls.find(l=>!l.done?.[x.id]);
+        let last=null;ls.forEach(l=>{const d=l.done?.[x.id]&&l.doneAt?.[x.id];if(d&&(!last||d>last))last=d;});
+        const days=last?Math.floor((Date.now()-new Date(last))/864e5):null;
+        const stalled=next&&(days===null?ls.some(l=>l.done?.[x.id])===false&&ls.some(l=>l.planDate&&l.planDate<today):days>14);
+        tot.given+=given.length;tot.planned+=planned.filter(l=>!l.done?.[x.id]).length;tot.late+=late.length;if(stalled)tot.stalled++;
+        rows.push({t,g,x,given,planned,late,next,last,days,stalled});
+      });
+    });
+  });
+  return{w,rows,tot};
+}
+function adminSemana(){
+  const off=adminView.week||0;const{w,rows,tot}=weekData(off);const today=todayIso();
+  const title=off===0?'Esta semana':off===-1?'Semana pasada':off===1?'Próxima semana':'Semana';
+  const byT={};rows.forEach(r=>{(byT[r.t.email]=byT[r.t.email]||[]).push(r);});
+  const chip=(l,x,kind)=>{const th='';const done=l.done?.[x.id];
+    const cls=done?'ok':(l.planDate&&l.planDate<today?'late':'pend');
+    return`<span class="wk-chip ${cls}" title="${escA(l.objective||'')}">${done?'✓':cls==='late'?'⚠':'○'} ${l.n}. ${escH(l.title||'')}${kind==='given'&&l.doneAt?.[x.id]?` <small>${escH(dayLbl(isoDay(l.doneAt[x.id])))}</small>`:l.planDate?` <small>${escH(dayLbl(l.planDate))}</small>`:''}</span>`;};
+  return`<div class="wk-nav"><button class="cx-btn" onclick="adminView.week=(adminView.week||0)-1;loadAdminTab('semana')">◀</button>
+      <div class="wk-title"><b>${title}</b><span>${escH(dayLbl(w.si))} al ${escH(dayLbl(isoDay(w.e)))}</span></div>
+      <button class="cx-btn" onclick="adminView.week=(adminView.week||0)+1;loadAdminTab('semana')">▶</button>
+      ${off?`<button class="cx-btn" onclick="adminView.week=0;loadAdminTab('semana')">Hoy</button>`:''}
+      <div style="flex:1"></div><button class="cx-btn" onclick="exportWeekCSV()">⬇ Informe de la semana</button></div>
+    <div class="ad-kpis">
+      <div class="ad-kpi"><b>${tot.given}</b><span>Clases dadas en la semana</span></div>
+      <div class="ad-kpi"><b>${tot.planned}</b><span>Programadas pendientes</span></div>
+      <div class="ad-kpi ${tot.late?'warn':''}"><b>${tot.late}</b><span>Atrasadas (fecha pasada)</span></div>
+      <div class="ad-kpi ${tot.stalled?'warn':''}"><b>${tot.stalled}</b><span>Salones sin avance +14 días</span></div></div>
+    ${Object.entries(byT).map(([email,list])=>{const t=adminData.byEmail[email];return`<div class="ad-card"><div class="wk-th">${avatarHtml(t,'ad-av-s')}<b>${escH(t.name)}</b><span class="cx-muted">${escH(email)}</span>
+        <button class="cx-mini" style="margin-left:auto" onclick="adminOpenPlan('${escA(email)}')">Ver planeación</button></div>
+      <table class="wk-t"><thead><tr><th>Salón</th><th>Dadas esta semana</th><th>Programadas</th><th>Siguiente clase</th><th>Estado</th></tr></thead><tbody>
+      ${list.map(r=>{const th=gTheme(r.g);const plannedPend=r.planned.filter(l=>!l.done?.[r.x.id]);
+        const st=r.late.length?`<span class="wk-st bad">⚠ ${plural(r.late.length,'atrasada')}</span>`:r.stalled?`<span class="wk-st bad">Sin avance ${r.days!=null?r.days+' días':''}</span>`:r.given.length?'<span class="wk-st ok">Al día</span>':'<span class="wk-st">—</span>';
+        return`<tr><td><span class="wk-sec" style="--gc:${th.c}">${th.m} ${escH(r.x.name)}</span></td>
+          <td>${r.given.map(l=>chip(l,r.x,'given')).join('')||'<span class="cx-muted">—</span>'}</td>
+          <td>${plannedPend.map(l=>chip(l,r.x)).join('')||'<span class="cx-muted">—</span>'}</td>
+          <td>${r.next?`${r.next.n}. ${escH(r.next.title||'')}${r.next.planDate?` <small class="cx-muted">${escH(dayLbl(r.next.planDate))}</small>`:''}`:'<span class="wk-st ok">Completa</span>'}
+            ${r.last?`<div class="cx-muted" style="font-size:11px">Última dada: ${escH(dayLbl(isoDay(r.last)))}</div>`:''}</td>
+          <td>${st}</td></tr>`;}).join('')}</tbody></table></div>`;}).join('')||'<div class="ad-card cx-muted">Aún no hay planeaciones.</div>'}
+    <div class="cx-muted">Las fechas "programadas" las pone cada profe en su planeación con 📅 Programar fechas. Las "dadas" se registran cuando marca la clase.</div>`;
+}
+function exportWeekCSV(){
+  const{w,rows}=weekData(adminView.week||0);const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const out=[['Semana',w.si+' a '+isoDay(w.e)].map(q).join(';'),['Profesor','Grado','Salón','Dadas en la semana','Programadas','Atrasadas','Siguiente clase','Última dada'].map(q).join(';')];
+  rows.forEach(r=>out.push([r.t.name,r.g.number+'°',r.x.name,r.given.map(l=>l.n+'. '+l.title).join(' | '),r.planned.map(l=>l.n+'. '+l.title+' ('+l.planDate+')').join(' | '),
+    r.late.map(l=>l.n+'. '+l.title).join(' | '),r.next?r.next.n+'. '+r.next.title:'Completa',r.last?isoDay(r.last):''].map(q).join(';')));
+  downloadBlob('\ufeff'+out.join('\n'),'informe-semana-'+w.si+'.csv','text/csv;charset=utf-8');
+}
+const _loadAdminTabCoord=loadAdminTab;
+loadAdminTab=async function(tab){
+  if(tab!=='semana')return _loadAdminTabCoord(tab);
+  const c=document.getElementById('admin-content');if(!c)return;
+  if(!tabAllowed('semana')){c.innerHTML='<div class="im-err">No tienes permiso para ver esta sección.</div>';return;}
+  try{await loadAdminData();}catch(e){c.innerHTML=`<div class="im-err">No se pudieron cargar los datos: ${escH(e.message||e)}</div>`;return;}
+  c.innerHTML=adminSemana();
+};
+
+/* ── Resumen con alertas para la coordinación ── */
+const _adminResumenCoord=adminResumen;
+adminResumen=function(){
+  const{rows}=weekData(0);const today=todayIso();
+  const alerts=[];
+  rows.forEach(r=>{
+    if(r.late.length)alerts.push({lvl:2,txt:`<b>${escH(r.t.name)}</b> · ${escH(r.x.name)}: ${plural(r.late.length,'clase atrasada','clases atrasadas')} (${escH(r.late[0].title||'')}${r.late.length>1?'…':''})`,email:r.t.email,n:r.g.number});
+    else if(r.stalled)alerts.push({lvl:1,txt:`<b>${escH(r.t.name)}</b> · ${escH(r.x.name)}: sin clases marcadas ${r.days!=null?'hace '+r.days+' días':'todavía'}`,email:r.t.email,n:r.g.number});
+  });
+  adminData.list.filter(t=>t.state).forEach(t=>{
+    let noRes=0,noDate=0;Object.values(t.state.grades||{}).forEach(g=>Object.values(g.lessons||{}).forEach(l=>{if(!l.canvaUrl&&!(l.links||[]).some(k=>k.url))noRes++;if(!l.planDate)noDate++;}));
+    if(noRes)alerts.push({lvl:0,txt:`<b>${escH(t.name)}</b>: ${plural(noRes,'clase')} sin presentación ni recursos`,email:t.email});
+    if(t.lessons&&noDate===t.lessons)alerts.push({lvl:0,txt:`<b>${escH(t.name)}</b>: la planeación no tiene fechas programadas`,email:t.email});
+  });
+  alerts.sort((a,b)=>b.lvl-a.lvl);
+  const box=`<div class="ad-card"><div class="ad-card-h">Para revisar</div>${alerts.length?alerts.slice(0,12).map(a=>`<button class="al-row l${a.lvl}" onclick="${can('planeaciones')?`adminOpenPlan('${escA(a.email)}'${a.n?','+a.n:''})`:''}"><span>${a.lvl===2?'⚠️':a.lvl===1?'⏸':'💡'}</span><span>${a.txt}</span></button>`).join('')+(alerts.length>12?`<div class="cx-muted" style="margin-top:6px">y ${alerts.length-12} más…</div>`:'')
+    :'<div class="cx-muted">Todo al día 🎉</div>'}
+    ${can('planeaciones')?'<button class="cx-btn" style="margin-top:10px" onclick="adminGo(\'semana\')">📆 Ver la semana</button>':''}</div>`;
+  const base=_adminResumenCoord();const i=base.indexOf('<div class="ad-card">');
+  return i>=0?base.slice(0,i)+box+base.slice(i):base+box;
+};
+
+/* ── El super admin (o quien tenga "editar") puede borrar clases ── */
+const _adminPlanCoord=adminPlan;
+adminPlan=function(){
+  let html=_adminPlanCoord();
+  const t=adminData.byEmail[adminView.email];if(!t)return html;
+  const g=Object.values(t.state?.grades||{}).find(x=>x.number==adminView.grade);if(!g)return html;
+  const ls=Object.values(g.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0));const today=todayIso();
+  let i=0;
+  html=html.replace(/<td class="pl-n">(\d+)<\/td><td>([^<]*)<\/td>/g,(m,n,per)=>{const l=ls[i++];if(!l)return m;
+    const date=l.planDate?`<div class="pl-pd${l.planDate<today&&!Object.keys(l.done||{}).length?' late':''}">📅 ${escH(dayLbl(l.planDate))}</div>`:'';
+    const del=can('editar')?`<button class="ad-del" onclick="adminDeleteLesson('${escA(t.email)}','${escA(g.id)}','${escA(l.id)}')" title="Borrar esta clase">🗑</button>`:'';
+    return`<td class="pl-n">${n}${del}</td><td>${per}${date}</td>`;});
+  if(can('editar')&&ls.length)html=html.replace('<button class="cx-btn" onclick="adminExportPlanCSV()">',
+    `<button class="cx-btn" onclick="adminClearGrade('${escA(t.email)}','${escA(g.id)}')">🗑 Vaciar ${g.number}°</button><button class="cx-btn" onclick="adminExportPlanCSV()">`);
+  return html;
+};
+async function adminFreshState(email){const{data,error}=await sb.from('user_data').select('state').eq('user_email',email).single();if(error)throw error;return data.state;}
+async function adminDeleteLesson(email,gid,lid){
+  const t=adminData.byEmail[email];
+  try{const st=await adminFreshState(email);const g=st.grades?.[gid];const l=g?.lessons?.[lid];
+    if(!l){showToast('Esa clase ya no existe');adminData.loaded=false;return loadAdminTab('plan');}
+    if(!confirm(`¿Borrar la clase ${l.n} "${l.title||''}" de ${t?.name||email}?\nSe guarda un respaldo antes.`))return;
+    delete g.lessons[lid];Object.values(g.lessons).sort((a,b)=>(a.n||0)-(b.n||0)).forEach((x,i)=>x.n=i+1);
+    await adminWriteState(email,st);adminData.loaded=false;await loadAdminData();loadAdminTab('plan');showToast('Clase borrada ✓');
+  }catch(e){showToast('No se pudo borrar: '+(e.message||e));}
+}
+async function adminClearGrade(email,gid){
+  const t=adminData.byEmail[email];
+  try{const st=await adminFreshState(email);const g=st.grades?.[gid];if(!g)return;const n=Object.keys(g.lessons||{}).length;
+    if(!confirm(`¿Borrar las ${n} clases de ${g.number}° de ${t?.name||email}?\nSe guarda un respaldo antes y se puede restaurar.`))return;
+    g.lessons={};await adminWriteState(email,st);adminData.loaded=false;await loadAdminData();loadAdminTab('plan');showToast('Grado vaciado ✓');
+  }catch(e){showToast('No se pudo vaciar: '+(e.message||e));}
+}
+/* El super admin sí aparece en la lista si tiene clases propias, para poder limpiarlas */
+const _loadAdminDataCoord=loadAdminData;
+loadAdminData=async function(force){
+  const r=await _loadAdminDataCoord(force);
+  const me=adminData.byEmail[ADMIN];
+  if(me&&me.lessons&&!adminData.list.some(x=>x.email===ADMIN)){adminData.list.push({lessons:0,groups:0,pct:0,byGrade:{},...me});renderSidebar();}
+  return r;
+};
 
 </script>
 </body>
