@@ -1340,6 +1340,136 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
   .au-node>button,.au-node:nth-child(odd)>button{width:100%;flex-direction:row;text-align:left}
 }
 @media (prefers-reduced-motion:reduce){.au-hero-m,.au-load-dot{animation:none}.au-grade,.au-dot,.gt-secs button{transition:none}}
+/* ═══ CLASS DRIVE 4.1 — PLANEACIÓN ═══ */
+#grade-view{display:none;padding:20px 24px 40px;--gc:var(--ac)}
+.pl-banner{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:18px 22px;border-radius:22px;background:linear-gradient(135deg,var(--gc),var(--gd));color:#fff;margin-bottom:14px}
+.pl-banner-m{font-size:52px;line-height:1}
+.pl-banner-k{font-size:12px;font-weight:700;opacity:.85}
+.pl-banner-h{font:900 34px var(--font-d);letter-spacing:-1px;line-height:1.05}
+.pl-banner-a{display:flex;gap:8px;flex-wrap:wrap}
+.pl-banner .cx-btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);color:#fff}
+.pl-banner .cx-btn.primary{background:#fff;color:var(--gd);border-color:#fff}
+.pl-secs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:12px}
+.pl-sec{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;gap:4px 10px;align-items:center;text-align:left;padding:10px 14px;border-radius:14px;border:1px solid var(--br);background:var(--s1);color:var(--tp);cursor:pointer;font-family:var(--font-b)}
+.pl-sec:hover{border-color:var(--gc)}
+.pl-sec-n{font:900 18px var(--font-d);color:var(--gc);grid-row:1/3}
+.pl-sec-bar{height:6px;border-radius:9px;background:var(--s4);overflow:hidden}
+.pl-sec-bar i{display:block;height:100%;background:var(--gc);border-radius:9px}
+.pl-sec-c{font-size:11px;font-weight:800;color:var(--ts)}
+.pl-sec-t{grid-column:2/4;font-size:12px;color:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-tip{font-size:12px;color:var(--tm);margin:0 2px 10px}
+.pl-wrap{overflow:auto;max-height:calc(100vh - 330px);min-height:280px;border:1px solid var(--br);border-radius:16px;background:var(--s1)}
+table.pl{border-collapse:separate;border-spacing:0;width:100%;min-width:1280px;font-size:12.5px;color:var(--tp)}
+table.pl thead th{position:sticky;top:0;z-index:3;background:var(--gc);color:#fff;font-weight:800;font-size:11.5px;padding:10px 8px;text-align:left;white-space:nowrap}
+table.pl td{border-bottom:1px solid var(--br);padding:5px 6px;vertical-align:top;background:var(--s1)}
+table.pl th.pl-c,table.pl td.pl-c{text-align:center;width:46px}
+.pl-h{width:22px}.pl-n{width:34px;color:var(--tm);font-weight:800;text-align:center;padding-top:9px!important}
+.pl-p{width:64px}.pl-t{width:170px}.pl-d{width:260px}.pl-o{width:240px}.pl-r{width:160px}.pl-u{width:200px}.pl-s{width:120px}.pl-a{width:64px}
+.pl-t .pl-ce{font-weight:800}
+.pl-ce{min-height:22px;outline:none;border-radius:7px;padding:4px 6px;line-height:1.45;white-space:pre-wrap;word-break:break-word;cursor:text}
+.pl-ce:hover{background:var(--s2)}
+.pl-ce:focus{background:var(--s3);box-shadow:0 0 0 2px var(--gc)}
+.pl-ce:empty::before{content:attr(data-ph);color:var(--tm)}
+.pl-drag{display:inline-block;cursor:grab;color:var(--tm);padding:6px 2px;letter-spacing:-2px;user-select:none}
+.pl-row.dragging{opacity:.35}
+.pl-row.over td{box-shadow:inset 0 3px 0 var(--gc)}
+.pl-row:hover td{background:var(--s2)}
+.pl-ck{display:inline-grid;place-items:center;cursor:pointer;padding:4px}
+.pl-ck input{position:absolute;opacity:0;pointer-events:none}
+.pl-ck span{width:22px;height:22px;border-radius:7px;border:2px solid var(--brh);display:grid;place-items:center;transition:background .12s,border-color .12s}
+.pl-ck input:checked+span{background:var(--gc);border-color:var(--gc)}
+.pl-ck input:checked+span::after{content:"✓";color:#fff;font-weight:900;font-size:13px}
+.pl-ck input:focus-visible+span{outline:2px solid var(--gc);outline-offset:2px}
+.pl-c.next .pl-ck span,.gl-row.next .pl-ck span{border-color:var(--gc);box-shadow:0 0 0 4px color-mix(in srgb,var(--gc) 25%,transparent)}
+.pl-c.next .pl-ck span::after{content:"▶";color:var(--gc);font-size:9px}
+.pl-per td{background:color-mix(in srgb,var(--pc) 14%,var(--s2))!important;font-weight:800;font-size:13px;padding:8px 12px!important;color:var(--tp)}
+.pl-per small{font-weight:600;color:var(--ts);margin-left:10px}
+.pl-per-b{display:inline-block;background:var(--pc);color:#0b1020;border-radius:8px;padding:2px 9px;margin-right:8px;font-weight:900}
+.pl-r a{display:block;color:var(--acl);font-weight:700;text-decoration:underline;text-underline-offset:2px;margin:2px 0;word-break:break-word}
+.pl-r span{display:block;color:var(--ts);margin:2px 0}
+.pl-r .pl-canva{text-decoration:none;color:var(--tp)}
+.pl-plus{margin-top:3px;border:1px dashed var(--brh);background:transparent;color:var(--tm);border-radius:7px;padding:1px 8px;cursor:pointer;font-size:12px}
+.pl-plus:hover{color:var(--gc);border-color:var(--gc)}
+.pl-u select{width:100%;background:transparent;border:0;border-left:4px solid var(--tc);color:var(--tp);font:600 12px var(--font-b);padding:4px 6px;border-radius:0;cursor:pointer;outline:none}
+.pl-u select option{background:var(--s1);color:var(--tp)}
+.pl-a button{border:1px solid var(--br);background:var(--s2);color:var(--tp);border-radius:8px;width:26px;height:26px;cursor:pointer;margin:2px}
+.pl-a button:hover{border-color:var(--gc);color:var(--gc)}
+.pl-row.vis .pl-n{color:var(--gr)}
+.pl-addrow{margin-top:10px;width:100%;padding:12px;border-radius:14px;border:1px dashed var(--brh);background:transparent;color:var(--ts);font:700 13px var(--font-b);cursor:pointer}
+.pl-addrow:hover{border-color:var(--gc);color:var(--gc)}
+.pl-empty{text-align:center;padding:50px 20px;border:1px dashed var(--brh);border-radius:20px;color:var(--ts)}
+.pl-empty-i{font-size:44px}.pl-empty h3{color:var(--tp);font:900 20px var(--font-d);margin:8px 0}.pl-empty p{margin-bottom:16px}
+.sb-plan{font-weight:700}
+.gt-top{background:none;border:0;color:inherit;cursor:pointer;width:100%;padding:0;text-align:left}
+.gt-secs .gt-plan{background:rgba(0,0,0,.22);color:#fff}
+.gt-secs small{opacity:.6;font-weight:700;margin-left:2px}
+.dn-box{margin-bottom:14px;text-align:left}
+.dn-h{font:900 16px var(--font-d);color:var(--tp);margin-bottom:8px}
+.dn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.dn-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--br);border-left:4px solid var(--gc);background:var(--s1);color:var(--tp);cursor:pointer;text-align:left;font-family:var(--font-b)}
+.dn-sec{font:900 15px var(--font-d);color:var(--gc);min-width:36px}
+.dn-t{flex:1;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dn-p{font-size:11px;color:var(--tm)}
+/* Panel lateral */
+#lesson-drawer{position:fixed;top:0;right:0;bottom:0;width:min(540px,100vw);z-index:450;background:var(--s1);border-left:1px solid var(--brh);box-shadow:-20px 0 60px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column;--gc:var(--ac)}
+#lesson-drawer.show{transform:none}
+.ld-head{display:flex;gap:12px;align-items:flex-start;padding:18px 20px 14px;border-bottom:3px solid var(--gc)}
+.ld-k{font-size:12px;color:var(--ts);font-weight:700}
+.ld-title{width:100%;background:transparent;border:0;outline:none;color:var(--tp);font:900 22px var(--font-d);letter-spacing:-.5px;padding:2px 0}
+.ld-x{border:1px solid var(--br);background:var(--s2);color:var(--tp);border-radius:10px;width:34px;height:34px;cursor:pointer}
+.ld-body{flex:1;overflow-y:auto;padding:16px 20px 30px}
+.ld-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.ld-sec{background:var(--s2);border-radius:14px;padding:12px 14px;margin-bottom:16px}
+.ld-l{font-size:11px;font-weight:700;color:var(--tm);margin-bottom:8px}
+.ld-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ld-link{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.ld-link input:first-child{max-width:150px}
+.ld-link .icon-btn{flex-shrink:0;width:32px;height:32px}
+.ld-link a.icon-btn{text-decoration:none;display:grid;place-items:center}
+.ld-del{margin-top:10px;border:1px solid rgba(239,68,68,.35);background:var(--rdd);color:var(--rd);border-radius:10px;padding:9px 14px;font:700 12px var(--font-b);cursor:pointer}
+/* Sección */
+.gl-next{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;padding:18px;border-radius:20px;background:color-mix(in srgb,var(--gc) 12%,var(--s1));border:1px solid color-mix(in srgb,var(--gc) 40%,transparent);margin-bottom:18px}
+.gl-next:not(:has(.gl-next-v)){grid-template-columns:1fr}
+.gl-next-k{font-size:12px;font-weight:800;color:var(--gc)}
+.gl-next-t{font:900 26px var(--font-d);letter-spacing:-.6px;color:var(--tp);margin:4px 0 8px;line-height:1.1}
+.gl-next-o{font-size:14px;color:var(--tp);margin-bottom:6px;line-height:1.5}
+.gl-next-d{font-size:13px;color:var(--ts);line-height:1.55;margin-bottom:6px}
+.gl-next-u{font-size:12px;color:var(--ts);margin-bottom:10px}
+.gl-next-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.gl-next-v{margin:0}
+.gl-done{padding:18px;border-radius:18px;background:var(--grd);color:var(--gr);font-weight:800;margin-bottom:16px}
+.gl-list{display:flex;flex-direction:column;gap:6px}
+.gl-per{margin:12px 0 4px;font:900 13px var(--font-d);color:var(--tp);display:flex;align-items:center;gap:8px}
+.gl-per::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--pc)}
+.gl-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--s1);border:1px solid var(--br)}
+.gl-row.next{border-color:var(--gc)}
+.gl-row.done .gl-t{color:var(--ts)}
+.gl-n{width:26px;text-align:center;font-weight:800;color:var(--tm);font-size:12px}
+.gl-main{flex:1;min-width:0;cursor:pointer}
+.gl-t{font-weight:800;font-size:13.5px;color:var(--tp)}
+.gl-o{font-size:12px;color:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl-u{font-size:14px}
+/* Importar */
+.im-opt{background:var(--s2);border-radius:14px;padding:14px;margin-bottom:12px}
+.im-t{font-weight:800;font-size:14px;color:var(--tp);margin-bottom:4px}
+.im-file{display:inline-block;margin-top:10px;padding:9px 14px;border-radius:10px;background:var(--ac);color:#fff;font-weight:700;font-size:12px;cursor:pointer}
+.im-file input{display:none}
+.im-paste{min-height:64px;border:2px dashed var(--brh);border-radius:12px;padding:12px;color:var(--ts);font-size:13px;outline:none;max-height:120px;overflow:auto}
+.im-paste:empty::before{content:attr(data-ph);color:var(--tm)}
+.im-paste:focus{border-color:var(--ac)}
+.im-prev{background:var(--s2);border:1px solid var(--bra);border-radius:14px;padding:14px;margin-top:4px}
+.im-line{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--br);font-size:13px;color:var(--tp)}
+.im-line small{color:var(--ts)}
+.im-g{font:900 18px var(--font-d);color:var(--gc);min-width:58px}
+.im-err{color:var(--rd);font-size:12px;font-weight:700;margin-top:8px}
+@media (max-width:900px){.gl-next{grid-template-columns:1fr}#grade-view{padding:14px}}
+
+#data-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:9800;display:none;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(760px,94vw);margin-top:10px;padding:12px 16px;border-radius:14px;font:600 13px var(--font-b);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#data-banner.warn{background:#3b1d0a;color:#fed7aa;border:1px solid #f97316}
+#data-banner.info{background:#0c2a4a;color:#bfdbfe;border:1px solid #3b82f6}
+#data-banner button{border:0;border-radius:9px;padding:6px 12px;font:700 12px var(--font-b);cursor:pointer;background:#fff;color:#111}
+.bk-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--br)}
+.bk-i{font-size:20px}.bk-t{font-weight:700;color:var(--tp);font-size:13px}
 </style>
 </head>
 <body>
@@ -1498,6 +1628,8 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
           <div class="grp-panel" id="panel-calendar"><div id="cal-section"></div></div>
           <div class="grp-panel" id="panel-wb"><div id="wb-inline"></div></div>
         </div>
+        <!-- PLANEACIÓN DEL GRADO -->
+        <div id="grade-view"></div>
         <!-- CLASS DETAIL -->
         <div id="cls-detail"></div>
         <!-- AI PANEL -->
@@ -1590,6 +1722,9 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
 <!-- KB HINT -->
 <div class="kb-hint" id="kb-hint"></div>
 
+<!-- FICHA DE CLASE -->
+<div id="lesson-drawer" role="dialog" aria-label="Clase"></div>
+
 <!-- PORTAL DE ESTUDIANTES -->
 <div id="aula" role="main"></div>
 
@@ -1652,7 +1787,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 4.0 — APP LOGIC
+   CLASS DRIVE 4.2 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -5391,13 +5526,13 @@ function aulaGroup(g,grp){
   const pct=total?Math.round(nDone/total*100):0;
   const units=(g.units||[]).filter(u=>classes.some(c=>c.unitId===u.id));
   const loose=classes.filter(c=>!c.unitId||!(g.units||[]).some(u=>u.id===c.unitId));
-  const sortC=a=>[...a].sort((x,y)=>(x.date||'9999').localeCompare(y.date||'9999')||String(x.title).localeCompare(String(y.title)));
+  const sortC=a=>[...a].sort((x,y)=>((x.order??9999)-(y.order??9999))||(x.date||'9999').localeCompare(y.date||'9999')||String(x.title).localeCompare(String(y.title)));
   const badges=units.map((u,i)=>{const cs=classes.filter(c=>c.unitId===u.id);const ok=cs.length&&cs.every(c=>done.has(c.id));
     return`<div class="au-badge${ok?' on':''}" style="--uc:${u.color||t.c}" title="${escA(u.title)}"><span>${ok?'🏅':i+1}</span><small>${escH(u.title)}</small></div>`;}).join('');
   const path=(list,col)=>`<ol class="au-path" style="--uc:${col}">${sortC(list).map((c,k)=>{const d=done.has(c.id);
       return`<li class="au-node${d?' done':''}"><button onclick="location.hash='${aulaHash(aula.email,grp.code,c.id)}'">
         <span class="au-dot">${d?'⭐':k+1}</span>
-        <span class="au-node-card"><span class="au-node-t">${escH(c.title)}</span>${c.date?`<span class="au-node-d">${escH(fmtDate(c.date))}</span>`:''}${c.canva?'<span class="au-node-tag">🎨 Presentación</span>':''}</span>
+        <span class="au-node-card"><span class="au-node-t">${escH(c.title)}</span>${c.date?`<span class="au-node-d">${escH(fmtDate(c.date))}</span>`:''}${c.canva?'<span class="au-node-tag">🎨 Presentación</span>':''}${c.theme?`<span class="au-node-d">${escH(c.theme)}</span>`:''}</span>
       </button></li>`;}).join('')}</ol>`;
   const sections=units.map((u,i)=>`<section class="au-unit">
       <div class="au-unit-h" style="--uc:${u.color||t.c}"><span class="au-unit-n">${i+1}</span><div><div class="au-unit-t">${escH(u.title)}</div>${u.centralIdea?`<div class="au-unit-i">${escH(u.centralIdea)}</div>`:''}${u.profile?`<div class="au-unit-p">🌱 Hoy somos ${escH(u.profile.toLowerCase())}</div>`:''}</div></div>
@@ -5473,6 +5608,790 @@ window.addEventListener('hashchange',()=>{
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 4.1 — PLANEACIÓN POR GRADO (estilo hoja de cálculo)
+   La clase pertenece al GRADO. Cada sección solo marca si ya la dio.
+   Importa tu Excel (todas las pestañas) o pega filas desde Sheets.
+═══════════════════════════════════════════════════════════════ */
+const PYP_THEME_INFO=[
+  {k:'Quiénes somos',e:'🟣',c:'#8B5CF6',m:/somos/},
+  {k:'Dónde nos encontramos en el tiempo y el espacio',e:'🔵',c:'#2563EB',m:/encontramos|tiempo y el espacio/},
+  {k:'Cómo nos expresamos',e:'🟡',c:'#EAB308',m:/expresamos/},
+  {k:'Cómo funciona el mundo',e:'🟢',c:'#16A34A',m:/funciona/},
+  {k:'Cómo nos organizamos',e:'🟠',c:'#F97316',m:/organizamos/},
+  {k:'Cómo compartimos el planeta',e:'🟤',c:'#92400E',m:/planeta|compartimos/},
+];
+const PERIOD_COLORS=['#60A5FA','#34D399','#FBBF24','#F472B6','#A78BFA','#FB923C'];
+function normTxt(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+function themeInfo(t){if(!t)return null;const n=normTxt(t);return PYP_THEME_INFO.find(x=>x.m.test(n))||null;}
+function periodNum(p){const m=String(p||'').match(/\d+/);return m?parseInt(m[0]):0;}
+function periodColor(p){const n=periodNum(p);return PERIOD_COLORS[((n||1)-1)%PERIOD_COLORS.length];}
+function periodLabel(p){const n=periodNum(p);return n?'Periodo '+n:String(p||'');}
+function lessonsOf(g){if(!g)return[];if(!g.lessons)g.lessons={};return Object.values(g.lessons).sort((a,b)=>(a.n||0)-(b.n||0));}
+function sortedGroups(g){return Object.values(g?.groups||{}).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true}));}
+function nextLesson(g,grpId){return lessonsOf(g).find(l=>!l.done?.[grpId]);}
+function secKey(s){return normTxt(s).replace(/[°º\s.]/g,'').toUpperCase();}
+function newLesson(g,data){
+  if(!g.lessons)g.lessons={};
+  const id='ls-'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const l={id,n:0,period:'',title:'',desc:'',objective:'',theme:'',standard:'',links:[],canvaUrl:'',planUrl:'',done:{},visible:false,...(data||{})};
+  if(!l.n)l.n=(lessonsOf(g).slice(-1)[0]?.n||0)+1;
+  l.id=id;g.lessons[id]=l;return l;
+}
+function renumber(g){lessonsOf(g).forEach((l,i)=>l.n=i+1);}
+function gradeViewOn(){return document.getElementById('grade-view')?.style.display==='block';}
+function grpViewOn(){return document.getElementById('grp-view')?.style.display==='flex';}
+function refreshViews(){if(gradeViewOn())renderGradePlan();else if(grpViewOn())renderGroupView();renderSidebar();}
+
+/* ── Migración: las clases por sección pasan a la planeación del grado ── */
+function fixState(){
+  if(!state.grades)state.grades={};
+  Object.values(state.grades).forEach(g=>{
+    if(!g.groups)g.groups={};
+    if(!g.units||typeof g.units!=='object')g.units={};
+    if(!g.lessons||typeof g.lessons!=='object')g.lessons={};
+    const n=parseInt(g.number)||0;
+    if(n>=1&&n<=6&&!g.secFix){
+      (n<=2?['A','B','C']:['A','B']).forEach(l=>{
+        const name=n+'°'+l;
+        const has=Object.values(g.groups).some(x=>String(x.name||'').replace(/\s/g,'').toUpperCase()===name.toUpperCase());
+        if(!has){let id=g.id+l;if(g.groups[id])id=uid();g.groups[id]={id,name,code:genCode(),classes:{},notes:''};}
+      });
+      g.secFix=true;
+    }
+    Object.values(g.groups).forEach(grp=>{
+      if(!grp.notes)grp.notes='';
+      if(!grp.classes)grp.classes={};
+      if(!grp.code)grp.code=genCode();
+      Object.keys(grp.classes).forEach(k=>{const c=grp.classes[k];if(!c||typeof c!=='object'||!c.title)delete grp.classes[k];});
+      delete grp.activities;
+    });
+    if(!g.planMig){
+      const byKey={};lessonsOf(g).forEach(l=>byKey[normTxt(l.title)]=l);
+      sortedGroups(g).forEach(grp=>{
+        const cls=Object.values(grp.classes||{});
+        cls.sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999')).forEach(c=>{
+          const k=normTxt(c.title);let l=byKey[k];
+          if(!l){
+            l=newLesson(g,{title:c.title,desc:c.desc||'',objective:c.objective||'',canvaUrl:c.canvaUrl||'',planUrl:c.planUrl||'',
+              theme:g.units?.[c.unitId]?.theme||'',
+              links:Object.values(c.resources||{}).filter(r=>r&&r.url&&r.type!=='html').map(r=>({label:r.title||'Recurso',url:r.url}))});
+            byKey[k]=l;
+          }
+          if(c.status==='published')l.visible=true;
+        });
+        if(cls.length){if(!state.legacyClasses)state.legacyClasses={};state.legacyClasses[grp.id]=grp.classes;grp.classes={};}
+      });
+      g.planMig=true;
+    }
+    Object.values(g.lessons).forEach(l=>{if(!l.done)l.done={};if(!Array.isArray(l.links))l.links=[];});
+  });
+}
+
+/* ── Enlaces de Google Docs/Sheets también se incrustan ── */
+function detectResType(url){
+  if(!url)return'link';
+  const u=url.toLowerCase();
+  if(u.includes('docs.google.com/presentation')||u.includes('slides.google'))return'slides';
+  if(u.includes('youtube.com')||u.includes('youtu.be'))return'video';
+  if(u.includes('canva.com')||u.includes('canva.link'))return'canva';
+  if(u.includes('genially.com'))return'genially';
+  if(u.includes('drive.google.com')||u.includes('docs.google.com/document')||u.includes('docs.google.com/spreadsheets'))return'drive';
+  if(/\.(pdf)($|\?)/.test(u))return'pdf';
+  if(/\.(jpg|jpeg|png|gif|webp|svg)($|\?)/.test(u))return'image';
+  if(u.startsWith('<')||u.includes('<html'))return'html';
+  return'link';
+}
+
+/* ── Vistas ── */
+function hideAll(){
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('grp-view').style.display='none';
+  const gv=document.getElementById('grade-view');if(gv)gv.style.display='none';
+  const cd=document.getElementById('cls-detail');if(cd)cd.style.display='none';
+  ['ai-panel','wb-panel','admin-panel'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('show');el.style.display='none';}});
+  const tna=document.getElementById('tb-new-act');if(tna)tna.style.display='none';
+  const tnc=document.getElementById('tb-new-class');if(tnc)tnc.style.display='none';
+  closeLesson(true);
+}
+function renderSidebar(){
+  const q=(document.getElementById('sb-search')?.value||'').toLowerCase();
+  const list=document.getElementById('grades-list');if(!list)return;list.innerHTML='';openCtxId=null;
+  sortedGrades().forEach(grade=>{
+    const t=gTheme(grade);const isExp=expandedGrades[grade.id];const total=lessonsOf(grade).length;
+    const planActive=!state.currentGroup&&state.currentGrade===grade.id&&gradeViewOn();
+    const groupsHtml=sortedGroups(grade).map(grp=>{
+      if(q&&!grp.name.toLowerCase().includes(q))return'';
+      const done=lessonsOf(grade).filter(l=>l.done?.[grp.id]).length;
+      return`<div style="position:relative">
+        <div class="grp-row${state.currentGroup===grp.id?' active':''}" onclick="selectGroup('${grade.id}','${grp.id}')">
+          <span class="grp-dot" style="background:${t.c}"></span><span style="flex:1">${escH(grp.name)}</span>
+          <span class="grp-cnt">${done}/${total}</span>
+          <button class="grp-ctx-btn" onclick="event.stopPropagation();toggleCtx('${grp.id}')">⋯</button>
+        </div>
+        <div class="ctx-menu" id="ctx-${grp.id}">
+          <div class="ctx-item" onclick="editGrp('${grade.id}','${grp.id}')">✏️ Renombrar</div>
+          <div class="ctx-item danger" onclick="delGrp('${grade.id}','${grp.id}')">🗑 Eliminar</div>
+        </div></div>`;
+    }).join('');
+    const el=document.createElement('div');
+    el.innerHTML=`<div class="gr-row${isExp?' open':''}" onclick="toggleGrade('${grade.id}')">
+      <span class="gr-icon">${t.m}</span><span class="gr-name">${escH(grade.name)}</span>
+      <span class="gr-chev${isExp?' open':''}">▶</span></div>
+      <div class="gr-wrap${isExp?' open':''}">
+        <div class="grp-row sb-plan${planActive?' active':''}" onclick="openGradePlan('${grade.id}')"><span>📋</span><span style="flex:1">Planeación</span><span class="grp-cnt">${total}</span></div>
+        ${groupsHtml}
+        <button class="add-grp-btn" onclick="openGrpModal('${grade.id}')">➕ Crear grupo</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+function renderGradeTiles(){
+  const tiles=sortedGrades().map(g=>{
+    const t=gTheme(g);const ls=lessonsOf(g);
+    return`<div class="gt-tile" style="--gc:${t.c};--gs:${t.s};--gd:${t.d}">
+      <button class="gt-top" onclick="openGradePlan('${g.id}')" title="Abrir planeación"><span class="gt-num">${g.number||''}°</span><span class="gt-mascot" aria-hidden="true">${t.m}</span></button>
+      <div class="gt-name">${escH(t.n)}</div>
+      <div class="gt-stats"><span>${plural(ls.length,'clase')} planeadas</span></div>
+      <div class="gt-secs">
+        <button class="gt-plan" onclick="openGradePlan('${g.id}')">📋 Planeación</button>
+        ${sortedGroups(g).map(x=>{const d=ls.filter(l=>l.done?.[x.id]).length;return`<button onclick="selectGroup('${g.id}','${x.id}')" title="${d} de ${ls.length} dadas">${escH(x.name)} <small>${d}/${ls.length}</small></button>`;}).join('')}
+      </div></div>`;
+  }).join('');
+  return`<div class="gt-head">
+      <div><div class="gt-h">Tus grados</div><div class="gt-sub">La planeación es una por grado; cada sección marca lo que ya dio.</div></div>
+      <div class="gt-actions">
+        <button class="cx-btn" onclick="openImportModal()">📥 Importar planeación</button>
+        <button class="cx-btn" onclick="printAllQR()">🖨 QR de grupos</button>
+        <button class="cx-btn" onclick="window.open(aulaLink(),'_blank')">🎒 Portal de estudiantes</button>
+      </div></div>
+    <div class="gt-grid">${tiles}</div>`;
+}
+function renderDashboard(){
+  const rows=[];
+  sortedGrades().forEach(g=>{const t=gTheme(g);sortedGroups(g).forEach(grp=>{const nx=nextLesson(g,grp.id);if(nx)rows.push(
+    `<button class="dn-row" style="--gc:${t.c}" onclick="selectGroup('${g.id}','${grp.id}')"><span class="dn-sec">${escH(grp.name)}</span><span class="dn-t">${escH(nx.title||'Sin tema')}</span><span class="dn-p">${escH(nx.period||'')}</span></button>`);});});
+  return rows.length?`<div class="dn-box"><div class="dn-h">Lo que toca en cada salón</div><div class="dn-grid">${rows.join('')}</div></div>`:'';
+}
+
+/* ══════════ PLANEACIÓN DEL GRADO ══════════ */
+function openGradePlan(gid){
+  if(!state.grades[gid])return;
+  state.currentGrade=gid;state.currentGroup=null;expandedGrades[gid]=true;
+  hideAll();document.getElementById('grade-view').style.display='block';
+  document.getElementById('tb-new-class').style.display='';
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  renderSidebar();renderGradePlan();document.getElementById('content').scrollTop=0;
+}
+function renderGradePlan(){
+  const g=curGrade();if(!g)return;const t=gTheme(g);const v=document.getElementById('grade-view');
+  const wrapOld=v.querySelector('.pl-wrap');const sx=wrapOld?.scrollLeft||0,sy=wrapOld?.scrollTop||0;
+  v.style.setProperty('--gc',t.c);v.style.setProperty('--gs',t.s);v.style.setProperty('--gd',t.d);
+  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span>${t.m} ${escH(g.name)}</span><span class="bc-s">›</span><span class="bc-a">Planeación</span>`;
+  const grps=sortedGroups(g);const ls=lessonsOf(g);
+  const nextBy={};grps.forEach(x=>{const nx=nextLesson(g,x.id);if(nx)nextBy[x.id]=nx.id;});
+  const secs=grps.map(grp=>{const done=ls.filter(l=>l.done?.[grp.id]).length;const nx=ls.find(l=>l.id===nextBy[grp.id]);
+    return`<button class="pl-sec" onclick="selectGroup('${g.id}','${grp.id}')"><span class="pl-sec-n">${escH(grp.name)}</span>
+      <span class="pl-sec-bar"><i style="width:${ls.length?Math.round(done/ls.length*100):0}%"></i></span>
+      <span class="pl-sec-t">${nx?'Próxima: '+escH(nx.title||'Sin tema'):(ls.length?'Planeación completa':'Sin clases aún')}</span>
+      <span class="pl-sec-c">${done}/${ls.length}</span></button>`;}).join('');
+  let body='';let prev=null;const cols=10+grps.length;
+  ls.forEach(l=>{
+    if((l.period||'')!==prev){prev=l.period||'';if(prev){const cnt=ls.filter(x=>(x.period||'')===prev).length;
+      body+=`<tr class="pl-per" style="--pc:${periodColor(prev)}"><td colspan="${cols}"><span class="pl-per-b">${escH(prev)}</span>${escH(periodLabel(prev))}<small>${plural(cnt,'clase')}</small></td></tr>`;}}
+    body+=planRow(l,grps,nextBy);
+  });
+  v.innerHTML=`<div class="pl-banner"><div class="pl-banner-m" aria-hidden="true">${t.m}</div>
+      <div style="flex:1;min-width:0"><div class="pl-banner-k">Planeación Tecnología · IB PYP</div><h1 class="pl-banner-h">Grado ${g.number}°</h1></div>
+      <div class="pl-banner-a"><button class="cx-btn" onclick="openImportModal()">📥 Importar</button><button class="cx-btn primary" onclick="addLessonRow()">+ Agregar clase</button></div></div>
+    <div class="pl-secs">${secs}</div>
+    <div class="pl-tip">Haz clic en una celda para escribir. Enter baja a la fila siguiente. Para traer tu hoja: copia las filas en Sheets y pega aquí con Cmd + V.</div>
+    ${ls.length?`<div class="pl-wrap"><table class="pl">
+      <thead><tr><th class="pl-h"></th><th class="pl-n">#</th><th class="pl-p">Período</th><th class="pl-t">Tema / actividad</th><th class="pl-d">Descripción</th><th class="pl-o">Objetivo de aprendizaje</th>
+      ${grps.map(x=>`<th class="pl-c">${escH(String(x.name).replace(/°/g,''))}</th>`).join('')}
+      <th class="pl-r">Recursos</th><th class="pl-u">Unidad PYP</th><th class="pl-s">Dominio / estándar</th><th class="pl-a"></th></tr></thead>
+      <tbody>${body}</tbody></table></div>
+      <button class="pl-addrow" onclick="addLessonRow()">+ Agregar clase al final</button>`
+    :`<div class="pl-empty"><div class="pl-empty-i">📋</div><h3>La planeación de ${escH(t.n)} está vacía</h3><p>Importa tu Excel con todas las pestañas, pega las filas desde tu hoja o empieza a escribir.</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="cx-btn primary" onclick="openImportModal()">📥 Importar mi planeación</button><button class="cx-btn" onclick="addLessonRow()">Escribir la primera clase</button></div></div>`}`;
+  const w=v.querySelector('.pl-wrap');if(w){w.scrollLeft=sx;w.scrollTop=sy;}
+}
+function ce(l,f,ph){return`<div class="pl-ce" contenteditable="true" spellcheck="false" data-id="${l.id}" data-f="${f}" data-ph="${escA(ph||'')}">${escH(l[f]||'')}</div>`;}
+function planRow(l,grps,nextBy){
+  const ti=themeInfo(l.theme);
+  const cells=grps.map(grp=>{const d=!!l.done?.[grp.id];const nx=nextBy[grp.id]===l.id;
+    return`<td class="pl-c${nx?' next':''}"><label class="pl-ck" title="${escA(grp.name)}${nx?' · próxima clase':''}"><input type="checkbox"${d?' checked':''} onchange="setDone('${l.id}','${grp.id}',this.checked)"><span></span></label></td>`;}).join('');
+  const links=(l.links||[]).map(k=>k.url?`<a href="${escA(k.url)}" target="_blank" rel="noopener">${escH(k.label||'Enlace')}</a>`:`<span>${escH(k.label)}</span>`).join('');
+  const opts=`<option value="">—</option>`+PYP_THEME_INFO.map(x=>`<option value="${escA(x.k)}"${ti&&ti.k===x.k?' selected':''}>${x.e} ${x.k}</option>`).join('')
+    +(l.theme&&!ti?`<option value="${escA(l.theme)}" selected>${escH(l.theme)}</option>`:'');
+  return`<tr class="pl-row${l.visible?' vis':''}" data-id="${l.id}">
+    <td class="pl-h"><span class="pl-drag" title="Arrastra para mover" onmousedown="plArm(this)">⋮⋮</span></td>
+    <td class="pl-n">${l.n}</td>
+    <td class="pl-p">${ce(l,'period','P1')}</td>
+    <td class="pl-t">${ce(l,'title','Tema')}</td>
+    <td class="pl-d">${ce(l,'desc','')}</td>
+    <td class="pl-o">${ce(l,'objective','')}</td>
+    ${cells}
+    <td class="pl-r">${l.canvaUrl?`<a class="pl-canva" href="#" onclick="event.preventDefault();openLesson('${l.id}')">🎨 Canva</a>`:''}${links}<button class="pl-plus" onclick="openLesson('${l.id}','links')" title="Agregar o editar recursos">＋</button></td>
+    <td class="pl-u"><select style="--tc:${ti?.c||'transparent'}" onchange="setLessonField('${l.id}','theme',this.value);renderGradePlan()" aria-label="Unidad PYP">${opts}</select></td>
+    <td class="pl-s">${ce(l,'standard','')}</td>
+    <td class="pl-a"><button onclick="openProjectLesson('${l.id}')" title="Proyectar">▶</button><button onclick="openLesson('${l.id}')" title="Abrir clase">↗</button></td>
+  </tr>`;
+}
+function setLessonField(id,f,val){
+  const l=curGrade()?.lessons?.[id];if(!l)return;l[f]=val;saveState();
+  document.querySelectorAll(`.pl-ce[data-id="${id}"][data-f="${f}"]`).forEach(el=>{if(el!==document.activeElement)el.textContent=val;});
+}
+function setDone(id,grpId,val){
+  const l=curGrade()?.lessons?.[id];if(!l)return;
+  if(val)l.done[grpId]=true;else delete l.done[grpId];
+  saveState();
+  if(gradeViewOn())renderGradePlan();else if(grpViewOn())renderGroupView();
+  renderSidebar();
+  const d=document.getElementById('lesson-drawer');if(d?.classList.contains('show')&&d.dataset.id===id)openLesson(id);
+}
+function addLessonRow(){
+  const g=curGrade();if(!g)return;const last=lessonsOf(g).slice(-1)[0];
+  const l=newLesson(g,{period:last?.period||'P1'});saveState();
+  if(!gradeViewOn())openGradePlan(g.id);else renderGradePlan();renderSidebar();
+  setTimeout(()=>{const el=document.querySelector(`.pl-ce[data-id="${l.id}"][data-f="title"]`);if(el){el.focus();el.scrollIntoView({block:'center'});}},30);
+}
+function openClassModal2(){if(!curGrade()){showToast('Primero elige un grado');return;}addLessonRow();}
+
+/* Edición en celdas: guardar, Enter baja, pegar trae la hoja */
+document.addEventListener('input',e=>{
+  const el=e.target.closest?.('.pl-ce');if(!el)return;
+  const l=curGrade()?.lessons?.[el.dataset.id];if(!l)return;l[el.dataset.f]=el.innerText.replace(/\n$/,'');saveState();
+});
+document.addEventListener('focusout',e=>{
+  const el=e.target.closest?.('.pl-ce');if(!el||el.dataset.f!=='period')return;
+  setTimeout(()=>{const a=document.activeElement;const key=a?.classList?.contains('pl-ce')?[a.dataset.id,a.dataset.f]:null;
+    renderGradePlan();if(key)document.querySelector(`.pl-ce[data-id="${key[0]}"][data-f="${key[1]}"]`)?.focus();},0);
+});
+document.addEventListener('keydown',e=>{
+  const el=e.target.closest?.('.pl-ce');if(!el)return;
+  if(e.key==='Enter'&&!e.shiftKey){
+    e.preventDefault();const g=curGrade();const ls=lessonsOf(g);const i=ls.findIndex(l=>l.id===el.dataset.id);
+    if(i>=0&&i<ls.length-1){const nx=document.querySelector(`.pl-ce[data-id="${ls[i+1].id}"][data-f="${el.dataset.f}"]`);if(nx){nx.focus();placeCaretEnd(nx);}}
+    else{el.blur();addLessonRow();}
+  }
+  if(e.key==='Escape')el.blur();
+  e.stopPropagation();
+},true);
+function placeCaretEnd(el){try{const r=document.createRange();r.selectNodeContents(el);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r);}catch(x){}}
+document.addEventListener('paste',e=>{
+  if(!gradeViewOn())return;
+  if(e.target.closest?.('#overlay,#lesson-drawer'))return;
+  const html=e.clipboardData?.getData('text/html')||'';const txt=e.clipboardData?.getData('text/plain')||'';
+  const multi=(html.match(/<td/gi)||[]).length>1||/\t/.test(txt)||(txt.trim().split('\n').length>1&&!e.target.closest?.('.pl-ce'));
+  if(multi){e.preventDefault();const rows=html?rowsFromHtml(html):rowsFromTsv(txt);previewImport([{g:curGrade(),rows:parsePlanRows(rows,curGrade())}]);return;}
+  if(e.target.closest?.('.pl-ce')){e.preventDefault();document.execCommand('insertText',false,txt);}
+});
+/* Arrastrar para reordenar */
+let plDragId=null;
+function plArm(h){const tr=h.closest('tr');tr.draggable=true;const off=()=>{tr.draggable=false;document.removeEventListener('mouseup',off);};document.addEventListener('mouseup',off);}
+document.addEventListener('dragstart',e=>{const tr=e.target.closest?.('tr.pl-row');if(!tr)return;plDragId=tr.dataset.id;tr.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',plDragId);}catch(x){}});
+document.addEventListener('dragover',e=>{if(!plDragId)return;const tr=e.target.closest?.('tr.pl-row');if(!tr)return;e.preventDefault();document.querySelectorAll('.pl-row.over').forEach(x=>x.classList.remove('over'));tr.classList.add('over');});
+document.addEventListener('drop',e=>{
+  if(!plDragId)return;const tr=e.target.closest?.('tr.pl-row');e.preventDefault();
+  const g=curGrade();if(tr&&tr.dataset.id!==plDragId){const ls=lessonsOf(g);const from=ls.findIndex(l=>l.id===plDragId);const [m]=ls.splice(from,1);
+    const to=ls.findIndex(l=>l.id===tr.dataset.id);ls.splice(to,0,m);ls.forEach((l,i)=>l.n=i+1);saveState();}
+  plDragId=null;renderGradePlan();
+});
+document.addEventListener('dragend',e=>{const tr=e.target.closest?.('tr.pl-row');if(tr){tr.draggable=false;tr.classList.remove('dragging');}document.querySelectorAll('.pl-row.over').forEach(x=>x.classList.remove('over'));plDragId=null;});
+
+/* ══════════ FICHA DE LA CLASE (panel lateral) ══════════ */
+function openLesson(id,focus){
+  const g=curGrade(),l=g?.lessons?.[id];if(!l)return;const t=gTheme(g);
+  const d=document.getElementById('lesson-drawer');d.style.setProperty('--gc',t.c);d.dataset.id=id;
+  const grps=sortedGroups(g);
+  const emb=l.canvaUrl&&canvaOk(l.canvaUrl)?canvaEmbed(l.canvaUrl):'';
+  const links=(l.links||[]).map((k,i)=>`<div class="ld-link">
+      <input class="cx-inp" value="${escA(k.label||'')}" placeholder="Nombre" oninput="setLink('${id}',${i},'label',this.value)">
+      <input class="cx-inp" value="${escA(k.url||'')}" placeholder="https://..." oninput="setLink('${id}',${i},'url',this.value)">
+      ${k.url?`<a class="icon-btn" href="${escA(k.url)}" target="_blank" rel="noopener" title="Abrir">↗</a>`:''}
+      <button class="icon-btn danger" onclick="delLink('${id}',${i})" title="Quitar">✕</button></div>`).join('');
+  const ti=themeInfo(l.theme);
+  d.innerHTML=`<div class="ld-head">
+      <div style="flex:1;min-width:0"><div class="ld-k">${t.m} ${escH(t.n)} · Clase ${l.n}${l.period?' · '+escH(l.period):''}</div>
+      <input class="ld-title" value="${escA(l.title)}" placeholder="Tema / actividad" oninput="setLessonField('${id}','title',this.value)"></div>
+      <button class="ld-x" onclick="closeLesson()" aria-label="Cerrar">✕</button></div>
+    <div class="ld-body">
+      <div class="ld-actions"><button class="cx-btn primary" onclick="openProjectLesson('${id}')">▶ Proyectar</button>
+        ${l.planUrl?`<a class="cx-btn" href="${escA(l.planUrl)}" target="_blank" rel="noopener">📋 Abrir planeación</a>`:''}</div>
+      ${emb?`<div class="cx-canva"><iframe src="${escA(emb)}" allowfullscreen allow="fullscreen" title="Presentación"></iframe></div>`:''}
+      <div class="ld-sec"><div class="ld-l">Dada en</div><div class="ld-chips">${grps.map(x=>`<label class="cx-ck"><input type="checkbox"${l.done?.[x.id]?' checked':''} onchange="setDone('${id}','${x.id}',this.checked)"> ${escH(x.name)}</label>`).join('')}</div>
+        <label class="cx-switch" style="margin-top:10px"><input type="checkbox"${l.visible?' checked':''} onchange="setLessonField('${id}','visible',this.checked)"> Mostrar a estudiantes aunque no se haya dado</label>
+        <div class="cx-muted" style="margin-top:4px">Al marcarla como dada en una sección, aparece sola en el portal de esa sección.</div></div>
+      <div class="form-group"><label>🎨 Presentación de Canva</label><input id="ld-canva" value="${escA(l.canvaUrl||'')}" placeholder="Enlace o código de inserción de Canva" oninput="setLessonField('${id}','canvaUrl',this.value);cxCanvaCheck(this.value)" onchange="openLesson('${id}')"><div id="fc-canva-msg" class="cx-field-msg"></div></div>
+      <div class="form-group"><label>📋 Planeación de clase (solo tú la ves)</label><input value="${escA(l.planUrl||'')}" placeholder="https://docs.google.com/..." oninput="setLessonField('${id}','planUrl',this.value)" onchange="openLesson('${id}')"></div>
+      <div class="form-group" id="ld-links"><label style="display:flex;justify-content:space-between;align-items:center"><span>🔗 Recursos</span><button class="cx-mini" onclick="addLink('${id}')">+ Agregar</button></label>
+        ${links||'<div class="cx-muted">Juegos, actividades, documentos o videos de esta clase.</div>'}</div>
+      <div class="form-2col">
+        <div class="form-group"><label>Período</label><input value="${escA(l.period||'')}" placeholder="P1" oninput="setLessonField('${id}','period',this.value)"></div>
+        <div class="form-group"><label>Dominio / estándar</label><input value="${escA(l.standard||'')}" placeholder="D1 · 1.2" oninput="setLessonField('${id}','standard',this.value)"></div>
+      </div>
+      <div class="form-group"><label>Unidad PYP</label><select onchange="setLessonField('${id}','theme',this.value)"><option value="">—</option>${PYP_THEME_INFO.map(x=>`<option value="${escA(x.k)}"${ti&&ti.k===x.k?' selected':''}>${x.e} ${x.k}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Descripción</label><textarea oninput="setLessonField('${id}','desc',this.value)">${escH(l.desc||'')}</textarea></div>
+      <div class="form-group"><label>Objetivo de aprendizaje</label><textarea oninput="setLessonField('${id}','objective',this.value)">${escH(l.objective||'')}</textarea></div>
+      <button class="ld-del" onclick="deleteLesson('${id}')">🗑 Eliminar esta clase</button>
+    </div>`;
+  d.classList.add('show');
+  cxCanvaCheck(l.canvaUrl||'');
+  if(focus==='links')setTimeout(()=>{document.getElementById('ld-links')?.scrollIntoView({block:'center'});if(!(l.links||[]).length)addLink(id);},60);
+}
+function closeLesson(silent){
+  const d=document.getElementById('lesson-drawer');if(!d||!d.classList.contains('show'))return;
+  d.classList.remove('show');d.innerHTML='';if(!silent)refreshViews();
+}
+function setLink(id,i,f,v){const l=curGrade()?.lessons?.[id];if(!l?.links?.[i])return;l.links[i][f]=v;saveState();}
+function addLink(id){const l=curGrade()?.lessons?.[id];if(!l)return;l.links.push({label:'',url:''});saveState();openLesson(id);
+  setTimeout(()=>{const ins=document.querySelectorAll('#ld-links .ld-link input');ins[ins.length-2]?.focus();},40);}
+function delLink(id,i){const l=curGrade()?.lessons?.[id];if(!l)return;l.links.splice(i,1);saveState();openLesson(id);}
+function deleteLesson(id){
+  const g=curGrade();const l=g?.lessons?.[id];if(!l)return;
+  if(!confirm(`¿Eliminar la clase ${l.n} "${l.title||'Sin tema'}"?`))return;
+  delete g.lessons[id];renumber(g);saveState();closeLesson();showToast('Clase eliminada');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('lesson-drawer')?.classList.contains('show')&&!document.getElementById('overlay')?.classList.contains('show')&&!document.getElementById('proj')?.classList.contains('show'))closeLesson();});
+
+/* ══════════ VISTA DE SECCIÓN ══════════ */
+function renderGroupView(){
+  const grade=curGrade();if(!grade){showWelcome();return;}
+  const grp=grade.groups[state.currentGroup];if(!grp){showWelcome();return;}
+  const t=gTheme(grade);const ls=lessonsOf(grade);
+  hideAll();const gv=document.getElementById('grp-view');gv.style.display='flex';gv.style.flexDirection='column';
+  gv.style.setProperty('--gc',t.c);gv.style.setProperty('--gs',t.s);
+  document.getElementById('tb-new-class').style.display='';
+  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span>
+     <span onclick="openGradePlan('${grade.id}')" style="cursor:pointer">${t.m} ${escH(grade.name)}</span><span class="bc-s">›</span><span class="bc-a">${escH(grp.name)}</span>`;
+  document.getElementById('grp-title').innerHTML=`<span class="grp-mascot">${t.m}</span>${escH(grp.name)}`;
+  document.getElementById('grp-sub').textContent=`${t.n} · GI School`;
+  if(!grp.code)grp.code=genCode();
+  const done=ls.filter(l=>l.done?.[grp.id]).length;
+  document.getElementById('tab-cnt-classes').textContent=ls.length;
+  document.getElementById('grp-stats').innerHTML=`
+    <div class="stat-chip"><span class="sc-n">${done}/${ls.length}</span> Clases dadas</div>
+    <div class="stat-chip"><span class="sc-n">${ls.filter(l=>l.visible||l.done?.[grp.id]).length}</span> Visibles para estudiantes</div>
+    <div class="stat-chip">Código <span class="sc-n" style="margin-left:6px">${escH(grp.code)}</span></div>`;
+  const ga=document.getElementById('grp-actions');
+  if(ga)ga.innerHTML=`<button class="cx-btn" onclick="openGradePlan('${grade.id}')">📋 Planeación del grado</button>
+    <button class="cx-btn" onclick="openGroupAccess()">📱 Acceso estudiantes</button>
+    <button class="cx-btn" onclick="window.open(aulaLink('${escA(grp.code)}'),'_blank')">🎒 Ver como estudiante</button>`;
+  renderQNotes();
+  if(currentTab==='activities')currentTab='classes';
+  document.querySelectorAll('.grp-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
+  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-'+currentTab)?.classList.add('show');
+  renderTab(currentTab);
+}
+function renderClasses2(){
+  const g=curGrade(),grp=curGrp();if(!grp)return;const list=document.getElementById('cls-list2');if(!list)return;
+  const t=gTheme(g);const ls=lessonsOf(g);const nx=nextLesson(g,grp.id);
+  if(!ls.length){list.innerHTML=`<div class="cls-empty2"><div class="cls-empty2-icon">📋</div><h3>Todavía no hay planeación de ${escH(t.n)}</h3><p>Las clases se crean una sola vez en la planeación del grado y aquí solo marcas lo que ya diste.</p><button class="tb-btn tb-primary" style="display:inline-flex" onclick="openGradePlan('${g.id}')">Ir a la planeación</button></div>`;return;}
+  let html='';
+  if(nx){
+    const emb=nx.canvaUrl&&canvaOk(nx.canvaUrl)?canvaEmbed(nx.canvaUrl):'';const ti=themeInfo(nx.theme);
+    html+=`<div class="gl-next"><div class="gl-next-txt">
+        <div class="gl-next-k">Próxima clase en ${escH(grp.name)} · #${nx.n}${nx.period?' · '+escH(nx.period):''}</div>
+        <div class="gl-next-t">${escH(nx.title||'Sin tema')}</div>
+        ${nx.objective?`<div class="gl-next-o">🎯 ${escH(nx.objective)}</div>`:''}
+        ${nx.desc?`<div class="gl-next-d">${escH(nx.desc)}</div>`:''}
+        ${ti?`<div class="gl-next-u">${ti.e} ${escH(ti.k)}</div>`:''}
+        <div class="gl-next-a"><button class="cx-btn primary" onclick="openProjectLesson('${nx.id}')">▶ Proyectar</button>
+          <button class="cx-btn" onclick="setDone('${nx.id}','${grp.id}',true);showToast('Marcada como dada ✓')">✓ Ya la di</button>
+          <button class="cx-btn" onclick="openLesson('${nx.id}')">↗ Abrir</button>
+          ${nx.planUrl?`<a class="cx-btn" href="${escA(nx.planUrl)}" target="_blank" rel="noopener">📋 Planeación</a>`:''}</div></div>
+      ${emb?`<div class="gl-next-v cx-canva"><iframe src="${escA(emb)}" loading="lazy" allowfullscreen allow="fullscreen" title="Presentación"></iframe></div>`:''}
+    </div>`;
+  }else html+=`<div class="gl-done">🎉 ${escH(grp.name)} ya completó toda la planeación.</div>`;
+  let prev=null;
+  html+='<div class="gl-list">'+ls.map(l=>{
+    let sep='';if((l.period||'')!==prev){prev=l.period||'';if(prev)sep=`<div class="gl-per" style="--pc:${periodColor(prev)}">${escH(periodLabel(prev))}</div>`;}
+    const d=!!l.done?.[grp.id];const ti=themeInfo(l.theme);
+    return sep+`<div class="gl-row${d?' done':''}${nx&&nx.id===l.id?' next':''}">
+      <label class="pl-ck"><input type="checkbox"${d?' checked':''} onchange="setDone('${l.id}','${grp.id}',this.checked)"><span></span></label>
+      <span class="gl-n">${l.n}</span>
+      <div class="gl-main" onclick="openLesson('${l.id}')"><div class="gl-t">${escH(l.title||'Sin tema')}</div>${l.objective?`<div class="gl-o">${escH(l.objective)}</div>`:''}</div>
+      ${ti?`<span class="gl-u" title="${escA(ti.k)}">${ti.e}</span>`:''}
+      ${l.canvaUrl?'<span class="gl-u" title="Tiene Canva">🎨</span>':''}
+      <button class="icon-btn" onclick="openProjectLesson('${l.id}')" title="Proyectar">▶</button>
+    </div>`;}).join('')+'</div>';
+  list.innerHTML=html;
+}
+
+/* ══════════ PROYECTAR (clases de la planeación) ══════════ */
+function lessonToProj(l){
+  return{id:l.id,title:l.title||'Sin tema',objective:l.objective||'',desc:l.desc||'',unit:[l.period,themeInfo(l.theme)?.k||l.theme].filter(Boolean).join(' · '),
+    canvaUrl:l.canvaUrl||'',resources:(l.links||[]).filter(k=>k.url).map((k,i)=>({id:'k'+i,title:k.label||'Enlace',url:k.url,type:detectResType(k.url)}))};
+}
+function openProjectLesson(id){
+  const g=curGrade();if(!g)return;
+  proj.list=lessonsOf(g).map(lessonToProj);proj.i=Math.max(0,proj.list.findIndex(x=>x.id===id));proj.res=null;
+  proj.label=curGrp()&&grpViewOn()?curGrp().name:gTheme(g).n;
+  const el=document.getElementById('proj');el.classList.add('show');el.style.setProperty('--gc',gTheme(g).c);
+  renderProject();
+}
+function openProject(id){openProjectLesson(id);}
+function projSources(c){const s=[];if(c.canvaUrl)s.push({id:'__canva',title:'Presentación',type:'canva',url:c.canvaUrl});(c.resources||[]).forEach(r=>s.push(r));return s;}
+function renderProject(){
+  const c=proj.list[proj.i];if(!c)return;const g=curGrade(),t=gTheme(g);
+  const src=projSources(c);const cur=src.find(x=>x.id===proj.res)||src[0];proj.res=cur?.id||null;
+  document.getElementById('proj-info').innerHTML=`<span class="pj-badge">${t.m} ${escH(proj.label||'')}</span>
+    <div class="pj-titles">${c.unit?`<div class="pj-unit">${escH(c.unit)}</div>`:''}<div class="pj-title">${escH(c.title)}</div></div>
+    <span class="pj-count">${proj.i+1} / ${proj.list.length}</span>`;
+  document.getElementById('proj-tabs').innerHTML=src.length>1?src.map(s=>`<button class="${s.id===proj.res?'on':''}" onclick="projPick('${s.id}')">${getResInfo2(s.type).icon} ${escH(s.title)}</button>`).join(''):'';
+  const st=document.getElementById('proj-stage');
+  if(!cur){
+    st.innerHTML=`<div class="pj-card"><div class="pj-card-m">${t.m}</div><div class="pj-card-t">${escH(c.title)}</div>${c.objective?`<div class="pj-card-o">Hoy vamos a: ${escH(c.objective)}</div>`:''}${c.desc?`<div class="pj-card-d">${escH(c.desc)}</div>`:''}</div>`;
+  }else if(cur.type==='link'||(cur.type==='canva'&&!canvaOk(cur.url))){
+    st.innerHTML=`<div class="pj-card"><div class="pj-card-m">🔗</div><div class="pj-card-t">${escH(cur.title)}</div>${c.objective?`<div class="pj-card-o">${escH(c.objective)}</div>`:''}<a class="pj-open" href="${escA(cur.type==='canva'?canvaOpenUrl(cur.url):cur.url)}" target="_blank" rel="noopener">Abrir actividad ↗</a></div>`;
+  }else if(cur.type==='image'){st.innerHTML=`<img src="${escA(cur.url)}" alt="${escA(cur.title)}">`;}
+  else{st.innerHTML=`<iframe src="${escA(buildEmbedUrl(cur.url,cur.type))}" allowfullscreen allow="fullscreen;autoplay;encrypted-media"></iframe>`;}
+  document.getElementById('pj-prev').disabled=proj.i===0;
+  document.getElementById('pj-next').disabled=proj.i>=proj.list.length-1;
+}
+
+/* ══════════ IMPORTAR (Excel completo o pegar desde Sheets) ══════════ */
+function openImportModal(){
+  const g=curGrade();
+  const gradeOpts=sortedGrades().map(x=>`<option value="${x.id}"${g&&g.id===x.id?' selected':''}>${gTheme(x).m} ${x.number}°</option>`).join('');
+  openModal('📥 Importar planeación',`
+    <div class="im-opt"><div class="im-t">Archivo completo, todos los grados</div>
+      <div class="cx-muted">En Google Sheets: Archivo → Descargar → Microsoft Excel (.xlsx). Cada pestaña (1°, 2°, 3°…) se carga en su grado.</div>
+      <label class="im-file"><input type="file" accept=".xlsx,.xls" onchange="importXlsx(event)">📂 Elegir archivo .xlsx</label></div>
+    <div class="im-opt"><div class="im-t">Copiar y pegar un grado</div>
+      <div class="cx-muted">Selecciona las filas en tu hoja (puedes incluir la fila de títulos), cópialas y pégalas en el recuadro. Los enlaces se conservan.</div>
+      <div style="display:flex;gap:8px;align-items:center;margin:8px 0"><span class="cx-muted">Grado:</span><select id="im-grade" class="cx-inp" style="width:auto">${gradeOpts}</select></div>
+      <div class="im-paste" contenteditable="true" onpaste="importPasteEvt(event)" data-ph="Haz clic aquí y pega con Cmd + V"></div></div>
+    <div id="im-result"></div>
+    <div class="cx-muted" style="margin-top:10px">Si una clase ya existe con el mismo número (#), se actualiza en lugar de duplicarse.</div>`,()=>closeModal());
+  setModalBtn('Cerrar');
+}
+function importPasteEvt(e){
+  e.preventDefault();const g=state.grades[document.getElementById('im-grade')?.value]||curGrade();if(!g)return;
+  const html=e.clipboardData.getData('text/html');const txt=e.clipboardData.getData('text/plain');
+  const rows=html?rowsFromHtml(html):rowsFromTsv(txt);
+  previewImport([{g,rows:parsePlanRows(rows,g)}]);
+}
+function boolCell(c){if(c.bool!=null)return!!c.bool;return /^(true|verdadero|si|sí|x|✓|✔|☑|1)$/i.test(String(c.text||'').trim());}
+function rowsFromHtml(html){
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  return[...doc.querySelectorAll('tr')].map(tr=>{const row=[];[...tr.children].forEach(td=>{
+    td.querySelectorAll('br').forEach(b=>b.replaceWith('\n'));
+    let bool=null;const sv=td.getAttribute('data-sheets-value');
+    if(sv){try{const o=JSON.parse(sv);if(o['1']===4)bool=!!o['4'];}catch(x){}}
+    if(td.querySelector('input[type=checkbox]'))bool=!!td.querySelector('input[type=checkbox]').checked;
+    const links=[...td.querySelectorAll('a[href]')].map(a=>({label:a.textContent.trim(),url:a.getAttribute('href')})).filter(k=>/^https?:/i.test(k.url));
+    row.push({text:td.textContent.replace(/\u00a0/g,' ').trim(),links,bool});
+    for(let i=1;i<(parseInt(td.getAttribute('colspan'))||1);i++)row.push({text:'',links:[]});
+  });return row;});
+}
+function rowsFromTsv(txt){
+  const rows=[];let row=[],cell='',q=false;
+  for(let i=0;i<txt.length;i++){const ch=txt[i];
+    if(q){if(ch==='"'){if(txt[i+1]==='"'){cell+='"';i++;}else q=false;}else cell+=ch;continue;}
+    if(ch==='"'&&cell==='')q=true;else if(ch==='\t'){row.push(cell);cell='';}else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell='';}else if(ch!=='\r')cell+=ch;}
+  if(cell||row.length){row.push(cell);rows.push(row);}
+  return rows.map(r=>r.map(t=>({text:t.trim(),links:(t.match(/https?:\/\/\S+/g)||[]).map(u=>({label:'Enlace',url:u}))})));
+}
+function parsePlanRows(rows,g){
+  const grps=sortedGroups(g);
+  let hi=rows.findIndex(r=>r.some(c=>/^tema/.test(normTxt(c.text))));
+  let map={};
+  if(hi>=0){
+    rows[hi].forEach((c,i)=>{const h=normTxt(c.text);const sk=secKey(c.text);
+      const grp=grps.find(x=>secKey(x.name)===sk);
+      if(grp){(map.secs=map.secs||{})[i]=grp.id;return;}
+      if(h==='#'||h==='no'||h==='n°'||h==='nro')map.n=i;
+      else if(h.startsWith('periodo'))map.period=i;
+      else if(h.startsWith('tema'))map.title=i;
+      else if(h.startsWith('descrip'))map.desc=i;
+      else if(h.startsWith('objetivo'))map.objective=i;
+      else if(h.startsWith('recurso'))map.links=i;
+      else if(h.includes('unidad'))map.theme=i;
+      else if(h.includes('dominio')||h.includes('estandar'))map.standard=i;
+    });
+    rows=rows.slice(hi+1);
+  }else{
+    const first=rows.find(r=>r.some(c=>c.text));const off=first&&!/^\d+$/.test(first[0]?.text||'')&&/^p\d/i.test(first[0]?.text||'')?-1:0;
+    map={n:0+off,period:1+off,title:2+off,desc:3+off,objective:4+off,secs:{}};
+    grps.forEach((x,i)=>map.secs[5+off+i]=x.id);
+    const b=5+off+grps.length;map.links=b;map.theme=b+1;map.standard=b+2;
+    if(off<0)delete map.n;
+  }
+  const get=(r,k)=>map[k]!=null&&map[k]>=0?r[map[k]]:null;
+  const out=[];
+  rows.forEach(r=>{
+    const title=(get(r,'title')?.text||'').trim();if(!title)return;
+    const lc=get(r,'links');const links=[];
+    if(lc){(lc.links||[]).forEach(k=>links.push({label:k.label||'Enlace',url:k.url}));
+      const covered=links.map(k=>normTxt(k.label));
+      String(lc.text||'').split('\n').map(s=>s.trim()).filter(Boolean).forEach(s=>{if(!covered.some(cv=>cv&&normTxt(s)===cv)&&!/^https?:/.test(s))links.push({label:s,url:''});});}
+    const done={};Object.entries(map.secs||{}).forEach(([i,gid])=>{if(r[i]&&boolCell(r[i]))done[gid]=true;});
+    const themeRaw=(get(r,'theme')?.text||'').replace(/^[\p{Extended_Pictographic}\s]+/u,'').trim();
+    out.push({n:parseInt(get(r,'n')?.text)||0,period:(get(r,'period')?.text||'').trim(),title,desc:(get(r,'desc')?.text||'').trim(),
+      objective:(get(r,'objective')?.text||'').trim(),theme:themeInfo(themeRaw)?.k||themeRaw,standard:(get(r,'standard')?.text||'').trim(),links,done});
+  });
+  return out;
+}
+function loadXLSX(){if(window.XLSX)return Promise.resolve();return new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+function xlsxCell(c){
+  if(!c)return{text:'',links:[]};
+  const text=String(c.w??c.v??'').trim();const links=[];
+  if(c.l?.Target&&/^https?:/i.test(c.l.Target))links.push({label:text.split('\n')[0]||'Enlace',url:c.l.Target});
+  if(c.f){const m=String(c.f).match(/HYPERLINK\(\s*"([^"]+)"\s*(?:[,;]\s*"([^"]*)")?/i);if(m)links.push({label:m[2]||text||'Enlace',url:m[1]});}
+  return{text,links,bool:c.t==='b'?!!c.v:null};
+}
+async function importXlsx(e){
+  const f=e.target.files?.[0];if(!f)return;const box=document.getElementById('im-result');if(box)box.innerHTML='<div class="cx-muted">Leyendo el archivo…</div>';
+  try{
+    await loadXLSX();const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellFormula:true});const res=[];
+    wb.SheetNames.forEach(name=>{
+      const m=name.match(/\d/);if(!m)return;const g=sortedGrades().find(x=>parseInt(x.number)===parseInt(m[0]));if(!g)return;
+      const ws=wb.Sheets[name];if(!ws['!ref'])return;const rg=XLSX.utils.decode_range(ws['!ref']);const rows=[];
+      for(let r=rg.s.r;r<=rg.e.r;r++){const row=[];for(let c=rg.s.c;c<=rg.e.c;c++)row.push(xlsxCell(ws[XLSX.utils.encode_cell({r,c})]));rows.push(row);}
+      const parsed=parsePlanRows(rows,g);if(parsed.length)res.push({g,rows:parsed});
+    });
+    if(!res.length){if(box)box.innerHTML='<div class="im-err">No encontré pestañas con el número del grado (1°, 2°…) ni una fila de títulos con "TEMA".</div>';return;}
+    previewImport(res);
+  }catch(err){console.error(err);if(box)box.innerHTML='<div class="im-err">No se pudo leer el archivo. Revisa que sea .xlsx.</div>';}
+  e.target.value='';
+}
+function previewImport(res){
+  res=res.filter(x=>x.g&&x.rows.length);
+  if(!res.length){showToast('No encontré filas con tema para importar');return;}
+  window._imp=res;
+  const lines=res.map(({g,rows})=>{const t=gTheme(g);const grps=sortedGroups(g);
+    const dn=grps.map(x=>`${escH(x.name)}: ${rows.filter(r=>r.done[x.id]).length}`).join(' · ');
+    const nl=rows.reduce((n,r)=>n+r.links.filter(k=>k.url).length,0);
+    return`<div class="im-line" style="--gc:${t.c}"><span class="im-g">${t.m} ${g.number}°</span><span><strong>${plural(rows.length,'clase')}</strong>, ${plural(nl,'enlace')}<br><small>Dadas → ${dn}</small></span></div>`;}).join('');
+  const html=`<div class="im-prev"><div class="im-t">Listo para importar</div>${lines}
+    <button class="cx-btn primary" style="width:100%;justify-content:center;margin-top:10px" onclick="applyImport()">Importar ahora</button></div>`;
+  if(document.getElementById('overlay').classList.contains('show')&&document.getElementById('im-result'))document.getElementById('im-result').innerHTML=html;
+  else{openModal('📥 Importar filas pegadas',html,()=>applyImport());setModalBtn('Importar');}
+}
+function applyImport(){
+  const res=window._imp||[];let nNew=0,nUpd=0;
+  res.forEach(({g,rows})=>{
+    const ls=lessonsOf(g);const byN={},byT={};ls.forEach(l=>{if(l.n)byN[l.n]=l;byT[normTxt(l.title)]=l;});
+    rows.forEach(r=>{
+      let canva='';const links=r.links.filter(k=>{if(!canva&&/canva\.com\/design\//i.test(k.url||'')){canva=k.url;return false;}return true;});
+      const ex=(r.n&&byN[r.n])||byT[normTxt(r.title)];
+      if(ex){Object.assign(ex,{period:r.period||ex.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme||ex.theme,standard:r.standard,links});
+        if(canva&&!ex.canvaUrl)ex.canvaUrl=canva;ex.done={...ex.done,...r.done};nUpd++;}
+      else{newLesson(g,{n:r.n||0,period:r.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme,standard:r.standard,links,canvaUrl:canva,done:r.done});nNew++;}
+    });
+    const all=lessonsOf(g);all.forEach((l,i)=>{if(!l.n)l.n=i+1;});
+  });
+  window._imp=null;clearTimeout(saveTimer);saveToDB();closeModal();
+  const g1=res[0]?.g;if(res.length===1&&g1)openGradePlan(g1.id);else showWelcome();
+  showToast(`Importado ✓ ${nNew} nuevas, ${nUpd} actualizadas`);
+}
+
+/* ══════════ BÚSQUEDA ══════════ */
+function runGlobalSearch(q){
+  const res=document.getElementById('gsearch-results');if(!res)return;
+  if(!q.trim()){res.innerHTML='<div class="gsearch-empty">Escribe para buscar en toda la plataforma</div>';return;}
+  const ql=normTxt(q);const out=[];
+  sortedGrades().forEach(g=>{const t=gTheme(g);
+    lessonsOf(g).forEach(l=>{if([l.title,l.desc,l.objective,l.standard,...(l.links||[]).map(k=>k.label)].some(s=>normTxt(s).includes(ql)))
+      out.push({icon:t.m,title:`${l.n}. ${l.title||'Sin tema'}`,sub:`${g.number}° · ${l.period||''} · ${l.objective||''}`,action:()=>{closeGlobalSearch();openGradePlan(g.id);openLesson(l.id);}});});
+    sortedGroups(g).forEach(grp=>{if(normTxt(grp.name).includes(ql))out.push({icon:'👥',title:grp.name,sub:t.n,action:()=>{closeGlobalSearch();selectGroup(g.id,grp.id);}});});
+  });
+  if(!out.length){res.innerHTML=`<div class="gsearch-empty">Sin resultados para "<strong>${escH(q)}</strong>"</div>`;return;}
+  res.innerHTML=out.slice(0,14).map((r,i)=>`<div class="gsearch-result" onclick="searchResults[${i}].action()"><div class="gsearch-result-icon" style="background:var(--acd)">${r.icon}</div>
+    <div class="gsearch-result-info"><div class="gsearch-result-title">${escH(r.title)}</div><div class="gsearch-result-sub">${escH(r.sub)}</div></div></div>`).join('');
+  window.searchResults=out;
+}
+
+/* ══════════ PORTAL: publica lo dado + lo marcado como visible ══════════ */
+function sanitizeForStudents(st,settings){
+  const out={v:2,appName:settings?.appName||'Class Drive',updated:new Date().toISOString(),grades:[]};
+  Object.values(st?.grades||{}).sort((a,b)=>(a.number||0)-(b.number||0)).forEach(g=>{
+    const ls=Object.values(g.lessons||{}).sort((a,b)=>(a.n||0)-(b.n||0));
+    const pers=[];ls.forEach(l=>{const p=l.period||'';if(p&&!pers.includes(p))pers.push(p);});
+    const units=pers.map((p,i)=>({id:'per-'+normTxt(p),title:periodLabel(p),theme:'',centralIdea:'',lines:'',profile:'',color:periodColor(p),order:i}));
+    const groups=Object.values(g.groups||{}).map(grp=>({id:grp.id,name:grp.name,code:grp.code||'',
+      classes:ls.filter(l=>l.title&&(l.visible||l.done?.[grp.id])).map(l=>({id:l.id,order:l.n,title:l.title,objective:l.objective||'',desc:l.desc||'',date:'',
+        unitId:l.period?'per-'+normTxt(l.period):'',canva:l.canvaUrl||'',theme:themeInfo(l.theme)?.k||'',
+        resources:(l.links||[]).filter(k=>k.url&&k.url!==l.canvaUrl).map((k,i)=>({id:'k'+i,type:detectResType(k.url),title:k.label||'Enlace',url:k.url}))}))}));
+    out.grades.push({id:g.id,number:g.number,name:g.name,units,groups});
+  });
+  return out;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLASS DRIVE 4.2 — PROTECCIÓN DE DATOS
+   1. Nunca guarda si la carga desde la nube no se confirmó.
+   2. Detecta cambios hechos en otra ventana y no los pisa.
+   3. Respaldos automáticos (navegador + nube) y restauración.
+═══════════════════════════════════════════════════════════════ */
+window._loadOK=false;window._baseRev=0;window._revCol=true;window._saving=false;
+function stateLessons(st){return Object.values(st?.grades||{}).reduce((n,g)=>n+Object.keys(g.lessons||{}).length,0);}
+function waitSupabase(ms){return new Promise(res=>{const t0=Date.now();(function tick(){if(window.supabase)return res(true);if(Date.now()-t0>ms)return res(false);setTimeout(tick,100);})();});}
+function dataBanner(msg,kind){
+  let b=document.getElementById('data-banner');
+  if(!b){b=document.createElement('div');b.id='data-banner';document.body.appendChild(b);}
+  if(!msg){b.style.display='none';return;}
+  b.className=kind||'warn';b.innerHTML=msg;b.style.display='flex';
+}
+async function loadFromSB(){
+  window._loadOK=false;
+  await waitSupabase(8000);initSB();
+  if(!sb||!window.currentUser?.email){
+    dataBanner('⚠ No se pudo conectar con la base de datos. <b>No se guardará nada</b> hasta que recargues la página.<button onclick="location.reload()">Recargar</button>');
+    loadLocal();return;
+  }
+  await ensureProfile();
+  for(let attempt=1;attempt<=3;attempt++){
+    try{
+      let r=await sb.from('user_data').select('state,trash,settings,rev').eq('user_email',window.currentUser.email).single();
+      if(r.error&&/rev/.test(r.error.message||'')&&r.error.code!=='PGRST116'){window._revCol=false;r=await sb.from('user_data').select('state,trash,settings').eq('user_email',window.currentUser.email).single();}
+      const{data,error}=r;
+      if(error&&error.code==='PGRST116'){initDemo();fixState();window._loadOK=true;window._baseRev=0;await saveToDB();return;}
+      if(error)throw error;
+      if(data.state&&Object.keys(data.state).length>0){state=data.state;if(!state.view)state.view='grid';fixState();}
+      else initDemo();
+      window._baseRev=data.rev||data.state?._rev||0;
+      if(data.trash)localStorage.setItem('cd-trash',JSON.stringify(data.trash));
+      const s=data.settings||{};
+      if(s.appName)localStorage.setItem('cd-app-name',s.appName);
+      if(s.appSub)localStorage.setItem('cd-app-sub',s.appSub);
+      if(s.theme)localStorage.setItem('cd-theme',s.theme);
+      if(s.accent)localStorage.setItem('cd-accent',s.accent);
+      if(s.aiProvider)localStorage.setItem('cd-ai-provider',s.aiProvider);
+      if(s.aiKey)localStorage.setItem('cd-ai-key',s.aiKey);
+      window._loadOK=true;dataBanner('');localBackup('Al abrir');return;
+    }catch(e){console.error('SB load intento '+attempt+':',e);await new Promise(r=>setTimeout(r,1200*attempt));}
+  }
+  dataBanner('⚠ No se pudieron cargar tus datos de la nube. Para protegerlos, <b>no se guardará nada</b> hasta que recargues.<button onclick="location.reload()">Recargar</button>');
+  loadLocal();
+}
+function bootApp(){
+  const user=window.currentUser;
+  if(user){
+    const name=user.displayName||user.email.split('@')[0];
+    document.getElementById('sb-uname').textContent=name;
+    const av=document.getElementById('sb-av');
+    if(user.photoURL){av.innerHTML=`<img src="${user.photoURL}" alt="">`;}else{av.textContent=name[0].toUpperCase();}
+  }
+  loadFromSB().then(()=>{
+    fixState();
+    if(window._loadOK)saveToDB();
+    renderSidebar();applyStoredTheme();applyStoredColor();applyStoredLogo();applyStoredSettings();renderRoleBadge();
+    initCosmosCanvas();initLoginCanvas();initKeyboardShortcuts();
+    showWelcome();setTimeout(checkUpcomingClasses,800);
+  });
+}
+async function saveToDB(){
+  initSB();
+  if(!sb||!window.currentUser?.email){saveLocal();return;}
+  if(!window._loadOK){console.warn('Guardado bloqueado: la carga no se confirmó');return;}
+  if(window._saving){clearTimeout(saveTimer);saveTimer=setTimeout(saveToDB,700);return;}
+  window._saving=true;
+  const email=window.currentUser.email;
+  try{
+    // ¿Otra ventana guardó después de que esta cargó?
+    const chk=await sb.from('user_data').select(window._revCol?'rev':'state').eq('user_email',email).single();
+    if(!chk.error){
+      const remoteRev=window._revCol?(chk.data?.rev||0):(chk.data?.state?._rev||0);
+      if(remoteRev&&window._baseRev&&remoteRev>window._baseRev){window._saving=false;return onConflict();}
+      if(!window._revCol){const rl=stateLessons(chk.data?.state),ll=stateLessons(state);
+        if(rl>5&&ll<rl*0.5&&!window._allowShrink){window._saving=false;return onShrink(rl,ll);}}
+    }else if(/rev/.test(chk.error.message||'')&&chk.error.code!=='PGRST116'){window._revCol=false;}
+    const rev=Date.now();state._rev=rev;
+    const trash=localStorage.getItem('cd-trash');
+    const row={user_email:email,state,trash:trash?JSON.parse(trash):{},
+      settings:{appName:localStorage.getItem('cd-app-name')||'Class Drive',appSub:localStorage.getItem('cd-app-sub')||'GI School · Tecnología · PYP',
+        theme:localStorage.getItem('cd-theme')||'dark',accent:localStorage.getItem('cd-accent')||'#6366f1',
+        aiProvider:localStorage.getItem('cd-ai-provider')||'claude',aiKey:localStorage.getItem('cd-ai-key')||''}};
+    if(window._revCol)row.rev=rev;
+    let{error}=await sb.from('user_data').upsert(row,{onConflict:'user_email'});
+    if(error&&/rev/.test(error.message||'')){window._revCol=false;delete row.rev;({error}=await sb.from('user_data').upsert(row,{onConflict:'user_email'}));}
+    if(error)throw error;
+    window._baseRev=rev;window._allowShrink=false;
+    try{new BroadcastChannel('classdrive').postMessage({rev});}catch(e){}
+    cloudBackup();localBackupThrottled();
+    publishSnapshot();
+  }catch(e){console.error('SB save:',e);showToast('⚠ No se pudo guardar. Revisa tu conexión.');}
+  window._saving=false;
+}
+async function onConflict(){
+  window._loadOK=false;
+  dataBanner('🔄 Tus datos cambiaron en otra ventana o dispositivo. Cargando la versión más reciente para no perder nada…','info');
+  await loadFromSB();fixState();
+  if(document.getElementById('grade-view')?.style.display==='block')renderGradePlan();else if(document.getElementById('grp-view')?.style.display==='flex')renderGroupView();else showWelcome();
+  renderSidebar();setTimeout(()=>dataBanner(''),2500);
+  showToast('Se cargó la versión más reciente. Repite tu último cambio si no aparece.');
+}
+function onShrink(remote,local){
+  dataBanner(`⚠ Este guardado dejaría ${local} clases donde la nube tiene ${remote}. Lo bloqueé para proteger tu planeación.
+    <button onclick="location.reload()">Recargar (recomendado)</button><button onclick="window._allowShrink=true;dataBanner('');saveToDB()">Guardar de todas formas</button>`);
+}
+try{new BroadcastChannel('classdrive').onmessage=e=>{if(e.data?.rev&&e.data.rev>window._baseRev&&window._loadOK)onConflict();};}catch(e){}
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState!=='visible'||!window._loadOK||!sb||!window.currentUser?.email)return;
+  try{const r=await sb.from('user_data').select(window._revCol?'rev':'state').eq('user_email',window.currentUser.email).single();
+    const rr=window._revCol?(r.data?.rev||0):(r.data?.state?._rev||0);if(rr&&rr>window._baseRev)onConflict();}catch(e){}
+});
+
+/* ── Respaldos ── */
+function getLocalBackups(){try{return JSON.parse(localStorage.getItem('cd-backups-'+(window.currentUser?.email||''))||'[]');}catch(e){return[];}}
+function localBackup(label){
+  try{if(!stateLessons(state)&&!Object.keys(state.grades||{}).length)return;
+    const list=getLocalBackups();const snap=JSON.stringify(state);
+    if(list[0]&&list[0].s===snap)return;
+    list.unshift({t:Date.now(),label:label||'',n:stateLessons(state),s:snap});
+    while(list.length>6)list.pop();
+    try{localStorage.setItem('cd-backups-'+window.currentUser.email,JSON.stringify(list));}
+    catch(e){list.splice(3);localStorage.setItem('cd-backups-'+window.currentUser.email,JSON.stringify(list));}
+  }catch(e){}
+}
+let _lbT=0;function localBackupThrottled(){if(Date.now()-_lbT>5*60000){_lbT=Date.now();localBackup('Automático');}}
+let _cbT=0;
+async function cloudBackup(force,label){
+  if(!sb||!window.currentUser?.email)return;
+  if(!force&&Date.now()-_cbT<15*60000)return;_cbT=Date.now();
+  try{await sb.from('respaldos').insert({user_email:window.currentUser.email,state,lessons:stateLessons(state),label:label||'Automático'});}catch(e){}
+}
+async function openBackups(){
+  openModal('🛟 Respaldos de tu planeación','<div class="cx-muted">Cargando respaldos…</div>',()=>closeModal());setModalBtn('Cerrar');
+  let cloud=[];
+  try{const{data,error}=await sb.from('respaldos').select('id,created_at,lessons,label').eq('user_email',window.currentUser.email).order('created_at',{ascending:false}).limit(20);if(!error)cloud=data||[];}catch(e){}
+  const loc=getLocalBackups();
+  const fmt=t=>new Date(t).toLocaleString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const rows=[...cloud.map(c=>`<div class="bk-row"><span class="bk-i">☁️</span><div style="flex:1"><div class="bk-t">${fmt(c.created_at)}</div><div class="cx-muted">${plural(c.lessons||0,'clase')} · ${escH(c.label||'')}</div></div><button class="cx-mini solid" onclick="restoreBackup('cloud','${c.id}')">Restaurar</button></div>`),
+    ...loc.map((c,i)=>`<div class="bk-row"><span class="bk-i">💻</span><div style="flex:1"><div class="bk-t">${fmt(c.t)}</div><div class="cx-muted">${plural(c.n||0,'clase')} · Este navegador · ${escH(c.label||'')}</div></div><button class="cx-mini solid" onclick="restoreBackup('local',${i})">Restaurar</button></div>`)].join('');
+  document.getElementById('modal-body').innerHTML=`<div class="cx-muted" style="margin-bottom:12px">Ahora tienes ${plural(stateLessons(state),'clase')}. Restaurar reemplaza la planeación actual (antes se guarda un respaldo de lo que hay).</div>
+    ${rows||'<div class="cx-muted">Aún no hay respaldos. Se crean solos mientras trabajas.</div>'}
+    <button class="cx-btn" style="margin-top:12px" onclick="cloudBackup(true,'Manual');showToast('Respaldo creado ✓');setTimeout(openBackups,600)">＋ Crear respaldo ahora</button>`;
+}
+async function restoreBackup(kind,ref){
+  let st=null;
+  if(kind==='local'){const b=getLocalBackups()[ref];if(b)st=JSON.parse(b.s);}
+  else{try{const{data}=await sb.from('respaldos').select('state').eq('id',ref).single();st=data?.state;}catch(e){}}
+  if(!st){showToast('No se pudo leer ese respaldo');return;}
+  if(!confirm(`¿Restaurar este respaldo con ${plural(stateLessons(st),'clase')}?`))return;
+  await cloudBackup(true,'Antes de restaurar');localBackup('Antes de restaurar');
+  state=st;fixState();window._loadOK=true;window._allowShrink=true;
+  const r=await sb.from('user_data').select(window._revCol?'rev':'state').eq('user_email',window.currentUser.email).single();
+  window._baseRev=window._revCol?(r.data?.rev||0):(r.data?.state?._rev||0);
+  clearTimeout(saveTimer);await saveToDB();closeModal();showWelcome();renderSidebar();showToast('Respaldo restaurado ✓');
+}
+/* Respaldo antes de cada importación */
+const _applyImportOrig=applyImport;
+applyImport=function(){localBackup('Antes de importar');cloudBackup(true,'Antes de importar');return _applyImportOrig();};
+/* Botón de respaldos en el menú lateral */
+document.addEventListener('DOMContentLoaded',()=>{
+  const t=document.querySelector('.sb-foot .sb-foot-row:nth-child(2)');
+  if(t&&!document.getElementById('bk-btn')){const b=document.createElement('button');b.className='sb-fb';b.id='bk-btn';b.textContent='🛟 Respaldos';b.onclick=openBackups;t.appendChild(b);}
+});
+if(document.readyState!=='loading')document.dispatchEvent(new Event('DOMContentLoaded'));
 
 </script>
 </body>
