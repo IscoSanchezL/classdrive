@@ -1614,15 +1614,21 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const app=initializeApp({apiKey:"AIzaSyCUIMsOJ628tz80fMEQXxWe8_fmRjzYf-A",authDomain:"classdrive-981c2.firebaseapp.com",projectId:"classdrive-981c2",storageBucket:"classdrive-981c2.firebasestorage.app",messagingSenderId:"296658855074",appId:"1:296658855074:web:025f4c3c8a69fe4ba323fb"});
+const app=initializeApp({apiKey:"AIzaSyCUIMsOJ628tz80fMEQXxWe8_fmRjzYf-A",authDomain:(/^classdrive-981c2\.(web\.app|firebaseapp\.com)$/.test(location.hostname)?location.hostname:"classdrive-981c2.firebaseapp.com"),projectId:"classdrive-981c2",storageBucket:"classdrive-981c2.firebasestorage.app",messagingSenderId:"296658855074",appId:"1:296658855074:web:025f4c3c8a69fe4ba323fb"});
 const auth=getAuth(app);const provider=new GoogleAuthProvider();
 provider.setCustomParameters({prompt:'select_account'});
 document.getElementById('google-btn').addEventListener('click',async()=>{
+  const err=document.getElementById('ln-err');if(err)err.style.display='none';
+  const show=(e)=>{console.error('Login:',e);if(err){err.textContent='No se pudo iniciar sesión ('+(e?.code||e?.message||'error')+').';err.style.display='block';}};
   try{await signInWithPopup(auth,provider);}
-  catch(e){if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'){try{await signInWithRedirect(auth,provider);}catch(e2){}}}
+  catch(e){
+    if(['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/web-storage-unsupported','auth/internal-error'].includes(e.code)){
+      try{await signInWithRedirect(auth,provider);}catch(e2){show(e2);}
+    }else show(e);
+  }
 });
 document.getElementById('logout-btn').addEventListener('click',async()=>{if(confirm('¿Cerrar sesión?'))await signOut(auth);});
-getRedirectResult(auth).catch(()=>{});
+getRedirectResult(auth).catch(e=>{console.error('Login redirect:',e);const err=document.getElementById('ln-err');if(err){err.textContent='No se pudo iniciar sesión ('+(e?.code||'error')+').';err.style.display='block';}});
 // Si es ruta pública, mostrar sin login
 if(window.location.hash.startsWith('#/pub/')){
   checkPublicRoute();
