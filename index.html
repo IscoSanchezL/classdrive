@@ -1909,7 +1909,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 5.2 — APP LOGIC
+   CLASS DRIVE 5.3 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -6800,21 +6800,19 @@ function pfLogo(e){
   r.readAsDataURL(f);
 }
 async function pfSave(){
-  const cfg={appName:document.getElementById('pf-name').value.trim()||'Class Drive',appSub:document.getElementById('pf-sub').value.trim(),
+  const cfg={...(window._platform||{}),appName:document.getElementById('pf-name').value.trim()||'Class Drive',appSub:document.getElementById('pf-sub').value.trim(),
     accent:document.getElementById('pf-acc').value,theme:document.getElementById('pf-theme').value,logoImg:window._pfLogo??(window._platform?.logoImg||''),
     grades:GRADE_THEME.map((t,i)=>({c:document.getElementById('pf-gc-'+i).value,m:document.getElementById('pf-gm-'+i).value.trim()||t.m,n:document.getElementById('pf-gt-'+i).value.trim()||t.n}))};
-  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;}
-  catch(e){showToast('No se pudo guardar: '+(e.message||e)+'. ¿Ejecutaste el SQL de la versión 5.0?');return;}
-  window._platform=cfg;window._platformAt=new Date().toISOString();localStorage.removeItem('cd-theme-own');
+  if(!await savePlatformCfg(cfg)){showToast('No se pudo guardar: revisa que ejecutaste supabase_admin.sql en Supabase.');return;}
+  localStorage.removeItem('cd-theme-own');
   applyStoredSettings();applyAccent(cfg.accent);setTheme(cfg.theme);renderAdminPanel();showToast('Plataforma actualizada para todos ✓');
 }
 async function pfReset(){
-  if(!confirm('¿Volver al nombre, colores y logo originales para todos?'))return;
+  if(!confirm('¿Volver al nombre, colores y logo originales para todos? (Los roles que creaste no se tocan)'))return;
   const orig=[['#F2613F','🐣','Primero'],['#E89B00','🦊','Segundo'],['#1F9D5C','🐢','Tercero'],['#1C84DB','🐬','Cuarto'],['#6D55F0','🦉','Quinto'],['#D7336F','🚀','Sexto']];
-  const cfg={appName:'Class Drive',appSub:'GI School · Tecnología · PYP',accent:'#6366f1',theme:'dark',logoImg:'',grades:orig.map(([c,m,n])=>({c,m,n}))};
-  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;}
-  catch(e){showToast('No se pudo guardar: '+(e.message||e));return;}
-  window._platform=cfg;localStorage.removeItem('cd-logo-img');applyStoredSettings();applyAccent(cfg.accent);renderAdminPanel();showToast('Valores originales restablecidos ✓');
+  const cfg={...(window._platform||{}),appName:'Class Drive',appSub:'GI School · Tecnología · PYP',accent:'#6366f1',theme:'dark',logoImg:'',grades:orig.map(([c,m,n])=>({c,m,n}))};
+  if(!await savePlatformCfg(cfg)){showToast('No se pudo guardar: revisa que ejecutaste supabase_admin.sql en Supabase.');return;}
+  localStorage.removeItem('cd-logo-img');applyStoredSettings();applyAccent(cfg.accent);renderAdminPanel();showToast('Valores originales restablecidos ✓');
 }
 
 /* ── Respaldos de toda la plataforma ── */
@@ -7100,31 +7098,6 @@ function adminFechas(){
 }
 
 /* ── Roles (solo super admin) ── */
-function adminRoles(){
-  const roles=allRoles();
-  return`<div class="ad-card ad-info">Los roles definen qué puede hacer cada persona. Los integrados no se pueden borrar. Los nuevos roles aparecen al asignar el rol de cada profesor.</div>
-    <div class="ad-grid">${Object.entries(roles).map(([k,d])=>`<div class="ad-tc">
-      <div class="ad-tc-top"><span class="ad-rico">${d.icon}</span><div style="flex:1"><div class="ad-nm">${escH(d.name)}</div><div class="ad-em">${d.fixed?'Integrado':'Personalizado'} · ${adminData.list.filter(t=>t.role===k||(k==='superadmin'&&t.email===ADMIN)).length} persona(s)</div></div>
-        ${d.fixed?'':`<button class="icon-btn" onclick="roleEdit('${k}')" title="Editar">✏️</button><button class="icon-btn danger" onclick="roleDelete('${k}')" title="Eliminar">🗑</button>`}</div>
-      <div class="ad-perms">${PERMS.map(([p,l])=>`<span class="${k==='superadmin'&&p!=='ensenar'||(d.perms||[]).includes(p)?'on':''}">${escH(l)}</span>`).join('')}</div></div>`).join('')}</div>
-    <div class="ad-save"><button class="cx-btn primary" onclick="roleEdit()">+ Crear rol nuevo</button></div>`;
-}
-function roleEdit(key){
-  const d=key?allRoles()[key]:{name:'',icon:'🧑‍💼',perms:['resumen','planeaciones']};
-  openModal(key?'✏️ Editar rol':'🔑 Nuevo rol',`
-    <div class="form-2col"><div class="form-group"><label>Nombre</label><input id="rl-name" value="${escA(d.name)}" placeholder="Ej: Coordinador académico"></div>
-      <div class="form-group"><label>Ícono</label><input id="rl-icon" value="${escA(d.icon)}" maxlength="4"></div></div>
-    <div class="form-group"><label>Permisos</label>${PERMS.map(([p,l])=>`<label class="cx-switch" style="margin:6px 0"><input type="checkbox" value="${p}"${(d.perms||[]).includes(p)?' checked':''}> ${escH(l)}</label>`).join('')}</div>
-    <div class="cx-muted">"Tiene grupos y planeación propios" hace que la persona también trabaje como profe. Sin ese permiso, entra directo a la consola.</div>`,
-  async()=>{
-    const name=document.getElementById('rl-name').value.trim();if(!name){showToast('Escribe el nombre del rol');return;}
-    const perms=[...document.querySelectorAll('#modal-body input[type=checkbox]:checked')].map(i=>i.value);
-    let k=key||normTxt(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,30)||('rol_'+Date.now());
-    if(!key&&allRoles()[k])k=k+'_'+Math.random().toString(36).slice(2,5);
-    const cfg={...(window._platform||{})};cfg.roles={...(cfg.roles||{}),[k]:{name,icon:document.getElementById('rl-icon').value.trim()||'🧑‍💼',perms}};
-    if(await savePlatformCfg(cfg)){closeModal();renderAdminPanel();showToast('Rol guardado ✓');}
-  });
-}
 async function roleDelete(key){
   const d=allRoles()[key];const n=adminData.list.filter(t=>t.role===key).length;
   if(!confirm(`¿Eliminar el rol "${d.name}"?${n?`\n${n} persona(s) con este rol pasarán a Profe.`:''}`))return;
@@ -7133,16 +7106,21 @@ async function roleDelete(key){
   if(await savePlatformCfg(cfg)){adminData.loaded=false;renderAdminPanel();showToast('Rol eliminado');}
 }
 async function savePlatformCfg(cfg){
-  try{const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser.email},{onConflict:'id'});if(error)throw error;
-    window._platform=cfg;window._platformAt=new Date().toISOString();return true;}
-  catch(e){showToast('No se pudo guardar: '+(e.message||e));return false;}
+  initSB();
+  if(!sb){showToast('No hay conexión con la base de datos.');return false;}
+  try{
+    const{error}=await sb.from('plataforma').upsert({id:1,config:cfg,updated_at:new Date().toISOString(),updated_by:window.currentUser?.email||''},{onConflict:'id'});
+    if(error)throw error;
+    window._platform=cfg;window._platformAt=new Date().toISOString();return true;
+  }catch(e){
+    console.error('savePlatformCfg:',e);
+    const msg=e?.message||String(e);
+    const hint=/relation .* does not exist|schema cache/i.test(msg)?' Falta ejecutar supabase_admin.sql en Supabase.':/row-level security|permission denied/i.test(msg)?' Revisa las políticas RLS de la tabla plataforma.':'';
+    showToast('No se pudo guardar: '+msg+hint);
+    return false;
+  }
 }
-/* pfSave conserva los roles creados */
-const _pfSaveRoles=pfSave;
-pfSave=async function(){const roles=window._platform?.roles;await _pfSaveRoles();
-  if(roles&&!window._platform?.roles){await savePlatformCfg({...window._platform,roles});}};
-const _pfResetRoles=pfReset;
-pfReset=async function(){const roles=window._platform?.roles;await _pfResetRoles();if(roles)await savePlatformCfg({...window._platform,roles});};
+/* pfSave y pfReset ahora conservan los roles por sí solos (ver arriba): ya no hace falta este parche. */
 
 
 /* ═══════════════════════════════════════════════════════════════
