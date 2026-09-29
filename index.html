@@ -1909,7 +1909,7 @@ onAuthStateChanged(auth,user=>{
 
 <script>
 /* ═══════════════════════════════════════════════
-   CLASS DRIVE 5.3 — APP LOGIC
+   CLASS DRIVE 5.4 — APP LOGIC
 ═══════════════════════════════════════════════ */
 const ADMIN='franksanlo@gmail.com';
 const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
@@ -5728,7 +5728,15 @@ window.addEventListener('hashchange',()=>{
 
 /* ══════════ PWA ══════════ */
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.update().catch(()=>{});
+      document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reg.update().catch(()=>{});});
+    }).catch(()=>{});
+    // Cuando una versión nueva toma el control, recarga una sola vez
+    let _swReloaded=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{if(_swReloaded)return;_swReloaded=true;location.reload();});
+  });
 }
 
 
@@ -6462,7 +6470,13 @@ document.addEventListener('visibilitychange',async()=>{
     const rr=window._revCol?(r.data?.rev||0):(r.data?.state?._rev||0);if(rr&&rr>window._baseRev)onConflict();}catch(e){}
 });
 
-/* ── Respaldos ── */
+/* ── Respaldos ──
+   5.4: el botón "🛟 Respaldos" (crear/restaurar manualmente) ahora solo
+   se ve y funciona para quien tenga el permiso "Hacer y restaurar
+   respaldos" (super admin lo tiene siempre; para "Profe" se puede
+   activar/desactivar desde 🔑 Roles). Los respaldos automáticos en
+   segundo plano (al guardar, antes de importar, etc.) siguen ocurriendo
+   para todos: esto solo quita el botón manual y el restaurar. */
 function getLocalBackups(){try{return JSON.parse(localStorage.getItem('cd-backups-'+(window.currentUser?.email||''))||'[]');}catch(e){return[];}}
 function localBackup(label){
   try{if(!stateLessons(state)&&!Object.keys(state.grades||{}).length)return;
@@ -6482,6 +6496,7 @@ async function cloudBackup(force,label){
   try{await sb.from('respaldos').insert({user_email:window.currentUser.email,state,lessons:stateLessons(state),label:label||'Automático'});}catch(e){}
 }
 async function openBackups(){
+  if(!isSuper()&&!can('respaldos')){showToast('Tu rol no permite hacer ni restaurar respaldos.');return;}
   openModal('🛟 Respaldos de tu planeación','<div class="cx-muted">Cargando respaldos…</div>',()=>closeModal());setModalBtn('Cerrar');
   let cloud=[];
   try{const{data,error}=await sb.from('respaldos').select('id,created_at,lessons,label').eq('user_email',window.currentUser.email).order('created_at',{ascending:false}).limit(20);if(!error)cloud=data||[];}catch(e){}
@@ -6494,6 +6509,7 @@ async function openBackups(){
     <button class="cx-btn" style="margin-top:12px" onclick="cloudBackup(true,'Manual');showToast('Respaldo creado ✓');setTimeout(openBackups,600)">＋ Crear respaldo ahora</button>`;
 }
 async function restoreBackup(kind,ref){
+  if(!isSuper()&&!can('respaldos')){showToast('Tu rol no permite restaurar respaldos.');return;}
   let st=null;
   if(kind==='local'){const b=getLocalBackups()[ref];if(b)st=JSON.parse(b.s);}
   else{try{const{data}=await sb.from('respaldos').select('state').eq('id',ref).single();st=data?.state;}catch(e){}}
@@ -6940,6 +6956,7 @@ function renderRoleBadge(){
   const lbl=[...document.querySelectorAll('.sb-sec-lbl')].find(x=>/grupos|profesores/i.test(x.textContent));
   if(lbl)lbl.textContent=isAdminUser()?'Profesores':'Mis Grupos';
   const an=document.getElementById('admin-nav');if(an)an.innerHTML=`<span class="sb-item-icon">${isSuper()?'👑':'⚡'}</span>Consola`;
+  const bk=document.getElementById('bk-btn');if(bk)bk.style.display=(isSuper()||can('respaldos'))?'':'none';
   if(blocked)window._loadOK=false;
 }
 /* Bloqueo según el rol (incluye roles personalizados) */
