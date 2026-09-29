@@ -1,5 +1,5 @@
 // Class Drive — Service Worker (red primero: siempre intenta la versión más nueva)
-const CACHE = 'classdrive-v' + '202609290808';
+const CACHE = 'classdrive-v' + '202609290812';
 
 self.addEventListener('install', () => self.skipWaiting());
 
