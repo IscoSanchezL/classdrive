@@ -8263,5 +8263,44 @@ const _downloadBlobBk=downloadBlob;
 downloadBlob=function(content,name,type){_downloadBlobBk(content,name,type);
   if(String(name).startsWith('classdrive-plataforma-')){try{localStorage.setItem('cd-last-download',new Date().toISOString());}catch(e){}cdBkReminderRefresh();}};
 </script>
+<style id="plan-fit-style">
+/* Tabla de planeación: se ajusta al ancho disponible (sin cortarse a la derecha) */
+table.pl{table-layout:fixed;width:100%;min-width:880px}
+table.pl .pl-h{width:22px}table.pl .pl-n{width:34px}table.pl .pl-p{width:80px}
+table.pl .pl-pd{white-space:normal;line-height:1.2;font-size:10px}
+table.pl th.pl-c,table.pl td.pl-c{width:44px}
+table.pl .pl-t,table.pl .pl-d,table.pl .pl-o{width:auto}
+table.pl .pl-r{width:112px}table.pl .pl-u{width:132px}table.pl .pl-s{width:104px}table.pl .pl-a{width:58px}
+table.pl .pl-r a,table.pl .pl-r span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.pl .pl-u select{width:100%;max-width:100%;text-overflow:ellipsis}
+table.pl thead th{white-space:normal;line-height:1.15;overflow:hidden;text-overflow:ellipsis}
+.pl-wrap{overflow-x:auto}
+/* Vista compacta: oculta descripción, objetivo y dominio */
+.pl-wrap.pl-compact table.pl{min-width:640px}
+.pl-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 10px}
+.pl-tools .pl-tip{margin:0;flex:1;min-width:220px}
+</style>
+<script>
+/* Interruptor "Vista compacta": por defecto se activa sola en pantallas angostas; tu elección se recuerda.
+   En compacto no se dibujan las columnas Descripción, Objetivo y Dominio. */
+function plCompactOn(){let v=null;try{v=localStorage.getItem('cd-pl-compact');}catch(e){}return v===null?window.innerWidth<1250:v==='1';}
+function plToggleCompact(){const on=!plCompactOn();try{localStorage.setItem('cd-pl-compact',on?'1':'0');}catch(e){}renderGradePlan();}
+const _rgpFit=renderGradePlan;
+renderGradePlan=function(){_rgpFit();
+  const v=document.getElementById('grade-view'),tip=v&&v.querySelector('.pl-tip');
+  if(tip&&!tip.parentElement.classList.contains('pl-tools')){
+    const box=document.createElement('div');box.className='pl-tools';tip.before(box);box.appendChild(tip);
+    box.insertAdjacentHTML('beforeend','<button type="button" id="pl-compact-btn" class="cx-mini" onclick="plToggleCompact()"></button>');}
+  const w=v&&v.querySelector('.pl-wrap'),b=document.getElementById('pl-compact-btn'),on=plCompactOn();
+  if(w){w.classList.toggle('pl-compact',on);
+    if(on){w.querySelectorAll('.pl-d,.pl-o,.pl-s').forEach(e=>e.remove());
+      w.querySelectorAll('td[colspan]').forEach(td=>td.setAttribute('colspan',Math.max(1,(parseInt(td.getAttribute('colspan'))||12)-3)));}}
+  if(b){b.textContent=on?'↔ Ver todas las columnas':'↔ Vista compacta';b.setAttribute('aria-pressed',on?'true':'false');}
+};
+window.addEventListener('resize',()=>{clearTimeout(window._plRz);window._plRz=setTimeout(()=>{
+  let pref=null;try{pref=localStorage.getItem('cd-pl-compact');}catch(e){}
+  if(pref===null&&document.querySelector('#grade-view .pl-wrap')&&typeof gradeViewOn==='function'&&gradeViewOn()){
+    const now=document.querySelector('#grade-view .pl-wrap').classList.contains('pl-compact');if(now!==plCompactOn())renderGradePlan();}},250);});
+</script>
 </body>
 </html>
