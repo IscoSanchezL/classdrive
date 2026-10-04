@@ -8238,5 +8238,30 @@ openSettings=function(){_openSettingsHc();
     <div style="font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Estado del sistema</div>
     <button type="button" class="cx-btn" onclick="cdHealthCheck()">🩺 Verificar que todo funciona</button><div id="cd-hc" style="margin-top:10px"></div></div>`);};
 </script>
+<script>
+/* ══════════ RECORDATORIO DE COPIA DE SEGURIDAD (Consola) ══════════
+   Avisa cuántos días llevas sin DESCARGAR una copia general (el archivo que guardas en tu Drive).
+   Los respaldos de la nube viven en la misma base de datos, por eso la copia descargada es la que protege de verdad. */
+const CD_BK_ALERT_DAYS=7;
+function cdBkDays(){try{const t=localStorage.getItem('cd-last-download');if(!t)return null;return Math.floor((Date.now()-new Date(t).getTime())/864e5);}catch(e){return null;}}
+function cdBkReminderHtml(){
+  const d=cdBkDays();
+  const btn='<button class="cx-btn primary" onclick="adminBackupAll()">🛟 Descargar copia ahora</button>';
+  if(d===null)return`<div class="cdp-card" style="border-left:3px solid var(--am);display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>⚠ Aún no has descargado ninguna copia de seguridad en este equipo.</b><div class="cx-muted">Descárgala y guárdala en tu Drive: los respaldos de la nube están en la misma base de datos.</div></div>${btn}</div>`;
+  if(d>=CD_BK_ALERT_DAYS)return`<div class="cdp-card" style="border-left:3px solid var(--rd);display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>⚠ Llevas ${d} días sin descargar una copia de seguridad.</b><div class="cx-muted">Lo recomendado es una por semana, guardada en tu Drive.</div></div>${btn}</div>`;
+  return`<div class="cx-muted" style="margin:0 0 10px">✓ Última copia descargada en este equipo: ${d===0?'hoy':'hace '+plural(d,'día','días')}.</div>`;
+}
+function cdBkReminderRefresh(){
+  const c=document.getElementById('admin-content');if(!c||!(isSuper()||can('respaldos')))return;
+  let box=document.getElementById('cd-bk-reminder');
+  if(!box){c.insertAdjacentHTML('beforebegin','<div id="cd-bk-reminder"></div>');box=document.getElementById('cd-bk-reminder');}
+  if(box)box.innerHTML=cdBkReminderHtml();
+}
+const _renderAdminPanelBk=renderAdminPanel;
+renderAdminPanel=function(){_renderAdminPanelBk();cdBkReminderRefresh();};
+const _downloadBlobBk=downloadBlob;
+downloadBlob=function(content,name,type){_downloadBlobBk(content,name,type);
+  if(String(name).startsWith('classdrive-plataforma-')){try{localStorage.setItem('cd-last-download',new Date().toISOString());}catch(e){}cdBkReminderRefresh();}};
+</script>
 </body>
 </html>
