@@ -8047,6 +8047,16 @@ table.pl td{background:transparent}
 .cg-card,.cg-ses,.cw-chip{background:var(--s2);border:1px solid var(--br);backdrop-filter:blur(6px);box-shadow:var(--glass-hi);border-radius:12px}
 .cg-ses.now{box-shadow:0 0 0 1px var(--ac),0 0 22px var(--acg)}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--s5);border-radius:10px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-track{background:transparent}
+
+/* ── Ventanas, paneles laterales y menús: fondo SÓLIDO (el cristal no va aquí, se lee mal) ── */
+:root{--solid:#121b28;--solid2:#182334}
+body.light{--solid:#f8fbfd;--solid2:#eaf1f7}
+#lesson-drawer,.modal,body:not(.light) .modal,body.light .modal,#timer-panel,#proj,.ctx-menu,#rv .rv-head{
+  background:var(--solid)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.ctx-menu,#timer-panel{background:var(--solid2)!important}
+#lesson-drawer .ld-body,#lesson-drawer .ld-head,.modal input,.modal select,.modal textarea,#lesson-drawer input,#lesson-drawer select,#lesson-drawer textarea{backdrop-filter:none!important}
+.modal input,.modal select,.modal textarea,#lesson-drawer input,#lesson-drawer select,#lesson-drawer textarea{background:var(--solid2)!important}
+#overlay{backdrop-filter:blur(4px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (prefers-reduced-transparency:reduce){:root{--glass-blur:none}}
 </style>
