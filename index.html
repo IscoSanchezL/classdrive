@@ -2009,35 +2009,6 @@ async function checkPublicRoute(){
   return true;
 }
 
-function renderPublicClass(cls,grpName){
-  const ICONS={slides:'📊',video:'🎬',pdf:'📄',drive:'📁',canva:'🎨',genially:'✨',html:'🌐',link:'🔗',image:'🖼️',actividad:'✏️',plan:'📋',evaluacion:'📝',presentacion:'📊'};
-  const resources=Object.values(cls.resources||{});
-  const resHtml=resources.length?resources.map((r,i)=>`
-    <button class="pub-res-btn" onclick="pubToggleEmbed(${i})">
-      <span class="pri">${ICONS[r.type]||'📎'}</span>
-      <div>
-        <div>${escH(r.title||r.url||'Recurso')}</div>
-        <div class="prt">${(r.type||'link').toUpperCase()}</div>
-      </div>
-      <span style="margin-left:auto;font-size:12px;opacity:.4">▶</span>
-    </button>
-    <div class="pub-embed-box" id="pub-emb-${i}" style="display:none"></div>
-  `).join(''):'<div class="pub-empty">Sin recursos adjuntos en esta clase.</div>';
-  document.getElementById('pub-content').innerHTML=`
-    <div class="pub-card">
-      <div class="pub-cls-title">📖 ${escH(cls.title)}</div>
-      <div class="pub-cls-meta">
-        ${grpName?'<span>👥 '+escH(grpName)+'</span>':''}
-        ${cls.date?'<span>📅 '+escH(cls.date)+'</span>':''}
-        ${cls.status?'<span>'+escH(cls.status)+'</span>':''}
-      </div>
-      ${cls.objective?`<div class="pub-cls-obj"><strong>🎯 Objetivo</strong>${escH(cls.objective)}</div>`:''}
-      ${cls.desc?`<div class="pub-cls-desc">${escH(cls.desc)}</div>`:''}
-      <div class="pub-res-title">📎 Recursos (${resources.length})</div>
-      <div id="pub-res-list">${resHtml}</div>
-    </div>`;
-  window._pubResources=resources;
-}
 
 function pubToggleEmbed(i){
   const box=document.getElementById('pub-emb-'+i);
@@ -2099,48 +2070,9 @@ async function ensureProfile(){
   }
 }
 
-async function loadFromSB(){
-  initSB();if(!sb||!window.currentUser?.email){loadLocal();return;}
-  await ensureProfile();
-  try{
-    const{data,error}=await sb.from('user_data').select('state,trash,settings').eq('user_email',window.currentUser.email).single();
-    if(error&&error.code==='PGRST116'){loadLocal();await saveToDB();return;}
-    if(error)throw error;
-    if(data.state&&Object.keys(data.state).length>0){state=data.state;if(!state.view)state.view='grid';fixState();}
-    else{initDemo();}
-    if(data.trash)localStorage.setItem('cd-trash',JSON.stringify(data.trash));
-    if(data.settings){
-      const s=data.settings;
-      ['cd-app-name','cd-app-sub','cd-theme','cd-accent','cd-logo-emoji','cd-logo-img','cd-ai-provider','cd-ai-key'].forEach(k=>{if(s[k.replace('cd-','').replace(/-/g,'_')]!==undefined)localStorage.setItem(k,s[k.replace('cd-','').replace(/-/g,'_')]);});
-      if(s.appName)localStorage.setItem('cd-app-name',s.appName);
-      if(s.appSub)localStorage.setItem('cd-app-sub',s.appSub);
-      if(s.theme)localStorage.setItem('cd-theme',s.theme);
-      if(s.accent)localStorage.setItem('cd-accent',s.accent);
-      if(s.aiProvider)localStorage.setItem('cd-ai-provider',s.aiProvider);
-      if(s.aiKey&&!localStorage.getItem('cd-ai-key'))localStorage.setItem('cd-ai-key',s.aiKey);
-    }
-  }catch(e){console.error('SB load:',e);loadLocal();}
-}
 
 let saveTimer=null;
 function saveState(){clearTimeout(saveTimer);saveTimer=setTimeout(saveToDB,900);}
-async function saveToDB(){
-  initSB();if(!sb||!window.currentUser?.email){saveLocal();return;}
-  try{
-    const trash=localStorage.getItem('cd-trash');
-    await sb.from('user_data').upsert({
-      user_email:window.currentUser.email,state,
-      trash:trash?JSON.parse(trash):{},
-      settings:{
-        appName:localStorage.getItem('cd-app-name')||'Class Drive',
-        appSub:localStorage.getItem('cd-app-sub')||'GI School · Tecnología · PYP',
-        theme:localStorage.getItem('cd-theme')||'dark',
-        accent:localStorage.getItem('cd-accent')||'#6366f1',
-        aiProvider:localStorage.getItem('cd-ai-provider')||'claude',
-      }
-    },{onConflict:'user_email'});
-  }catch(e){console.error('SB save:',e);saveLocal();}
-}
 function loadLocal(){
   const k='cd-state-'+(window.currentUser?.email||'guest');
   const s=localStorage.getItem(k);
@@ -2185,29 +2117,6 @@ function escQ(s){return String(s||'').replace(/"/g,'&quot;');}
 function ds(d){return d.toISOString().slice(0,10);}
 function tod(){const d=new Date();d.setHours(0,0,0,0);return d;}
 
-function fixState(){
-  if(!state.grades)state.grades={};
-  Object.values(state.grades).forEach(g=>{
-    if(!g.groups)g.groups={};
-    Object.values(g.groups).forEach(grp=>{
-      if(!grp.notes)grp.notes='';
-      if(!grp.classes)grp.classes={};
-      // Remove ALL invalid class entries — nulls, undefined, non-objects
-      Object.keys(grp.classes).forEach(k=>{
-        const cls=grp.classes[k];
-        if(!cls||typeof cls!=='object'||!cls.title){
-          delete grp.classes[k];
-          return;
-        }
-        if(!cls.resources)cls.resources={};
-        if(!cls.status)cls.status='draft';
-        if(!cls.id)cls.id=k;
-      });
-      // Remove activities (no longer used)
-      delete grp.activities;
-    });
-  });
-}
 
 function initDemo(){
   state={grades:{},currentGrade:null,currentGroup:null,currentClass:null,view:'grid'};
@@ -2220,35 +2129,7 @@ function initDemo(){
 function genCode(){return Math.random().toString(36).slice(2,8).toUpperCase();}
 
 /* ── BOOT ── */
-function bootApp(){
-  const user=window.currentUser;
-  if(user){
-    const name=user.displayName||user.email.split('@')[0];
-    document.getElementById('sb-uname').textContent=name;
-    const av=document.getElementById('sb-av');
-    if(user.photoURL){av.innerHTML=`<img src="${user.photoURL}" alt="">"`;}
-    else{av.textContent=name[0].toUpperCase();}
-  }
-  loadFromSB().then(()=>{
-    fixState();
-    saveToDB();
-    renderSidebar();applyStoredTheme();applyStoredColor();applyStoredLogo();applyStoredSettings();renderRoleBadge();
-    initCosmosCanvas();initLoginCanvas();
-    initKeyboardShortcuts();
-    setTimeout(checkUpcomingClasses, 800);
-  });
-}
 
-function renderRoleBadge(){
-  const isAdmin=window.currentUser?.email===ADMIN;
-  window.userRole=isAdmin?'admin':'teacher';
-  const roleEl=document.getElementById('sb-role');
-  if(roleEl){roleEl.textContent=isAdmin?'⚡ Admin':'👨‍🏫 Profe';roleEl.className='sb-role '+(isAdmin?'admin':'teacher');}
-  const adminNav=document.getElementById('admin-nav');if(adminNav)adminNav.style.display=isAdmin?'':'none';
-  const adminBtn=document.getElementById('admin-panel-btn');if(adminBtn)adminBtn.style.display=isAdmin?'':'none';
-  // Color picker only for admin
-  const cp=document.getElementById('admin-cp-btn');if(cp)cp.style.display=isAdmin?'':'none';
-}
 
 /* ── THEME ── */
 function toggleTheme(){const c=document.body.classList.contains('light');setTheme(c?'dark':'light');}
@@ -2402,37 +2283,6 @@ function initLoginCanvas(){
 }
 
 /* ── SIDEBAR ── */
-function renderSidebar(){
-  const q=(document.getElementById('sb-search')?.value||'').toLowerCase();
-  const list=document.getElementById('grades-list');list.innerHTML='';openCtxId=null;
-  Object.values(state.grades).forEach((grade,gi)=>{
-    const isExp=expandedGrades[grade.id];
-    const groupsHtml=Object.values(grade.groups).map(grp=>{
-      if(q&&!grp.name.toLowerCase().includes(q))return'';
-      const cnt=Object.keys(grp.classes||{}).length;
-      return`<div style="position:relative">
-        <div class="grp-row${state.currentGroup===grp.id?' active':''}" onclick="selectGroup('${grade.id}','${grp.id}')">
-          <span class="grp-dot"></span><span style="flex:1">${escH(grp.name)}</span>
-          <span class="grp-cnt">${cnt}</span>
-          <button class="grp-ctx-btn" onclick="event.stopPropagation();toggleCtx('${grp.id}')">⋯</button>
-        </div>
-        <div class="ctx-menu" id="ctx-${grp.id}">
-          <div class="ctx-item" onclick="editGrp('${grade.id}','${grp.id}')">✏️ Renombrar</div>
-          <div class="ctx-item danger" onclick="delGrp('${grade.id}','${grp.id}')">🗑 Eliminar</div>
-        </div>
-      </div>`;
-    }).join('');
-    const el=document.createElement('div');
-    el.innerHTML=`<div class="gr-row${isExp?' open':''}" onclick="toggleGrade('${grade.id}')">
-      <span class="gr-icon">${GRADE_ICONS[gi]}</span><span class="gr-name">${grade.name}</span>
-      <span class="gr-chev${isExp?' open':''}">▶</span></div>
-      <div class="gr-wrap${isExp?' open':''}">
-        ${groupsHtml}
-        <button class="add-grp-btn" onclick="openGrpModal('${grade.id}')">➕ Crear grupo</button>
-      </div>`;
-    list.appendChild(el);
-  });
-}
 document.getElementById('sb-search')?.addEventListener('input',renderSidebar);
 function toggleGrade(gid){expandedGrades[gid]=!expandedGrades[gid];state.currentGrade=gid;renderSidebar();}
 function selectGroup(gid,grpId){
@@ -2452,60 +2302,6 @@ document.addEventListener('click',e=>{
 });
 
 /* ── VIEWS ── */
-function hideAll(){
-  document.getElementById('welcome').style.display='none';
-  document.getElementById('grp-view').style.display='none';
-  const cd=document.getElementById('cls-detail');if(cd)cd.style.display='none';
-  ['ai-panel','wb-panel','admin-panel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.classList.remove('show');el.style.display='none';}
-  });
-  const tna=document.getElementById('tb-new-act');if(tna)tna.style.display='none';
-  const tnc=document.getElementById('tb-new-class');if(tnc)tnc.style.display='none';
-}
-function showWelcome(){
-  hideAll();document.getElementById('welcome').style.display='flex';
-  document.getElementById('breadcrumb').innerHTML='<span>Class Drive</span>';
-  state.currentGroup=null;state.currentClass=null;
-  document.querySelectorAll('.sb-item').forEach((el,i)=>{el.classList.toggle('active',i===0);});
-  renderSidebar();
-  // Inject dashboard
-  const dash=document.getElementById('wlc-dashboard');
-  if(dash)dash.innerHTML=renderDashboard();
-}
-function renderGroupView(){
-  // Always read fresh from state (prevents ghost classes)
-  const grade=state.grades[state.currentGrade];
-  if(!grade){showWelcome();return;}
-  const grp=grade.groups[state.currentGroup];
-  if(!grp){showWelcome();return;}
-  hideAll();const gv=document.getElementById('grp-view');gv.style.display='flex';gv.style.flexDirection='column';
-  const _tna=document.getElementById('tb-new-act');if(_tna)_tna.style.display='none';
-document.getElementById('tb-new-class').style.display='';
-  document.getElementById('breadcrumb').innerHTML=
-    `<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span>
-     <span>${GRADE_ICONS[grade.number-1]} ${grade.name}</span><span class="bc-s">›</span><span class="bc-a">${escH(grp.name)}</span>`;
-  document.getElementById('grp-title').textContent=grp.name;
-  document.getElementById('grp-sub').textContent=`${grade.name} · GI School`;
-  if(!grp.code)grp.code=genCode();
-  document.getElementById('grp-code').textContent=grp.code;
-  const classes=Object.values(grp.classes);const acts=Object.values(grp.activities||{});
-  // Always recount from fresh state
-  const freshGrp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  const freshClasses=Object.values(freshGrp?.classes||{});
-  document.getElementById('tab-cnt-classes').textContent=freshClasses.length;
-  const totalRes=freshClasses.reduce((n,cls)=>n+Object.keys(cls.resources||{}).length,0);
-  document.getElementById('grp-stats').innerHTML=`
-    <div class="stat-chip"><span class="sc-n">${freshClasses.length}</span> Clase${freshClasses.length!==1?'s':''}</div>
-    <div class="stat-chip"><span class="sc-n">${totalRes}</span> Recurso${totalRes!==1?'s':''}</div>`;
-  renderQNotes();
-  if(currentTab==='activities')currentTab='classes';
-  document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
-  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
-  document.getElementById('panel-'+currentTab)?.classList.add('show');
-  renderTab(currentTab);
-}
 function switchTab(tab,el){
   currentTab=tab;
   document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
@@ -3049,126 +2845,12 @@ function getResInfo2(type){
 }
 
 /* ── Detect resource type from URL ── */
-function detectResType(url){
-  if(!url)return'link';
-  const u=url.toLowerCase();
-  if(u.includes('docs.google.com/presentation')||u.includes('slides.google'))return'slides';
-  if(u.includes('youtube.com')||u.includes('youtu.be'))return'video';
-  if(u.includes('canva.com'))return'canva';
-  if(u.includes('genially.com'))return'genially';
-  if(u.includes('drive.google.com'))return'drive';
-  if(/\.(pdf)($|\?)/.test(u))return'pdf';
-  if(/\.(jpg|jpeg|png|gif|webp|svg)($|\?)/.test(u))return'image';
-  if(u.startsWith('<')||u.includes('<html'))return'html';
-  return'link';
-}
 
 /* ── Build embed URL ── */
-function buildEmbedUrl(url,type){
-  if(!url)return url;
-  if(type==='slides'){
-    let u=url.split('?')[0].replace('/edit','/embed').replace('/pub','/embed');
-    if(!u.includes('/embed'))u=u+'/embed';
-    return u+'?start=false&loop=false';
-  }
-  if(type==='video'){
-    const m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return m?`https://www.youtube.com/embed/${m[1]}?rel=0`:url;
-  }
-  if(type==='drive'){
-    return url.replace('/view','/preview').replace('/edit','/preview');
-  }
-  if(type==='pdf'&&url.includes('drive.google.com')){
-    return url.replace('/view','/preview').replace('/edit','/preview');
-  }
-  if(type==='canva'){
-    return url.includes('/embed')?url:url+'/embed';
-  }
-  return url;
-}
 
 /* ── RENDER CLASSES ── */
-function renderClasses2(){
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  if(!grp)return;
-  if(!grp.classes)grp.classes={};
-  const list=document.getElementById('cls-list2');
-  if(!list)return;
-  const classes=Object.values(grp.classes).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  if(!classes.length){
-    list.innerHTML=`<div class="cls-empty2">
-      <div class="cls-empty2-icon">📖</div>
-      <h3>Sin clases aún</h3>
-      <p>Crea tu primera clase con recursos multimedia embebidos — presentaciones, videos, PDFs, Canva y más.</p>
-      <button class="tb-btn tb-primary" onclick="openClassModal2()" style="display:inline-flex">✨ Crear primera clase</button>
-    </div>`;
-    return;
-  }
-  list.innerHTML=classes.map(cls=>buildClassCard2(cls)).join('');
-  // Fix: ensure all open cards show resources button
-  setTimeout(()=>{
-    document.querySelectorAll('.cls-card2.open').forEach(card=>{
-      const clsId=card.id.replace('clsc-','');
-      // Make sure + Agregar button triggers correctly
-    });
-  },50);
-}
 
-function buildClassCard2(cls){
-  const resources=Object.values(cls.resources||{});
-  const statusLabel={draft:'Borrador',published:'Publicada',archived:'Archivada'}[cls.status||'draft']||'Borrador';
-  const resTiles=resources.map(r=>{
-    const info=getResInfo2(r.type);
-    return`<div class="res-item" onclick="openResEmbed('${cls.id}','${r.id}')">
-      <div class="res-item-icon ${info.cls}">${info.icon}</div>
-      <div class="res-item-info">
-        <div class="res-item-name" title="${escH(r.title)}">${escH(r.title)}</div>
-        <div class="res-item-type">${info.label}</div>
-      </div>
-      <div class="res-item-btns">
-        <button class="icon-btn" onclick="event.stopPropagation();editRes2('${cls.id}','${r.id}')" title="Editar">✏️</button>
-        <button class="icon-btn danger" onclick="event.stopPropagation();delRes2('${cls.id}','${r.id}')" title="Eliminar">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
 
-  return`<div class="cls-card2 open" id="clsc-${cls.id}">
-    <div class="cls-card2-head" onclick="toggleClsCard2('${cls.id}')">
-      <div class="cls-head-left">
-        <div class="cls-name">${escH(cls.title)}</div>
-        <div class="cls-meta-row">
-          <span class="cls-status ${cls.status||'draft'}">${statusLabel}</span>
-          ${cls.date?`<span class="cls-meta-item">📅 ${cls.date}</span>`:''}
-          ${cls.groups?`<span class="cls-meta-item">👥 ${escH(cls.groups)}</span>`:''}
-          <span class="cls-meta-item">📎 ${resources.length} recurso${resources.length!==1?'s':''}</span>
-        </div>
-      </div>
-      <div class="cls-head-right">
-        <button class="icon-btn" onclick="event.stopPropagation();openClassModal2('${cls.id}')" title="Editar clase">✏️</button>
-        <button class="icon-btn danger" onclick="event.stopPropagation();deleteClass2('${cls.id}')" title="Eliminar">🗑</button>
-        <span class="cls-chevron">›</span>
-      </div>
-    </div>
-    <div class="cls-card2-body" id="cls-body2-${cls.id}">
-      ${cls.desc?`<div class="cls-desc-txt">${escH(cls.desc)}</div>`:''}
-      ${cls.objective?`<div style="font-size:12px;color:var(--tm);margin-bottom:12px">🎯 <strong style="color:var(--ts)">Objetivo:</strong> ${escH(cls.objective)}</div>`:''}
-      <div class="res-section-title">
-        Recursos
-        <button onclick="openAddResModal('${cls.id}')" style="padding:3px 10px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font-b)">+ Agregar</button>
-      </div>
-      ${resources.length
-        ?`<div class="res-grid">${resTiles}</div>`
-        :`<div style="font-size:12px;color:var(--tm);padding:10px 0;margin-bottom:10px">Sin recursos — agrega presentaciones, videos, PDFs y más</div>`
-      }
-      <div id="embed-area-${cls.id}"></div>
-    </div>
-  </div>`;
-}
-
-function toggleClsCard2(clsId){
-  const card=document.getElementById('clsc-'+clsId);
-  if(card)card.classList.toggle('open');
-}
 
 /* ── Open resource embed inside class ── */
 function openResEmbed(clsId,resId){
@@ -3202,89 +2884,6 @@ function openResEmbed(clsId,resId){
 }
 
 /* ── Class modal (create/edit) ── */
-function openClassModal2(clsId){
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
-  const editing=clsId?grp.classes[clsId]:null;
-  if(!editing)pendingResources={};
-  else pendingResources=JSON.parse(JSON.stringify(editing.resources||{}));
-
-  function buildPendingList(){
-    const items=Object.values(pendingResources);
-    if(!items.length)return'<div style="font-size:12px;color:var(--tm);padding:4px 0">Sin recursos — usa el botón de abajo</div>';
-    return items.map(r=>{const info=getResInfo2(r.type);return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br)"><span>${info.icon}</span><span style="flex:1;font-size:12px;color:var(--tp)">${escH(r.title)}</span><span style="font-size:10px;color:var(--tm)">${info.label}</span><button onclick="removePendingRes('${r.id}')" style="border:none;background:transparent;color:var(--rd);cursor:pointer;font-size:14px;padding:0 4px">✕</button></div>`;}).join('');
-  }
-
-  const typeOpts=RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('');
-
-  openModal(editing?'✏️ Editar Clase':'📖 Nueva Clase',`
-    <div class="form-group"><label>Nombre de la clase</label>
-      <input id="fc-title" value="${escQ(editing?.title||'')}" placeholder="Ej: Introducción a Scratch Jr" autofocus></div>
-    <div class="form-group"><label>🎯 Objetivo</label>
-      <input id="fc-obj" value="${escQ(editing?.objective||'')}" placeholder="Al finalizar, el estudiante podrá..."></div>
-    <div class="form-group"><label>📝 Descripción</label>
-      <textarea id="fc-desc" style="min-height:60px" placeholder="Notas, materiales...">${escH(editing?.desc||'')}</textarea></div>
-    <div class="form-2col">
-      <div class="form-group"><label>📅 Fecha</label><input type="date" id="fc-date" value="${editing?.date||''}"></div>
-      <div class="form-group"><label>Estado</label>
-        <select id="fc-status">
-          <option value="draft"${(!editing||editing.status==='draft')?' selected':''}>📝 Borrador</option>
-          <option value="published"${editing?.status==='published'?' selected':''}>✅ Publicada</option>
-          <option value="archived"${editing?.status==='archived'?' selected':''}>📦 Archivada</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label>👥 Grupos</label>
-      <div id="fc-grp-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 14px;max-height:130px;overflow-y:auto">
-        ${buildGrpCheckboxes(editing?.groups?editing.groups.split(', '):[])}</div></div>
-    <div class="form-group">
-      <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span>📎 Recursos</span>
-        <button type="button" onclick="document.getElementById('cls-res-form').style.display=document.getElementById('cls-res-form').style.display==='none'?'block':'none'" style="padding:3px 12px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b)">+ Agregar</button>
-      </label>
-      <div id="pending-res-list" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;min-height:38px;margin-bottom:6px">${buildPendingList()}</div>
-      <div id="cls-res-form" style="display:none;background:var(--s2);border:1px solid var(--bra);border-radius:var(--r3);padding:12px">
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <select id="ir-type" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 8px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)"
-            onchange="(function(t){const hints={slides:'Google Slides → Compartir → Copiar enlace',video:'URL del video de YouTube',pdf:'Google Drive → Obtener enlace',drive:'Google Drive → Compartir',canva:'Canva → Compartir → Enlace público',genially:'Genially → Publicar → Copiar',link:'Cualquier URL',image:'URL de imagen (.jpg .png)',html:'Código HTML completo'};document.getElementById('ir-hint').textContent='💡 '+(hints[t]||'URL');const w=document.getElementById('ir-url-wrap');if(t==='html'){w.innerHTML='<textarea id=ir-url style=width:100%;min-height:70px;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px;color:var(--tp);font-size:11px;font-family:monospace;outline:none;box-sizing:border-box;resize:vertical placeholder=Código HTML...></textarea>';}else{w.innerHTML='<input id=ir-url style=width:100%;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;box-sizing:border-box placeholder=https://...>';};})(this.value)">
-            ${typeOpts}
-          </select>
-          <input id="ir-name" placeholder="Nombre del recurso" style="flex:1;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b)">
-        </div>
-        <div id="ir-url-wrap" style="margin-bottom:6px">
-          <input id="ir-url" placeholder="https://..." style="width:100%;background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:7px 10px;color:var(--tp);font-size:12px;outline:none;font-family:var(--font-b);box-sizing:border-box">
-        </div>
-        <div id="ir-hint" style="font-size:10px;color:var(--tm);margin-bottom:8px">💡 Google Slides → Compartir → Copiar enlace</div>
-        <div style="display:flex;gap:6px;justify-content:flex-end">
-          <button type="button" onclick="document.getElementById('cls-res-form').style.display='none'" style="padding:5px 12px;border-radius:var(--r2);border:1px solid var(--br);background:transparent;color:var(--tm);font-size:11px;cursor:pointer;font-family:var(--font-b)">Cancelar</button>
-          <button type="button" onclick="addPendingResInline()" style="padding:5px 14px;border-radius:var(--r2);border:none;background:var(--ac);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b)">✓ Agregar</button>
-        </div>
-      </div>
-    </div>`,
-    ()=>{
-      const title=document.getElementById('fc-title').value.trim();
-      if(!title){showToast('El nombre es obligatorio');return;}
-      if(editing){
-        editing.title=title;editing.objective=document.getElementById('fc-obj').value;
-        editing.desc=document.getElementById('fc-desc').value;editing.date=document.getElementById('fc-date').value;
-        editing.status=document.getElementById('fc-status').value;editing.groups=getCheckedGroups('fc-grp-wrap');
-        Object.assign(editing.resources,pendingResources);
-      }else{
-        const id=uid();if(!grp.classes)grp.classes={};
-        grp.classes[id]={id,title,objective:document.getElementById('fc-obj').value,
-          desc:document.getElementById('fc-desc').value,date:document.getElementById('fc-date').value,
-          status:document.getElementById('fc-status').value||'draft',
-          groups:getCheckedGroups('fc-grp-wrap'),resources:{...pendingResources}};
-      }
-      pendingResources={};clearTimeout(saveTimer);saveToDB();closeModal();
-      currentTab='classes';
-      document.querySelectorAll('.grp-tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById('tab-btn-classes')?.classList.add('active');
-      document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
-      document.getElementById('panel-classes')?.classList.add('show');
-      renderClasses2();
-      const cnt=Object.keys(grp.classes).length;
-      const tc=document.getElementById('tab-cnt-classes');if(tc)tc.textContent=cnt;
-    });
-}
 
 function addPendingResInline(){
   const name=(document.getElementById('ir-name')?.value||'').trim();
@@ -3475,7 +3074,6 @@ function deleteClass2(clsId){
 }
 
 /* ── Fix openClassModal to point to v2 ── */
-function openClassModal(){openClassModal2();}
 
 /* ── CLASSES ── */
 function renderClasses(){
@@ -4253,29 +3851,6 @@ function saveWB(){
 }
 
 /* ── ADMIN PANEL ── */
-function openAdminPanel(){
-  if(window.currentUser?.email!==ADMIN){showToast('Solo el administrador puede acceder.');return;}
-  hideAll();const p=document.getElementById('admin-panel');p.style.display='block';p.classList.add('show');
-  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span class="bc-a">⚡ Admin</span>`;
-  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('admin-nav').classList.add('active');
-  renderAdminPanel();
-}
-function renderAdminPanel(){
-  const p=document.getElementById('admin-panel');
-  p.innerHTML=`<div class="admin-title">⚡ Panel de Administración</div>
-    <div class="admin-sub">Control total de Class Drive. Solo visible para el super administrador.</div>
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="adminTab('teachers',this)">👨‍🏫 Profesores</button>
-      <button class="admin-tab" onclick="adminTab('visual',this)">🎨 Visual</button>
-      <button class="admin-tab" onclick="adminTab('data',this)">💾 Datos</button>
-    </div>
-    <div id="admin-content"><div style="color:var(--tm);font-size:13px;padding:20px">Cargando...</div></div>`;
-  loadAdminTab('teachers');
-}
-function adminTab(tab,el){
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');loadAdminTab(tab);
-}
 function showRegistrationInfo(){
   const url=window.location.origin;
   return`<div style="background:var(--grd);border:1px solid rgba(16,185,129,.25);border-radius:var(--r3);padding:14px 16px;margin-bottom:12px">
@@ -4287,72 +3862,6 @@ function showRegistrationInfo(){
   </div>`;
 }
 
-async function loadAdminTab(tab){
-  const c=document.getElementById('admin-content');if(!c)return;
-  if(tab==='teachers'){
-    c.innerHTML='<div style="color:var(--tm);font-size:13px">Cargando profesores...</div>';
-    initSB();
-    if(!sb){
-      c.innerHTML=showRegistrationInfo();
-      return;
-    }
-    try{
-      const{data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
-      if(error){
-        // Table might not exist yet — show setup info
-        if(error.message.includes('profiles')||error.code==='42P01'){
-          c.innerHTML=`<div style="background:var(--amd);border:1px solid rgba(240,165,0,.3);border-radius:var(--r3);padding:16px;margin-bottom:16px">
-            <div style="font-size:13px;font-weight:700;color:var(--am);margin-bottom:8px">⚠ Tabla de perfiles no encontrada</div>
-            <div style="font-size:12px;color:var(--ts);line-height:1.7">Ve a <strong>supabase.com</strong> → SQL Editor y ejecuta el schema inicial.<br>Los profesores podrán registrarse con su cuenta de Google.</div>
-          </div>`+showRegistrationInfo();
-        }else{
-          c.innerHTML=`<div style="color:var(--tm);font-size:12px">Error: ${escH(error.message)}</div>`;
-        }
-        return;
-      }
-      if(!data?.length){
-        c.innerHTML=`<div style="color:var(--tm);font-size:13px;padding:20px;text-align:center;margin-bottom:12px">Sin profesores registrados aún.</div>`+showRegistrationInfo();
-        return;
-      }
-      const rows=await Promise.all(data.map(async pr=>{
-        let g=0,cl=0;
-        try{
-          const{data:ud}=await sb.from('user_data').select('state').eq('user_email',pr.email).single();
-          if(ud?.state?.grades){Object.values(ud.state.grades).forEach(grade=>{g+=Object.keys(grade.groups||{}).length;Object.values(grade.groups||{}).forEach(grp=>{cl+=Object.keys(grp.classes||{}).length;});});}
-        }catch(e){}
-        return{...pr,g,cl};
-      }));
-      c.innerHTML=`<div style="margin-bottom:14px">${showRegistrationInfo()}</div>`+rows.map(pr=>`<div class="teacher-card">
-        <div class="t-av">${(pr.name||pr.email)[0].toUpperCase()}</div>
-        <div class="t-info">
-          <div class="t-name">${escH(pr.name||'Sin nombre')}</div>
-          <div class="t-email">${escH(pr.email)}</div>
-          <div class="t-stats">${pr.g} grupos · ${pr.cl} clases · Desde ${new Date(pr.created_at).toLocaleDateString('es-CO')}</div>
-        </div>
-        <span class="t-role ${pr.role}">${pr.role==='admin'?'⚡ Admin':'👨‍🏫 Profe'}</span>
-        <div class="t-actions">
-          <button class="t-action-btn" onclick="changeTeacherRole('${escA(pr.email)}','${pr.role}')">${pr.role==='admin'?'→ Profe':'→ Admin'}</button>
-          ${pr.email!==ADMIN?`<button class="t-action-btn danger" onclick="deleteTeacher('${escA(pr.email)}')">🗑</button>`:''}
-        </div>
-      </div>`).join('');
-    }catch(e){
-      c.innerHTML=`<div style="color:var(--tm);font-size:12px">Error: ${escH(e.message)}</div>`;
-    }
-  }else if(tab==='visual'){
-    c.innerHTML=`<div class="vc-grid">
-      <div class="vc-card" onclick="openColorPicker()"><div class="vc-icon">🎨</div><div class="vc-name">Color de acento</div><div class="vc-desc">Cambia el color principal de la app</div></div>
-      <div class="vc-card" onclick="toggleTheme()"><div class="vc-icon">🌓</div><div class="vc-name">Cambiar tema</div><div class="vc-desc">Alternar entre oscuro y claro</div></div>
-      <div class="vc-card" onclick="openLogoPicker()"><div class="vc-icon">🖼️</div><div class="vc-name">Logo de la app</div><div class="vc-desc">Cambiar el logo del sidebar</div></div>
-      <div class="vc-card" onclick="openSettings()"><div class="vc-icon">✍️</div><div class="vc-name">Nombre de la app</div><div class="vc-desc">Cambiar nombre y subtítulo</div></div>
-    </div>`;
-  }else if(tab==='data'){
-    c.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px;max-width:400px">
-      <button class="tb-btn" style="text-align:left;padding:12px 16px" onclick="exportData()">⬇ Exportar mis datos (JSON)</button>
-      <button class="tb-btn" style="text-align:left;padding:12px 16px" onclick="document.getElementById('imp-input').click()">⬆ Importar datos (JSON)</button>
-      <button class="tb-btn" style="text-align:left;padding:12px 16px;color:var(--rd);border-color:rgba(239,68,68,.3)" onclick="if(confirm('¿Borrar todos los datos?')&&confirm('¿Seguro?')){localStorage.removeItem('cd-state-'+window.currentUser?.email);localStorage.removeItem('cd-trash');initDemo();renderSidebar();showWelcome();showToast('Datos borrados');}">🗑 Borrar todos los datos</button>
-    </div>`;
-  }
-}
 
 /* ── GROUPS CRUD ── */
 function openGrpModal(gid){
@@ -4529,11 +4038,6 @@ function exportData(){const b=new Blob([JSON.stringify(state,null,2)],{type:'app
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.grades)throw new Error();state=d;saveState();expandedGrades={};renderSidebar();showWelcome();showToast('Datos importados ✓');}catch(err){showToast('Archivo inválido');}};r.readAsText(f);e.target.value='';}
 
 /* ── HELPERS ── */
-function openFirstGroup(tab){
-  const gids=Object.keys(state.grades||{});
-  for(const gid of gids){const grpIds=Object.keys(state.grades[gid].groups||{});if(grpIds.length){expandedGrades[gid]=true;state.currentGrade=gid;state.currentGroup=grpIds[0];state.currentClass=null;currentTab=tab;actFilter='all';renderSidebar();renderGroupView();return;}}
-  showToast('Crea un grupo primero ➕');
-}
 function expandFirstGrade(){const gid=Object.keys(state.grades||{})[0];if(!gid){showToast('Sin grados');return;}expandedGrades[gid]=true;state.currentGrade=gid;renderSidebar();showToast('Selecciona un grupo del sidebar 👈');}
 
 
@@ -4721,77 +4225,10 @@ function closeGlobalSearch(){
 }
 function handleSearchClick(e){if(e.target===document.getElementById('gsearch-overlay'))closeGlobalSearch();}
 
-function runGlobalSearch(q){
-  const res=document.getElementById('gsearch-results');if(!res)return;
-  if(!q.trim()){res.innerHTML='<div class="gsearch-empty">Escribe para buscar en toda la plataforma</div>';return;}
-  const ql=q.toLowerCase();const results=[];
-  Object.values(state.grades||{}).forEach(g=>{
-    Object.values(g.groups||{}).forEach(grp=>{
-      // Search classes
-      Object.values(grp.classes||{}).forEach(cls=>{
-        if(cls.title?.toLowerCase().includes(ql)||cls.desc?.toLowerCase().includes(ql)||cls.objective?.toLowerCase().includes(ql)){
-          results.push({type:'class',icon:'📖',title:cls.title,sub:g.name+' · '+grp.name,
-            action:()=>{closeGlobalSearch();state.currentGrade=g.id;state.currentGroup=grp.id;currentTab='classes';renderGroupView();setTimeout(()=>goToClassFromCal(cls.id),150);}});
-        }
-        // Search resources inside classes
-        Object.values(cls.resources||{}).forEach(r=>{
-          if(r.title?.toLowerCase().includes(ql)){
-            const info=getResInfo2(r.type);
-            results.push({type:'resource',icon:info.icon,title:r.title,sub:'Recurso en "'+cls.title+'" · '+grp.name,
-              action:()=>{closeGlobalSearch();state.currentGrade=g.id;state.currentGroup=grp.id;currentTab='classes';renderGroupView();setTimeout(()=>{goToClassFromCal(cls.id);setTimeout(()=>openResEmbed(cls.id,r.id),300);},150);}});
-          }
-        });
-      });
-      // Search groups
-      if(grp.name?.toLowerCase().includes(ql)){
-        results.push({type:'group',icon:'👥',title:grp.name,sub:g.name,
-          action:()=>{closeGlobalSearch();state.currentGrade=g.id;state.currentGroup=grp.id;renderGroupView();}});
-      }
-    });
-  });
-  if(!results.length){res.innerHTML=`<div class="gsearch-empty">Sin resultados para "<strong>${escH(q)}</strong>"</div>`;return;}
-  res.innerHTML=results.slice(0,12).map((r,i)=>`
-    <div class="gsearch-result" onclick="searchResults[${i}].action()">
-      <div class="gsearch-result-icon" style="background:var(--acd)">${r.icon}</div>
-      <div class="gsearch-result-info">
-        <div class="gsearch-result-title">${escH(r.title)}</div>
-        <div class="gsearch-result-sub">${escH(r.sub)}</div>
-      </div>
-    </div>`).join('');
-  window.searchResults=results;
-}
 
 /* ══════════════════════════════════════
    DASHBOARD (showWelcome)
 ══════════════════════════════════════ */
-function renderDashboard(){
-  let totalClases=0,totalRes=0,clsToday=[];
-  const today=ds(new Date());
-  Object.values(state.grades||{}).forEach(g=>{
-    Object.values(g.groups||{}).forEach(grp=>{
-      Object.values(grp.classes||{}).forEach(cls=>{
-        totalClases++;
-        totalRes+=Object.keys(cls.resources||{}).length;
-        if(cls.date===today)clsToday.push({...cls,grpName:grp.name,gradeId:g.id,grpId:grp.id});
-      });
-    });
-  });
-  const totalGrps=Object.values(state.grades||{}).reduce((n,g)=>n+Object.keys(g.groups||{}).length,0);
-  const todayHtml=clsToday.length
-    ?clsToday.map(cl=>`<div class="dash-today-item" onclick="goToClassFromNotif('${cl.id}')">
-        <span>📅</span><span style="flex:1">${escH(cl.title)}</span>
-        <span style="font-size:10px;color:var(--tm)">${escH(cl.grpName)}</span>
-      </div>`).join('')
-    :`<div style="font-size:12px;color:var(--tm);padding:4px 0">Sin clases programadas para hoy</div>`;
-  return`
-    <div class="dash-today"><div class="dash-today-title">📅 Clases de hoy</div>${todayHtml}</div>
-    <div class="dash-grid">
-      <div class="dash-card" onclick="expandFirstGrade()"><div class="dash-card-num">${totalGrps}</div><div class="dash-card-lbl">Grupos</div></div>
-      <div class="dash-card" onclick="openFirstGroup('classes')"><div class="dash-card-num">${totalClases}</div><div class="dash-card-lbl">Clases</div></div>
-      <div class="dash-card" onclick="openFirstGroup('classes')"><div class="dash-card-num">${totalRes}</div><div class="dash-card-lbl">Recursos</div></div>
-      <div class="dash-card" onclick="openWhiteboard()"><div class="dash-card-num">🎨</div><div class="dash-card-lbl">Pizarra</div></div>
-    </div>`;
-}
 
 /* ══════════════════════════════════════
    ADMIN — Teacher Management
@@ -4874,7 +4311,6 @@ function showKbHelp(){
 }
 
 /* ── MODAL ── */
-function openModal(title,body,onSave){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').innerHTML=body;saveHandler=onSave;document.getElementById('overlay').classList.add('show');document.getElementById('modal-save-btn').style.display='';setTimeout(()=>{const f=document.querySelector('#modal-body input,#modal-body textarea,#modal-body select');if(f)f.focus();},80);}
 function closeModal(){document.getElementById('overlay').classList.remove('show');saveHandler=null;}
 function doSave(){if(saveHandler)saveHandler();}
 function handleOvClick(e){if(e.target===document.getElementById('overlay'))closeModal();}
@@ -4922,37 +4358,6 @@ function aulaLink(code){
 function plural(n,s,p){return n+' '+(n===1?s:(p||s+'s'));}
 
 /* ── Migración segura del estado (no borra nada existente) ── */
-function fixState(){
-  if(!state.grades)state.grades={};
-  Object.values(state.grades).forEach(g=>{
-    if(!g.groups)g.groups={};
-    if(!g.units||typeof g.units!=='object')g.units={};
-    const n=parseInt(g.number)||0;
-    // Secciones: 1° y 2° → A, B, C · 3° a 6° → A, B (solo se crean una vez)
-    if(n>=1&&n<=6&&!g.secFix){
-      (n<=2?['A','B','C']:['A','B']).forEach(l=>{
-        const name=n+'°'+l;
-        const has=Object.values(g.groups).some(x=>String(x.name||'').replace(/\s/g,'').toUpperCase()===name.toUpperCase());
-        if(!has){let id=g.id+l;if(g.groups[id])id=uid();g.groups[id]={id,name,code:genCode(),classes:{},notes:''};}
-      });
-      g.secFix=true;
-    }
-    Object.values(g.groups).forEach(grp=>{
-      if(!grp.notes)grp.notes='';
-      if(!grp.classes)grp.classes={};
-      if(!grp.code)grp.code=genCode();
-      Object.keys(grp.classes).forEach(k=>{
-        const cls=grp.classes[k];
-        if(!cls||typeof cls!=='object'||!cls.title){delete grp.classes[k];return;}
-        if(!cls.resources)cls.resources={};
-        if(!cls.status)cls.status='draft';
-        if(!cls.id)cls.id=k;
-        if(cls.unitId&&!g.units[cls.unitId])cls.unitId='';
-      });
-      delete grp.activities;
-    });
-  });
-}
 
 /* ── Canva: cualquier enlace → formato embed ── */
 function canvaEmbed(raw){
@@ -4969,19 +4374,6 @@ function canvaEmbed(raw){
 function canvaOk(raw){return /canva\.com\/design\//i.test(canvaEmbed(raw));}
 function canvaOpenUrl(raw){const e=canvaEmbed(raw);return /canva\.com\/design\//.test(e)?e.replace('?embed',''):String(raw||'').trim();}
 
-function detectResType(url){
-  if(!url)return'link';
-  const u=url.toLowerCase();
-  if(u.includes('docs.google.com/presentation')||u.includes('slides.google'))return'slides';
-  if(u.includes('youtube.com')||u.includes('youtu.be'))return'video';
-  if(u.includes('canva.com')||u.includes('canva.link'))return'canva';
-  if(u.includes('genially.com'))return'genially';
-  if(u.includes('drive.google.com'))return'drive';
-  if(/\.(pdf)($|\?)/.test(u))return'pdf';
-  if(/\.(jpg|jpeg|png|gif|webp|svg)($|\?)/.test(u))return'image';
-  if(u.startsWith('<')||u.includes('<html'))return'html';
-  return'link';
-}
 function buildEmbedUrl(url,type){
   if(!url)return url;
   if(type==='canva'||/canva\.com\/design\//i.test(url))return canvaEmbed(url);
@@ -5012,27 +4404,6 @@ function openModal(title,body,onSave){
 function setModalBtn(txt){const b=document.getElementById('modal-save-btn');if(b)b.textContent=txt;}
 
 /* ══════════ INICIO DOCENTE: tarjetas de grado ══════════ */
-function renderGradeTiles(){
-  const tiles=sortedGrades().map(g=>{
-    const t=gTheme(g);const grps=Object.values(g.groups||{});
-    let nc=0,np=0;grps.forEach(x=>Object.values(x.classes||{}).forEach(c=>{nc++;if(c.status==='published')np++;}));
-    const nu=Object.keys(g.units||{}).length;
-    return`<div class="gt-tile" style="--gc:${t.c};--gs:${t.s};--gd:${t.d}">
-      <div class="gt-top"><span class="gt-num">${g.number||''}°</span><span class="gt-mascot" aria-hidden="true">${t.m}</span></div>
-      <div class="gt-name">${escH(t.n)}</div>
-      <div class="gt-stats"><span>${plural(nu,'unidad','unidades')}</span><span>${plural(nc,'clase')}</span><span>${np} visibles</span></div>
-      <div class="gt-secs">${grps.map(x=>`<button onclick="selectGroup('${g.id}','${x.id}')">${escH(x.name)}</button>`).join('')}</div>
-    </div>`;
-  }).join('');
-  return`<div class="gt-head">
-      <div><div class="gt-h">Tus grados</div><div class="gt-sub">Entra a una sección para ver sus unidades, clases y presentaciones.</div></div>
-      <div class="gt-actions">
-        <button class="cx-btn" onclick="printAllQR()">🖨 Imprimir QR de grupos</button>
-        <button class="cx-btn" onclick="window.open(aulaLink(),'_blank')">🎒 Portal de estudiantes</button>
-      </div>
-    </div>
-    <div class="gt-grid">${tiles}</div>`;
-}
 function showWelcome(){
   hideAll();document.getElementById('welcome').style.display='flex';
   document.getElementById('breadcrumb').innerHTML='<span>Class Drive</span>';
@@ -5050,81 +4421,11 @@ function openFirstGroup(tab){
 }
 
 /* ══════════ VISTA DE GRUPO ══════════ */
-function renderGroupView(){
-  const grade=curGrade();if(!grade){showWelcome();return;}
-  const grp=grade.groups[state.currentGroup];if(!grp){showWelcome();return;}
-  const t=gTheme(grade);
-  hideAll();const gv=document.getElementById('grp-view');gv.style.display='flex';gv.style.flexDirection='column';
-  gv.style.setProperty('--gc',t.c);gv.style.setProperty('--gs',t.s);
-  document.getElementById('tb-new-class').style.display='';
-  document.getElementById('breadcrumb').innerHTML=
-    `<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span>
-     <span>${t.m} ${escH(grade.name)}</span><span class="bc-s">›</span><span class="bc-a">${escH(grp.name)}</span>`;
-  document.getElementById('grp-title').innerHTML=`<span class="grp-mascot">${t.m}</span>${escH(grp.name)}`;
-  document.getElementById('grp-sub').textContent=`${t.n} · GI School`;
-  if(!grp.code)grp.code=genCode();
-  const gc=document.getElementById('grp-code');if(gc)gc.textContent=grp.code;
-  const classes=Object.values(grp.classes||{});
-  const pub=classes.filter(c=>c.status==='published').length;
-  const totalRes=classes.reduce((n,c)=>n+Object.keys(c.resources||{}).length+(c.canvaUrl?1:0),0);
-  document.getElementById('tab-cnt-classes').textContent=classes.length;
-  document.getElementById('grp-stats').innerHTML=`
-    <div class="stat-chip"><span class="sc-n">${Object.keys(grade.units||{}).length}</span> Unidades</div>
-    <div class="stat-chip"><span class="sc-n">${classes.length}</span> ${classes.length===1?'Clase':'Clases'}</div>
-    <div class="stat-chip"><span class="sc-n">${pub}</span> Visibles para estudiantes</div>
-    <div class="stat-chip"><span class="sc-n">${totalRes}</span> Recursos</div>`;
-  const ga=document.getElementById('grp-actions');
-  if(ga)ga.innerHTML=`
-    <button class="cx-btn" onclick="openUnitsModal()">🧭 Unidades PYP</button>
-    <button class="cx-btn" onclick="openGroupAccess()">📱 Acceso estudiantes</button>
-    <button class="cx-btn" onclick="window.open(aulaLink('${escA(grp.code)}'),'_blank')">🎒 Ver como estudiante</button>`;
-  renderQNotes();
-  if(currentTab==='activities')currentTab='classes';
-  document.querySelectorAll('.grp-tab').forEach(x=>x.classList.remove('active'));
-  document.getElementById('tab-btn-'+currentTab)?.classList.add('active');
-  document.querySelectorAll('.grp-panel').forEach(p=>p.classList.remove('show'));
-  document.getElementById('panel-'+currentTab)?.classList.add('show');
-  renderTab(currentTab);
-}
 
 /* ══════════ CLASES AGRUPADAS POR UNIDAD ══════════ */
 let clsStatusFilter='all';
 const openCards=new Set();
 function setClsFilter(f){clsStatusFilter=f;renderClasses2();}
-function renderClasses2(){
-  const grade=curGrade(),grp=curGrp();if(!grp)return;
-  const list=document.getElementById('cls-list2');if(!list)return;
-  const all=Object.values(grp.classes||{});
-  const pub=all.filter(c=>c.status==='published').length;
-  const fil=all.filter(c=>clsStatusFilter==='all'||(clsStatusFilter==='published'?c.status==='published':c.status!=='published'));
-  const units=sortedUnits(grade);
-  const byUnit=uid_=>fil.filter(c=>(c.unitId||'')===uid_).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999')||String(a.title).localeCompare(String(b.title)));
-  let html=`<div class="cx-toolbar">
-    <div class="cx-pills">
-      <button class="fpill${clsStatusFilter==='all'?' active':''}" onclick="setClsFilter('all')">Todas (${all.length})</button>
-      <button class="fpill${clsStatusFilter==='published'?' active':''}" onclick="setClsFilter('published')">Visibles (${pub})</button>
-      <button class="fpill${clsStatusFilter==='draft'?' active':''}" onclick="setClsFilter('draft')">Borradores (${all.length-pub})</button>
-    </div>
-    <div class="cx-tools">
-      <button class="cx-btn" onclick="openUnitsModal()">🧭 Unidades</button>
-      <button class="cx-btn primary" onclick="openClassModal2()">+ Nueva clase</button>
-    </div>
-  </div>`;
-  if(!units.length){
-    html+=`<div class="cx-hint"><div class="cx-hint-ico">🧭</div><div style="flex:1"><strong>Organiza este grado por unidades de indagación.</strong><br>Cada unidad agrupa sus clases como un mapa de misiones, igual para todas las secciones.</div><button class="cx-btn primary" onclick="openUnitModal()">Crear la primera unidad</button></div>`;
-  }
-  if(!all.length){
-    html+=`<div class="cls-empty2"><div class="cls-empty2-icon">📖</div><h3>Sin clases aún</h3>
-      <p>Crea una clase, pega el enlace de tu presentación de Canva y el de tu planeación.</p>
-      <button class="tb-btn tb-primary" onclick="openClassModal2()" style="display:inline-flex">✨ Crear primera clase</button></div>`;
-    list.innerHTML=html;return;
-  }
-  units.forEach((u,i)=>{html+=unitSection(u,byUnit(u.id),i);});
-  const loose=byUnit('');
-  if(loose.length)html+=unitSection(null,loose,-1);
-  if(!fil.length)html+=`<div class="cx-unit-empty">No hay clases con este filtro.</div>`;
-  list.innerHTML=html;
-}
 function unitSection(u,classes,i){
   const grade=curGrade();const col=u?.color||gTheme(grade).c;
   const lines=(u?.lines||'').split('\n').map(s=>s.trim()).filter(Boolean);
@@ -5213,68 +4514,6 @@ function togglePublish(id){
 }
 
 /* ══════════ MODAL DE CLASE (Canva + planeación + unidad) ══════════ */
-function openClassModal2(clsId,presetUnit){
-  const grade=curGrade(),grp=curGrp();if(!grp){showToast('Primero entra a una sección');return;}
-  const editing=clsId?grp.classes[clsId]:null;
-  pendingResources=editing?JSON.parse(JSON.stringify(editing.resources||{})):{};
-  const units=sortedUnits(grade);
-  const selUnit=editing?(editing.unitId||''):(presetUnit||'');
-  const unitOpts=`<option value="">Sin unidad</option>`+units.map((u,i)=>`<option value="${u.id}"${u.id===selUnit?' selected':''}>${i+1}. ${escH(u.title)}</option>`).join('');
-  const pendingHtml=()=>{const items=Object.values(pendingResources);
-    if(!items.length)return'<div class="cx-muted" style="padding:4px 0">Sin recursos extra</div>';
-    return items.map(r=>{const info=getResInfo2(r.type);return`<div class="cx-pend"><span>${info.icon}</span><span style="flex:1">${escH(r.title)}</span><span class="cx-muted">${info.label}</span><button onclick="removePendingRes('${r.id}')">✕</button></div>`;}).join('');};
-  const typeOpts=RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('');
-  openModal(editing?'✏️ Editar clase':'📖 Nueva clase',`
-    <div class="form-group"><label>Nombre de la clase</label>
-      <input id="fc-title" value="${escQ(editing?.title||'')}" placeholder="Ej: Conozco el teclado"></div>
-    <div class="form-2col">
-      <div class="form-group"><label>Unidad PYP</label><select id="fc-unit">${unitOpts}</select></div>
-      <div class="form-group"><label>Fecha</label><input type="date" id="fc-date" value="${escQ(editing?.date||'')}"></div>
-    </div>
-    <div class="form-group"><label>🎨 Presentación de Canva</label>
-      <input id="fc-canva" value="${escQ(editing?.canvaUrl||'')}" placeholder="Pega el enlace o el código de inserción de Canva" oninput="cxCanvaCheck(this.value)">
-      <div id="fc-canva-msg" class="cx-field-msg"></div></div>
-    <div class="form-group"><label>📋 Planeación de clase (solo tú la ves)</label>
-      <input id="fc-plan" value="${escQ(editing?.planUrl||'')}" placeholder="https://docs.google.com/... o enlace de Drive"></div>
-    <div class="form-group"><label>🎯 Objetivo</label>
-      <input id="fc-obj" value="${escQ(editing?.objective||'')}" placeholder="Al finalizar, el estudiante podrá..."></div>
-    <div class="form-group"><label>📝 Descripción para estudiantes</label>
-      <textarea id="fc-desc" style="min-height:60px" placeholder="Qué vamos a hacer hoy, materiales...">${escH(editing?.desc||'')}</textarea></div>
-    <label class="cx-switch"><input type="checkbox" id="fc-pub" ${editing?.status==='published'?'checked':''}> Visible para estudiantes</label>
-    <div class="form-group" style="margin-top:14px">
-      <label style="display:flex;align-items:center;justify-content:space-between"><span>📎 Recursos extra</span>
-        <button type="button" class="cx-mini" onclick="const f=document.getElementById('cls-res-form');f.style.display=f.style.display==='none'?'block':'none'">+ Agregar</button></label>
-      <div id="pending-res-list" class="cx-pend-list">${pendingHtml()}</div>
-      <div id="cls-res-form" class="cx-res-form" style="display:none">
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <select id="ir-type" class="cx-inp" style="width:auto">${typeOpts}</select>
-          <input id="ir-name" class="cx-inp" placeholder="Nombre del recurso" style="flex:1">
-        </div>
-        <div id="ir-url-wrap" style="margin-bottom:6px"><input id="ir-url" class="cx-inp" placeholder="https://..."></div>
-        <div style="display:flex;gap:6px;justify-content:flex-end">
-          <button type="button" class="cx-mini ghost" onclick="document.getElementById('cls-res-form').style.display='none'">Cancelar</button>
-          <button type="button" class="cx-mini solid" onclick="addPendingResInline()">✓ Agregar</button>
-        </div>
-      </div>
-    </div>`,
-  ()=>{
-    const title=document.getElementById('fc-title').value.trim();
-    if(!title){showToast('El nombre es obligatorio');return;}
-    const data={title,unitId:document.getElementById('fc-unit').value,date:document.getElementById('fc-date').value,
-      canvaUrl:document.getElementById('fc-canva').value.trim(),planUrl:document.getElementById('fc-plan').value.trim(),
-      objective:document.getElementById('fc-obj').value,desc:document.getElementById('fc-desc').value,
-      status:document.getElementById('fc-pub').checked?'published':'draft'};
-    if(editing){
-      if(editing.status==='archived'&&data.status==='draft')data.status='archived';
-      Object.assign(editing,data);editing.resources={...pendingResources};
-    }else{
-      const id=uid();grp.classes[id]={id,...data,resources:{...pendingResources}};openCards.add(id);
-    }
-    pendingResources={};clearTimeout(saveTimer);saveToDB();closeModal();
-    currentTab='classes';renderSidebar();renderGroupView();
-  });
-  setTimeout(()=>cxCanvaCheck(editing?.canvaUrl||''),40);
-}
 function cxCanvaCheck(v){
   const m=document.getElementById('fc-canva-msg');if(!m)return;
   if(!v.trim()){m.className='cx-field-msg';m.textContent='En Canva: Compartir → Más → Insertar, o copia el enlace de "Ver".';return;}
@@ -5364,47 +4603,12 @@ function projList(){
   const g=curGrade(),grp=curGrp();const order={};sortedUnits(g).forEach((u,i)=>order[u.id]=i);
   return Object.values(grp?.classes||{}).sort((a,b)=>((order[a.unitId]??999)-(order[b.unitId]??999))||(a.date||'9999').localeCompare(b.date||'9999')||String(a.title).localeCompare(String(b.title)));
 }
-function projSources(cls){
-  const s=[];
-  if(cls.canvaUrl)s.push({id:'__canva',title:'Presentación',type:'canva',url:cls.canvaUrl});
-  Object.values(cls.resources||{}).forEach(r=>{if(r.type!=='plan')s.push(r);});
-  return s;
-}
-function openProject(clsId){
-  proj.list=projList();proj.i=Math.max(0,proj.list.findIndex(c=>c.id===clsId));proj.res=null;
-  const el=document.getElementById('proj');el.classList.add('show');
-  const t=gTheme(curGrade());el.style.setProperty('--gc',t.c);
-  renderProject();
-}
 function closeProject(){
   document.getElementById('proj').classList.remove('show');document.getElementById('proj-stage').innerHTML='';
   if(document.fullscreenElement)document.exitFullscreen?.();
 }
 function projGo(d){const j=proj.i+d;if(j<0||j>=proj.list.length)return;proj.i=j;proj.res=null;renderProject();}
 function projPick(id){proj.res=id;renderProject();}
-function renderProject(){
-  const cls=proj.list[proj.i];if(!cls)return;
-  const g=curGrade(),grp=curGrp(),t=gTheme(g),unit=g.units?.[cls.unitId];
-  const src=projSources(cls);const cur=src.find(x=>x.id===proj.res)||src[0];proj.res=cur?.id||null;
-  document.getElementById('proj-info').innerHTML=`<span class="pj-badge">${t.m} ${escH(grp.name)}</span>
-    <div class="pj-titles">${unit?`<div class="pj-unit">${escH(unit.title)}</div>`:''}<div class="pj-title">${escH(cls.title)}</div></div>
-    <span class="pj-count">${proj.i+1} / ${proj.list.length}</span>`;
-  document.getElementById('proj-tabs').innerHTML=src.length>1?src.map(s=>`<button class="${s.id===proj.res?'on':''}" onclick="projPick('${s.id}')">${getResInfo2(s.type).icon} ${escH(s.title)}</button>`).join(''):'';
-  const st=document.getElementById('proj-stage');
-  if(!cur){
-    st.innerHTML=`<div class="pj-card"><div class="pj-card-m">${t.m}</div><div class="pj-card-t">${escH(cls.title)}</div>${cls.objective?`<div class="pj-card-o">Hoy vamos a: ${escH(cls.objective)}</div>`:''}${cls.desc?`<div class="pj-card-d">${escH(cls.desc)}</div>`:''}</div>`;
-  }else if(cur.type==='link'||(cur.type==='canva'&&!canvaOk(cur.url))){
-    st.innerHTML=`<div class="pj-card"><div class="pj-card-t">${escH(cur.title)}</div><a class="pj-open" href="${escA(cur.type==='canva'?canvaOpenUrl(cur.url):cur.url)}" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a></div>`;
-  }else if(cur.type==='image'){
-    st.innerHTML=`<img src="${escA(cur.url)}" alt="${escA(cur.title)}">`;
-  }else if(cur.type==='html'&&!/^https?:/i.test(cur.url)){
-    st.innerHTML=`<iframe srcdoc="${escA(cur.url)}" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
-  }else{
-    st.innerHTML=`<iframe src="${escA(buildEmbedUrl(cur.url,cur.type))}" allowfullscreen allow="fullscreen;autoplay;encrypted-media"></iframe>`;
-  }
-  document.getElementById('pj-prev').disabled=proj.i===0;
-  document.getElementById('pj-next').disabled=proj.i>=proj.list.length-1;
-}
 function projFull(){const el=document.getElementById('proj');if(document.fullscreenElement)document.exitFullscreen?.();else el.requestFullscreen?.().catch(()=>{});}
 function projTimer(min){
   clearInterval(proj.int);proj.total=proj.left=min*60;
@@ -5495,19 +4699,6 @@ function printAllQR(){
 }
 
 /* ══════════ PUBLICACIÓN PARA ESTUDIANTES (sin planeaciones) ══════════ */
-function sanitizeForStudents(st,settings){
-  const out={v:1,appName:settings?.appName||'Class Drive',updated:new Date().toISOString(),grades:[]};
-  Object.values(st?.grades||{}).sort((a,b)=>(a.number||0)-(b.number||0)).forEach(g=>{
-    const units=Object.values(g.units||{}).sort((a,b)=>(a.order||0)-(b.order||0))
-      .map(u=>({id:u.id,title:u.title,theme:u.theme||'',centralIdea:u.centralIdea||'',lines:u.lines||'',profile:u.profile||'',color:u.color||'',order:u.order||0}));
-    const groups=Object.values(g.groups||{}).map(grp=>({id:grp.id,name:grp.name,code:grp.code||'',
-      classes:Object.values(grp.classes||{}).filter(c=>c&&c.title&&c.status==='published').map(c=>({
-        id:c.id,title:c.title,objective:c.objective||'',desc:c.desc||'',date:c.date||'',unitId:c.unitId||'',canva:c.canvaUrl||'',
-        resources:Object.values(c.resources||{}).filter(r=>r&&r.type!=='plan').map(r=>({id:r.id,type:r.type,title:r.title,url:r.url}))}))}));
-    out.grades.push({id:g.id,number:g.number,name:g.name,units,groups});
-  });
-  return out;
-}
 async function publishSnapshot(){
   if(!sb||!window.currentUser?.email)return;
   try{
@@ -5515,24 +4706,6 @@ async function publishSnapshot(){
     const{error}=await sb.from('aula_publica').upsert({user_email:window.currentUser.email,data,updated_at:new Date().toISOString()},{onConflict:'user_email'});
     if(error&&!window._aulaWarned){window._aulaWarned=1;console.warn('aula_publica (ejecuta el SQL de la versión 4.0):',error.message);}
   }catch(e){}
-}
-async function saveToDB(){
-  initSB();if(!sb||!window.currentUser?.email){saveLocal();return;}
-  try{
-    const trash=localStorage.getItem('cd-trash');
-    await sb.from('user_data').upsert({
-      user_email:window.currentUser.email,state,
-      trash:trash?JSON.parse(trash):{},
-      settings:{
-        appName:localStorage.getItem('cd-app-name')||'Class Drive',
-        appSub:localStorage.getItem('cd-app-sub')||'GI School · Tecnología · PYP',
-        theme:localStorage.getItem('cd-theme')||'dark',
-        accent:localStorage.getItem('cd-accent')||'#6366f1',
-        aiProvider:localStorage.getItem('cd-ai-provider')||'claude',
-      }
-    },{onConflict:'user_email'});
-  }catch(e){console.error('SB save:',e);saveLocal();}
-  publishSnapshot();
 }
 
 /* Enlaces públicos antiguos (#/pub/…): nunca muestran planeaciones */
@@ -6542,8 +5715,6 @@ if(document.readyState!=='loading')document.dispatchEvent(new Event('DOMContentL
 ═══════════════════════════════════════════════════════════════ */
 const adminData={loaded:false,list:[],byEmail:{}};
 const adminView={tab:'resumen',email:null,grade:null};
-function isAdminUser(){return window.currentUser?.email===ADMIN||window.userRole==='admin';}
-function roleLabel(r){return r==='admin'?'⚡ Admin':r==='blocked'?'⛔ Bloqueado':'👨‍🏫 Profe';}
 function timeAgo(t){if(!t)return'—';const s=(Date.now()-new Date(t).getTime())/1000;
   if(s<90)return'hace un momento';if(s<3600)return'hace '+Math.round(s/60)+' min';if(s<86400)return'hace '+Math.round(s/3600)+' h';
   const d=Math.round(s/86400);return d===1?'ayer':'hace '+d+' días';}
@@ -6552,17 +5723,6 @@ function mixHex(a,b,p){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));co
 function avatarHtml(t,cls){return t.photo?`<img class="${cls}" src="${escA(t.photo)}" alt="" referrerpolicy="no-referrer">`:`<span class="${cls}">${escH((t.name||t.email||'?')[0].toUpperCase())}</span>`;}
 
 /* ── Rol y aspecto del menú ── */
-function renderRoleBadge(){
-  const r=window.currentUser?.email===ADMIN?'admin':(window.userRole||'teacher');window.userRole=r;
-  const a=r==='admin';
-  const roleEl=document.getElementById('sb-role');
-  if(roleEl){roleEl.textContent=roleLabel(r);roleEl.className='sb-role '+(a?'admin':'teacher');}
-  ['admin-nav','admin-panel-btn','admin-cp-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=a?'':'none';});
-  document.body.classList.toggle('is-admin',a);document.body.classList.toggle('is-blocked',r==='blocked');
-  const lbl=[...document.querySelectorAll('.sb-sec-lbl')].find(x=>/grupos|profesores/i.test(x.textContent));
-  if(lbl)lbl.textContent=a?'Profesores':'Mis Grupos';
-  const an=document.getElementById('admin-nav');if(an)an.innerHTML='<span class="sb-item-icon">⚡</span>Consola admin';
-}
 
 /* ── Plataforma: marca, colores y grados para todos ── */
 async function loadPlatform(){
@@ -6654,40 +5814,8 @@ async function loadAdminData(force){
 }
 
 /* ══════════ CONSOLA ══════════ */
-function openAdminPanel(){
-  if(!isAdminUser()){showToast('Solo el administrador puede acceder.');return;}
-  hideAll();const p=document.getElementById('admin-panel');p.style.display='block';p.classList.add('show');
-  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('admin-nav')?.classList.add('active');
-  renderAdminPanel();
-}
-function renderAdminPanel(){
-  const p=document.getElementById('admin-panel');
-  const tabs=[['resumen','📊 Resumen'],['profes','👨‍🏫 Profesores'],['plan','📋 Planeaciones'],['plataforma','🎨 Plataforma'],['respaldos','🛟 Respaldos']];
-  document.getElementById('breadcrumb').innerHTML=`<span>Class Drive</span><span class="bc-s">›</span><span class="bc-a">⚡ Consola admin</span>`;
-  p.innerHTML=`<div class="cdp-head"><div><div class="cdp-title">Consola de administración</div>
-      <div class="cdp-sub">Supervisa a los profesores, sus planeaciones y la plataforma completa.</div></div>
-      <button class="cx-btn" onclick="adminRefresh()">↻ Actualizar datos</button></div>
-    <div class="cdp-tabs">${tabs.map(([k,l])=>`<button class="cdp-tab${adminView.tab===k?' on':''}" onclick="adminGo('${k}')">${l}</button>`).join('')}</div>
-    <div id="admin-content"><div class="cx-muted" style="padding:20px">Cargando…</div></div>`;
-  loadAdminTab(adminView.tab);
-}
-function adminGo(tab){adminView.tab=tab;renderAdminPanel();renderSidebar();}
 function adminTab(tab){adminGo(tab);}
 async function adminRefresh(){adminData.loaded=false;renderSidebar();renderAdminPanel();}
-function adminOpenPlan(email,gradeNum){
-  adminView.email=email;if(gradeNum)adminView.grade=gradeNum;adminView.tab='plan';
-  if(!document.getElementById('admin-panel')?.classList.contains('show'))openAdminPanel();else renderAdminPanel();
-  renderSidebar();
-}
-async function loadAdminTab(tab){
-  const c=document.getElementById('admin-content');if(!c)return;
-  try{await loadAdminData();}catch(e){c.innerHTML=`<div class="im-err">No se pudieron cargar los datos: ${escH(e.message||e)}</div>`;return;}
-  if(tab==='resumen')c.innerHTML=adminResumen();
-  else if(tab==='profes')c.innerHTML=adminProfes();
-  else if(tab==='plan')c.innerHTML=adminPlan();
-  else if(tab==='plataforma'){c.innerHTML=adminPlataforma();}
-  else if(tab==='respaldos'){c.innerHTML='<div class="cx-muted">Cargando respaldos…</div>';c.innerHTML=await adminRespaldos();}
-}
 
 /* ── Resumen ── */
 function adminResumen(){
@@ -6710,31 +5838,6 @@ function adminResumen(){
 }
 
 /* ── Profesores y roles ── */
-function adminProfes(){
-  return`<div class="cdp-card cdp-info">Cualquier profesor entra en <b>${escH(location.origin)}</b> con su cuenta de Google y aparece aquí. Usa <b>Bloqueado</b> para quitarle el acceso sin borrar su trabajo.</div>
-    <div class="cdp-grid">${adminData.list.map(t=>{const me=t.email===ADMIN;return`<div class="cdp-tc">
-      <div class="cdp-tc-top">${avatarHtml(t,'cdp-av')}<div style="flex:1;min-width:0"><div class="cdp-nm">${escH(t.name)}</div><div class="cdp-em">${escH(t.email)}</div></div>
-        <select class="cdp-role" ${me?'disabled title="Administrador principal"':''} onchange="adminSetRole('${escA(t.email)}',this.value)">
-          ${['teacher','admin','blocked'].map(r=>`<option value="${r}"${t.role===r?' selected':''}>${roleLabel(r)}</option>`).join('')}</select></div>
-      <div class="cdp-tc-stats"><span><b>${t.lessons}</b> clases</span><span><b>${t.groups}</b> grupos</span><span><b>${t.pct}%</b> dado</span></div>
-      <div class="cdp-tc-bar"><i style="width:${t.pct}%"></i></div>
-      <div class="cdp-when">Último cambio: ${timeAgo(t.updated_at)}</div>
-      <div class="cdp-tc-act">
-        <button class="cx-btn" onclick="adminOpenPlan('${escA(t.email)}')">📋 Ver planeación</button>
-        <button class="cx-btn" onclick="adminBackupOne('${escA(t.email)}')">🛟 Respaldar</button>
-        <button class="cx-btn" onclick="adminDownloadOne('${escA(t.email)}')" title="Descargar copia">⬇</button>
-      </div></div>`;}).join('')}</div>`;
-}
-async function adminSetRole(email,role){
-  const t=adminData.byEmail[email];if(!t)return;
-  if(!confirm(`¿Cambiar a ${t.name} a ${roleLabel(role)}?`)){renderAdminPanel();return;}
-  try{
-    const r=t.hasProfile?await sb.from('profiles').update({role}).eq('email',email)
-      :await sb.from('profiles').insert({email,name:t.name,role});
-    if(r.error)throw r.error;t.role=role;t.hasProfile=true;showToast('Rol actualizado ✓');
-  }catch(e){showToast('No se pudo cambiar el rol: '+(e.message||e));}
-  renderAdminPanel();
-}
 
 /* ── Planeaciones (solo lectura) ── */
 function adminPlan(){
