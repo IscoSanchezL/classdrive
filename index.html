@@ -2402,16 +2402,6 @@ function getFileIcon(url){
   if(u.includes('canva'))return'🎨';if(u.includes('genially'))return'✨';
   if(u.includes('.pdf'))return'📄';return'🔗';
 }
-function buildGrpOptions(currentVal){
-  const opts=['<option value="Todos">👥 Todos los grupos</option>'];
-  Object.values(state.grades||{}).forEach(g=>{
-    Object.values(g.groups||{}).forEach(grp=>{
-      const sel=currentVal===grp.name?' selected':'';
-      opts.push(`<option value="${escQ(grp.name)}"${sel}>${escH(g.name)} — ${escH(grp.name)}</option>`);
-    });
-  });
-  return opts.join('');
-}
 
 function buildGrpCheckboxes(selectedArr){
   const sel=selectedArr||[];
@@ -2446,65 +2436,6 @@ function getCheckedGroups(wrapperId){
   return checked.join(', ');
 }
 
-function openActivityModal(prefillTitle,prefillDesc,prefillUrl){
-  // Build classes dropdown from current group
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  const classes=grp?Object.values(grp.classes||{}):[]; 
-  const clsOptions=classes.length
-    ?`<div class="form-group"><label>📖 Vincular a una clase (opcional)</label><select id="f-cls-link">
-        <option value="">— Sin vincular —</option>
-        ${classes.map(cl=>`<option value="${cl.id}">${escH(cl.title)}</option>`).join('')}
-      </select></div>`
-    :'';
-  
-  openModal('📋 Nueva Actividad',`
-    <div class="form-group"><label>Título</label><input id="f-t" placeholder="Ej: Tarea sobre el sistema solar" autofocus value="${escQ(prefillTitle||'')}"></div>
-    <div class="form-2col">
-      <div class="form-group"><label>Tipo</label><select id="f-type">
-        <option value="tarea">✏️ Tarea</option><option value="anuncio">📢 Anuncio</option>
-        <option value="material">📚 Material</option><option value="cuestionario">❓ Cuestionario</option>
-        <option value="presentacion">📊 Presentación</option><option value="video">🎬 Video</option>
-      </select></div>
-      <div class="form-group"><label>👥 Asignar a grupos</label>
-        <div id="f-who-wrap" style="background:var(--s3);border:1px solid var(--br);border-radius:var(--r2);padding:8px 12px;max-height:130px;overflow-y:auto">
-          ${buildGrpCheckboxes()}
-        </div>
-      </div>
-    </div>
-    ${clsOptions}
-    <div class="form-group"><label>Instrucciones</label><textarea id="f-desc" style="min-height:80px" placeholder="Describe la actividad...">${escH(prefillDesc||'')}</textarea></div>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <button type="button" onclick="generateActWithAI()" style="padding:6px 12px;border-radius:var(--r2);border:1px solid var(--bra);background:var(--acd);color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-b);display:flex;align-items:center;gap:5px">✨ Generar con IA</button>
-      <span style="font-size:10px;color:var(--tm);align-self:center">Gemini crea la actividad automáticamente</span>
-    </div>
-    <div class="form-2col">
-      <div class="form-group"><label>📅 Fecha asignación</label><input type="date" id="f-start"></div>
-      <div class="form-group"><label>⏰ Fecha límite</label><input type="date" id="f-due"></div>
-    </div>
-    <div class="form-group"><label>🔗 Enlace del recurso</label><input id="f-url" placeholder="https://..." value="${escQ(prefillUrl||'')}"></div>
-    <div class="form-group"><label>📎 Nombre del recurso</label><input id="f-fname" placeholder="Nombre del archivo o link"></div>`,
-    ()=>{
-      const title=document.getElementById('f-t').value.trim();if(!title){showToast('El título es obligatorio');return;}
-      if(!grp)return;
-      if(!grp.activities)grp.activities={};const id=uid();
-      const url=document.getElementById('f-url').value.trim(),fname=document.getElementById('f-fname').value.trim();
-      const act={id,title,type:document.getElementById('f-type').value,description:document.getElementById('f-desc').value,
-        assignedTo:getCheckedGroups('f-who-wrap'),dateCreated:new Date().toISOString(),
-        dateAssigned:document.getElementById('f-start').value,dateDue:document.getElementById('f-due').value,
-        attachments:url?[{name:fname||'Recurso',url,icon:getFileIcon(url)}]:[],comments:[],status:'pending'};
-      grp.activities[id]=act;
-      // Also add as resource to linked class if selected
-      const clsId=document.getElementById('f-cls-link')?.value;
-      if(clsId&&grp.classes[clsId]){
-        const resId=uid();
-        if(!grp.classes[clsId].resources)grp.classes[clsId].resources={};
-        grp.classes[clsId].resources[resId]={id:resId,type:'actividad',title,desc:act.description,url,comments:[]};
-      }
-      saveState();closeModal();renderActivities();
-      document.getElementById('tab-cnt-activities').textContent=Object.keys(grp.activities).length;
-    });
-  setTimeout(()=>{const e=document.getElementById('f-start');if(e)e.value=ds(new Date());},60);
-}
 
 async function generateActWithAI(){
   const key=localStorage.getItem('cd-ai-key')||'';
@@ -2853,61 +2784,9 @@ function getResInfo2(type){
 
 
 /* ── Open resource embed inside class ── */
-function openResEmbed(clsId,resId){
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  const cls=grp?.classes[clsId];const r=cls?.resources[resId];if(!r)return;
-  const area=document.getElementById('embed-area-'+clsId);if(!area)return;
-  // Toggle
-  if(area.dataset.open===resId){area.innerHTML='';area.dataset.open='';return;}
-  area.dataset.open=resId;
-  const info=getResInfo2(r.type);
-  if(r.type==='link'){window.open(r.url,'_blank','noopener');area.innerHTML='';area.dataset.open='';return;}
-  const embedUrl=buildEmbedUrl(r.url,r.type);
-  const h=r.type==='video'?360:r.type==='slides'?460:r.type==='pdf'||r.type==='drive'?520:r.type==='image'?'auto':400;
-  const frameH=typeof h==='number'?h+'px':'auto';
-  const frameContent=r.type==='html'
-    ?`<iframe class="cls-embed-frame" srcdoc="${escA(r.url)}" sandbox="allow-scripts allow-same-origin" style="height:${frameH}"></iframe>`
-    :r.type==='image'
-    ?`<img src="${escA(r.url)}" style="max-width:100%;max-height:500px;display:block;margin:0 auto;border-radius:var(--r2)" alt="${escH(r.title)}">`
-    :`<iframe class="cls-embed-frame" src="${escA(embedUrl)}" allowfullscreen allow="autoplay;encrypted-media" style="height:${frameH}"></iframe>`;
-  area.innerHTML=`<div class="cls-embed-area">
-    <div class="cls-embed-bar">
-      <span class="cls-embed-title">${info.icon} ${escH(r.title)}</span>
-      <div style="display:flex;gap:6px">
-        <a href="${escA(r.url)}" target="_blank" rel="noopener" style="padding:3px 10px;border-radius:var(--r2);border:1px solid var(--br);background:var(--s3);color:var(--ts);font-size:10px;font-weight:600;text-decoration:none">↗ Abrir</a>
-        <button class="cls-embed-close" onclick="document.getElementById('embed-area-${clsId}').innerHTML='';document.getElementById('embed-area-${clsId}').dataset.open=''">✕</button>
-      </div>
-    </div>
-    ${frameContent}
-  </div>`;
-  area.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
 
 /* ── Class modal (create/edit) ── */
 
-function addPendingResInline(){
-  const name=(document.getElementById('ir-name')?.value||'').trim();
-  const type=document.getElementById('ir-type')?.value||'slides';
-  const url=(document.getElementById('ir-url')?.value||'').trim();
-  if(!name){showToast('Escribe el nombre del recurso');return;}
-  if(!url&&type!=='link'){showToast('Agrega la URL o contenido');return;}
-  const id=uid();
-  pendingResources[id]={id,type,title:name,url,desc:''};
-  const lst=document.getElementById('pending-res-list');
-  if(lst){
-    const info=getResInfo2(type);
-    const div=document.createElement('div');
-    div.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br)';
-    div.innerHTML=`<span>${info.icon}</span><span style="flex:1;font-size:12px;color:var(--tp)">${escH(name)}</span><span style="font-size:10px;color:var(--tm)">${info.label}</span><button onclick="removePendingRes('${id}')" style="border:none;background:transparent;color:var(--rd);cursor:pointer;font-size:14px;padding:0 4px">✕</button>`;
-    const empty=lst.querySelector('div');
-    if(empty&&empty.textContent.includes('Sin recursos'))empty.remove();
-    lst.appendChild(div);
-  }
-  const n=document.getElementById('ir-name');if(n)n.value='';
-  const u=document.getElementById('ir-url');if(u)u.value='';
-  document.getElementById('cls-res-form').style.display='none';
-  showToast(`✓ "${name}" agregado`);
-}
 
 function removePendingRes(id){
   delete pendingResources[id];
@@ -2920,59 +2799,7 @@ function removePendingRes(id){
 
 /* ── Add resource modal ── */
 let selectedResType='slides';
-function openAddResModal(clsId){
-  selectedResType='slides';
-  openModal('📎 Agregar Recurso',buildResModalHtml(),
-    ()=>{
-      const name=document.getElementById('fr-name').value.trim();
-      if(!name){showToast('El nombre es obligatorio');return;}
-      const url=(document.getElementById('fr-url')?.value||'').trim();
-      if(!url&&selectedResType!=='link'){showToast('Agrega la URL o el código HTML');return;}
-      const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];if(!grp)return;
-      if(!grp.classes[clsId])return;
-      const id=uid();
-      grp.classes[clsId].resources[id]={
-        id,type:selectedResType,
-        title:name,url,
-        desc:document.getElementById('fr-desc')?.value||'',
-      };
-      saveState();closeModal();renderClasses2();
-    });
-}
 
-function buildResModalHtml(){
-  const hints={
-    slides:'Google Slides → Compartir → Copiar enlace',
-    video:'Copia la URL del video de YouTube',
-    pdf:'Google Drive → clic derecho → Obtener enlace',
-    drive:'Google Drive → Compartir → Copiar enlace',
-    canva:'Canva → Compartir → Enlace público → Copiar',
-    genially:'Genially → Publicar → Copiar enlace',
-    link:'Cualquier URL del internet',
-    image:'URL directa (.jpg .png .webp .gif)',
-    html:'Pega el código HTML completo',
-  };
-  return`
-    <div class="form-group">
-      <label>Nombre del recurso</label>
-      <input id="fr-name" placeholder="Ej: Presentación Clase 1" autofocus>
-    </div>
-    <div class="form-group">
-      <label>Tipo de recurso</label>
-      <select id="fr-type-sel" style="font-size:13px" onchange="updateResField(this.value)">
-        ${RES_TYPES2.map(t=>`<option value="${t.id}">${t.icon} ${t.label}</option>`).join('')}
-      </select>
-    </div>
-    <div class="form-group" id="fr-field-wrap">
-      <label id="fr-field-lbl">URL del recurso</label>
-      <input id="fr-url" placeholder="${hints.slides}">
-      <div id="fr-hint" style="font-size:10px;color:var(--tm);margin-top:4px">💡 ${hints.slides}</div>
-    </div>
-    <div class="form-group">
-      <label>Descripción (opcional)</label>
-      <input id="fr-desc" placeholder="Breve descripción">
-    </div>`;
-}
 
 function updateResField(type){
   selectedResType=type;
@@ -3020,58 +2847,10 @@ function updateResField(type){
 // selectResType replaced by updateResField
 
 /* ── Edit resource ── */
-function editRes2(clsId,resId){
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  const r=grp?.classes[clsId]?.resources[resId];if(!r)return;
-  const isHtml=r.type==='html';
-  openModal('✏️ Editar Recurso',`
-    <div class="form-group"><label>Nombre</label><input id="fr-name" value="${escQ(r.title)}" autofocus></div>
-    <div class="form-group"><label>Tipo</label><select id="fr-type">
-      ${RES_TYPES2.map(t=>`<option value="${t.id}"${t.id===r.type?' selected':''}>${t.icon} ${t.label}</option>`).join('')}
-    </select></div>
-    <div class="form-group"><label>${isHtml?'Código HTML':'URL del recurso'}</label>
-      ${isHtml
-        ?`<textarea id="fr-url" style="min-height:120px;font-family:monospace;font-size:12px">${escH(r.url||'')}</textarea>`
-        :`<input id="fr-url" value="${escQ(r.url||'')}">`
-      }
-    </div>
-    <div class="form-group"><label>Descripción</label>
-      <input id="fr-desc" value="${escQ(r.desc||'')}"></div>`,
-    ()=>{
-      r.title=document.getElementById('fr-name').value.trim()||r.title;
-      r.type=document.getElementById('fr-type').value;
-      r.url=document.getElementById('fr-url').value;
-      r.desc=document.getElementById('fr-desc').value;
-      saveState();closeModal();renderClasses2();
-    });
-}
 
 /* ── Delete resource ── */
-function delRes2(clsId,resId){
-  if(!confirm('¿Eliminar este recurso?'))return;
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  if(grp?.classes[clsId]?.resources[resId]){
-    delete grp.classes[clsId].resources[resId];
-    saveState();renderClasses2();
-  }
-}
 
 /* ── Delete class ── */
-function deleteClass2(clsId){
-  if(!confirm('¿Eliminar esta clase y todos sus recursos?'))return;
-  const grp=state.grades[state.currentGrade]?.groups[state.currentGroup];
-  if(!grp||!grp.classes[clsId])return;
-  // Save to trash first
-  pushTrash('classes',JSON.parse(JSON.stringify(grp.classes[clsId])),{gradeId:state.currentGrade,groupId:state.currentGroup});
-  // Delete from state
-  delete grp.classes[clsId];
-  // Force immediate save (bypass debounce)
-  clearTimeout(saveTimer);
-  saveToDB();
-  // Re-render with fresh state
-  renderSidebar();
-  renderGroupView();
-}
 
 /* ── Fix openClassModal to point to v2 ── */
 
@@ -3317,7 +3096,6 @@ function renderAiPanel(){
   renderKeySection();
   setTimeout(()=>{const m=document.getElementById('ai-msgs');if(m)m.scrollTop=m.scrollHeight;},100);
 }
-function selectAiProvider(id){localStorage.setItem('cd-ai-provider','gemini');}
 function saveAiKey(){
   const key=document.getElementById('ai-key-input')?.value.trim();
   if(!key){showToast('Ingresa tu API key');return;}
@@ -3851,16 +3629,6 @@ function saveWB(){
 }
 
 /* ── ADMIN PANEL ── */
-function showRegistrationInfo(){
-  const url=window.location.origin;
-  return`<div style="background:var(--grd);border:1px solid rgba(16,185,129,.25);border-radius:var(--r3);padding:14px 16px;margin-bottom:12px">
-    <div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:6px">✅ Registro de profesores</div>
-    <div style="font-size:12px;color:var(--ts);line-height:1.7">Cualquier profesor puede registrarse en:<br>
-      <strong style="color:var(--acl)">${url}</strong><br>
-      Solo deben iniciar sesión con su cuenta de <strong>Google</strong>. Cada profesor tendrá su propio espacio con sus grupos y clases.
-    </div>
-  </div>`;
-}
 
 
 /* ── GROUPS CRUD ── */
@@ -3881,7 +3649,6 @@ function delGrp(gid,grpId){
   delete state.grades[gid].groups[grpId];saveState();
   if(state.currentGroup===grpId){state.currentGroup=null;showWelcome();}else renderSidebar();
 }
-function copyCode(){}
 
 /* ── CLASSES CRUD ── */
 function openClassModal(){
@@ -4233,27 +4000,7 @@ function handleSearchClick(e){if(e.target===document.getElementById('gsearch-ove
 /* ══════════════════════════════════════
    ADMIN — Teacher Management
 ══════════════════════════════════════ */
-async function changeTeacherRole(email,currentRole){
-  const newRole=currentRole==='admin'?'teacher':'admin';
-  if(!confirm(`¿Cambiar rol de ${email} a ${newRole}?`))return;
-  initSB();if(!sb)return;
-  try{
-    await sb.from('profiles').update({role:newRole}).eq('email',email);
-    showToast(`✓ Rol actualizado a ${newRole}`);
-    loadAdminTab('teachers');
-  }catch(e){showToast('Error: '+e.message);}
-}
 
-async function deleteTeacher(email){
-  if(email===ADMIN){showToast('No puedes eliminar al admin principal');return;}
-  if(!confirm(`¿Eliminar al profesor ${email}? Esto eliminará su perfil.`))return;
-  initSB();if(!sb)return;
-  try{
-    await sb.from('profiles').delete().eq('email',email);
-    showToast('✓ Profesor eliminado');
-    loadAdminTab('teachers');
-  }catch(e){showToast('Error: '+e.message);}
-}
 
 /* ══════════════════════════════════════
    KEYBOARD SHORTCUTS
@@ -4425,93 +4172,6 @@ function openFirstGroup(tab){
 /* ══════════ CLASES AGRUPADAS POR UNIDAD ══════════ */
 let clsStatusFilter='all';
 const openCards=new Set();
-function setClsFilter(f){clsStatusFilter=f;renderClasses2();}
-function unitSection(u,classes,i){
-  const grade=curGrade();const col=u?.color||gTheme(grade).c;
-  const lines=(u?.lines||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  const head=u?`<div class="cx-unit-head" style="--uc:${col}">
-      <div class="cx-unit-num">${i+1}</div>
-      <div class="cx-unit-txt">
-        ${u.theme?`<div class="cx-unit-theme">${escH(u.theme)}</div>`:''}
-        <div class="cx-unit-title">${escH(u.title)}</div>
-        ${u.centralIdea?`<div class="cx-unit-idea">💡 ${escH(u.centralIdea)}</div>`:''}
-        ${lines.length?`<ul class="cx-unit-lines">${lines.map(l=>`<li>${escH(l)}</li>`).join('')}</ul>`:''}
-        ${u.profile?`<span class="cx-chip">🌱 ${escH(u.profile)}</span>`:''}
-      </div>
-      <div class="cx-unit-side">
-        <span class="cx-unit-count">${plural(classes.length,'clase')}</span>
-        <button class="icon-btn" onclick="openUnitModal('${u.id}')" title="Editar unidad">✏️</button>
-        <button class="icon-btn" onclick="openClassModal2(null,'${u.id}')" title="Agregar clase a esta unidad">＋</button>
-      </div>
-    </div>`
-    :`<div class="cx-unit-head loose"><div class="cx-unit-num">?</div><div class="cx-unit-txt"><div class="cx-unit-title">Sin unidad asignada</div><div class="cx-unit-idea">Edita cada clase para ubicarla en una unidad.</div></div><div class="cx-unit-side"><span class="cx-unit-count">${plural(classes.length,'clase')}</span></div></div>`;
-  const body=classes.length?classes.map((c,k)=>buildClassCard2(c,k+1)).join('')
-    :`<div class="cx-unit-empty">Aún no hay clases en esta unidad.</div>`;
-  return`<section class="cx-unit" style="--uc:${col}">${head}<div class="cx-track">${body}</div></section>`;
-}
-function buildClassCard2(cls,step){
-  const resources=Object.values(cls.resources||{});
-  const pub=cls.status==='published';
-  const isOpen=openCards.has(cls.id);
-  const emb=cls.canvaUrl?canvaEmbed(cls.canvaUrl):'';
-  const resTiles=resources.map(r=>{
-    const info=getResInfo2(r.type);
-    return`<div class="res-item" onclick="openResEmbed('${cls.id}','${r.id}')">
-      <div class="res-item-icon ${info.cls}">${info.icon}</div>
-      <div class="res-item-info"><div class="res-item-name" title="${escA(r.title)}">${escH(r.title)}</div><div class="res-item-type">${info.label}</div></div>
-      <div class="res-item-btns">
-        <button class="icon-btn" onclick="event.stopPropagation();editRes2('${cls.id}','${r.id}')" title="Editar">✏️</button>
-        <button class="icon-btn danger" onclick="event.stopPropagation();delRes2('${cls.id}','${r.id}')" title="Eliminar">🗑</button>
-      </div></div>`;
-  }).join('');
-  const canvaBlock=cls.canvaUrl?(canvaOk(cls.canvaUrl)
-    ?`<div class="cx-canva"><iframe ${isOpen?'src':'data-src'}="${escA(emb)}" loading="lazy" allowfullscreen allow="fullscreen" title="Presentación de Canva"></iframe></div>`
-    :`<a class="cx-canva-link" href="${escA(cls.canvaUrl)}" target="_blank" rel="noopener">🎨 Abrir presentación de Canva ↗<small>Este enlace no se puede incrustar. Usa Compartir → Más → Insertar en Canva.</small></a>`):'';
-  return`<article class="cls-card2 cx-card${isOpen?' open':''}" id="clsc-${cls.id}">
-    ${step?`<div class="cx-step" aria-hidden="true">${step}</div>`:''}
-    <div class="cls-card2-head" onclick="toggleClsCard2('${cls.id}')">
-      <div class="cls-head-left">
-        <div class="cls-name">${escH(cls.title)}</div>
-        <div class="cls-meta-row">
-          <button class="cx-pub${pub?' on':''}" onclick="event.stopPropagation();togglePublish('${cls.id}')" title="${pub?'Ocultar a estudiantes':'Mostrar a estudiantes'}">${pub?'● Visible':'○ Borrador'}</button>
-          ${cls.date?`<span class="cls-meta-item">📅 ${escH(cls.date)}</span>`:''}
-          ${cls.canvaUrl?'<span class="cls-meta-item">🎨 Canva</span>':''}
-          ${cls.planUrl?'<span class="cls-meta-item">📋 Planeación</span>':''}
-          ${resources.length?`<span class="cls-meta-item">📎 ${resources.length}</span>`:''}
-        </div>
-      </div>
-      <div class="cls-head-right">
-        <button class="cx-act proj" onclick="event.stopPropagation();openProject('${cls.id}')" title="Proyectar en el aula">▶ Proyectar</button>
-        ${cls.planUrl?`<a class="cx-act" href="${escA(cls.planUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Solo tú ves la planeación">📋 Planeación</a>`:''}
-        <button class="icon-btn" onclick="event.stopPropagation();openCopyModal('${cls.id}')" title="Copiar a otras secciones">⧉</button>
-        <button class="icon-btn" onclick="event.stopPropagation();openClassModal2('${cls.id}')" title="Editar clase">✏️</button>
-        <button class="icon-btn danger" onclick="event.stopPropagation();deleteClass2('${cls.id}')" title="Eliminar">🗑</button>
-        <span class="cls-chevron">›</span>
-      </div>
-    </div>
-    <div class="cls-card2-body" id="cls-body2-${cls.id}">
-      ${canvaBlock}
-      ${cls.objective?`<div class="cx-obj"><span>🎯 Objetivo</span>${escH(cls.objective)}</div>`:''}
-      ${cls.desc?`<div class="cls-desc-txt">${escH(cls.desc)}</div>`:''}
-      <div class="res-section-title">Recursos extra
-        <button onclick="openAddResModal('${cls.id}')" class="cx-mini">+ Agregar</button></div>
-      ${resources.length?`<div class="res-grid">${resTiles}</div>`:`<div class="cx-muted" style="padding:6px 0 10px">Videos, PDFs, Genially, HTML interactivo o enlaces.</div>`}
-      <div id="embed-area-${cls.id}"></div>
-    </div>
-  </article>`;
-}
-function toggleClsCard2(id){
-  const c=document.getElementById('clsc-'+id);if(!c)return;
-  c.classList.toggle('open');
-  if(c.classList.contains('open')){openCards.add(id);c.querySelectorAll('iframe[data-src]').forEach(f=>{f.src=f.dataset.src;f.removeAttribute('data-src');});}
-  else openCards.delete(id);
-}
-function togglePublish(id){
-  const cls=curGrp()?.classes?.[id];if(!cls)return;
-  cls.status=cls.status==='published'?'draft':'published';
-  saveState();renderSidebar();renderGroupView();
-  showToast(cls.status==='published'?'Visible para estudiantes ✓':'Oculta para estudiantes');
-}
 
 /* ══════════ MODAL DE CLASE (Canva + planeación + unidad) ══════════ */
 function cxCanvaCheck(v){
@@ -4574,35 +4234,9 @@ function delUnit(id){
 }
 
 /* ══════════ COPIAR CLASE A OTRAS SECCIONES ══════════ */
-function openCopyModal(clsId){
-  const src=curGrp()?.classes?.[clsId];if(!src)return;
-  const blocks=sortedGrades().map(g=>{
-    const t=gTheme(g);
-    const items=Object.values(g.groups||{}).filter(x=>!(g.id===state.currentGrade&&x.id===state.currentGroup))
-      .map(x=>`<label class="cx-ck"><input type="checkbox" value="${g.id}|${x.id}"${g.id===state.currentGrade?' checked':''}> ${escH(x.name)}</label>`).join('');
-    return items?`<div class="cx-ckgrade"><div class="cx-ckhead" style="color:${t.c}">${t.m} ${escH(t.n)}</div><div class="cx-ckrow">${items}</div></div>`:'';
-  }).join('');
-  openModal('⧉ Copiar clase',`<div class="cx-muted" style="margin-bottom:12px">Se copia "${escH(src.title)}" con su Canva, planeación y recursos. Las otras secciones del mismo grado ya vienen marcadas.</div><div id="cx-copy-wrap">${blocks}</div>`,()=>{
-    const sel=[...document.querySelectorAll('#cx-copy-wrap input:checked')].map(i=>i.value);
-    if(!sel.length){showToast('Elige al menos un grupo');return;}
-    sel.forEach((v,n)=>{
-      const [gid,grpId]=v.split('|');const grp=state.grades[gid]?.groups?.[grpId];if(!grp)return;
-      const c=JSON.parse(JSON.stringify(src));c.id=uid()+n;const res={};
-      Object.values(c.resources||{}).forEach((r,k)=>{const nid=uid()+n+k;res[nid]={...r,id:nid};});c.resources=res;
-      if(gid!==state.currentGrade)c.unitId='';
-      grp.classes[c.id]=c;
-    });
-    saveState();closeModal();renderSidebar();showToast(`Copiada a ${plural(sel.length,'grupo')} ✓`);
-  });
-  setModalBtn('Copiar');
-}
 
 /* ══════════ MODO PROYECTAR ══════════ */
 const proj={list:[],i:0,res:null,left:0,total:0,int:null};
-function projList(){
-  const g=curGrade(),grp=curGrp();const order={};sortedUnits(g).forEach((u,i)=>order[u.id]=i);
-  return Object.values(grp?.classes||{}).sort((a,b)=>((order[a.unitId]??999)-(order[b.unitId]??999))||(a.date||'9999').localeCompare(b.date||'9999')||String(a.title).localeCompare(String(b.title)));
-}
 function closeProject(){
   document.getElementById('proj').classList.remove('show');document.getElementById('proj-stage').innerHTML='';
   if(document.fullscreenElement)document.exitFullscreen?.();
@@ -5340,7 +4974,6 @@ function openProjectLesson(id){
   const el=document.getElementById('proj');el.classList.add('show');el.style.setProperty('--gc',gTheme(g).c);
   renderProject();
 }
-function openProject(id){openProjectLesson(id);}
 function projSources(c){const s=[];if(c.canvaUrl)s.push({id:'__canva',title:'Presentación',type:'canva',url:c.canvaUrl});(c.resources||[]).forEach(r=>s.push(r));return s;}
 function renderProject(){
   const c=proj.list[proj.i];if(!c)return;const g=curGrade(),t=gTheme(g);
@@ -5814,7 +5447,6 @@ async function loadAdminData(force){
 }
 
 /* ══════════ CONSOLA ══════════ */
-function adminTab(tab){adminGo(tab);}
 async function adminRefresh(){adminData.loaded=false;renderSidebar();renderAdminPanel();}
 
 /* ── Resumen ── */
