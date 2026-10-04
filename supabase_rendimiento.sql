@@ -8,7 +8,7 @@
 alter table public.user_data add column if not exists rev bigint;
 
 -- 2) Índices para que los respaldos y la consola del administrador sean rápidos
-create index if not exists idx_respaldos_user_fecha on public.respaldos (user_email, created_at desc);
+-- (el índice de respaldos por usuario y fecha ya existe como respaldos_email_fecha)
 create index if not exists idx_user_data_email_upd on public.user_data (user_email, updated_at desc);
 
 -- 3) Limpieza automática de respaldos: deja los 6 automáticos y 5 manuales/generales
