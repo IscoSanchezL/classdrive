@@ -7960,5 +7960,99 @@ showWelcome=function(){
   const d=document.getElementById('wlc-dashboard');if(d&&window.userRole!=='blocked')d.innerHTML=homeRender();
 };
 </script>
+<style id="glass-style">
+/* ══════════ ESTILO CRISTAL · TECNOLÓGICO ══════════
+   Paneles de vidrio translúcido sobre un fondo de degradados suaves,
+   acentos cian y brillos finos. Solo cambia la apariencia. */
+:root{
+  --s0:#0a111b;--s1:rgba(20,31,46,.58);--s2:rgba(255,255,255,.05);--s3:rgba(255,255,255,.085);--s4:rgba(255,255,255,.13);--s5:rgba(255,255,255,.19);
+  --tp:#eaf2fb;--ts:#a9b9cc;--tm:#7b8da3;--ti:#06222d;
+  --ac:#35b8d8;--acl:#7ad7ee;--acd:rgba(53,184,216,.16);--acg:rgba(53,184,216,.32);
+  --cy:#5fd0e0;--cyd:rgba(95,208,224,.14);--gr:#5fcf9f;--grd:rgba(95,207,159,.15);
+  --am:#e7b862;--amd:rgba(231,184,98,.15);--rd:#ef7f86;--rdd:rgba(239,127,134,.15);--pu:#a99bf0;--pud:rgba(169,155,240,.15);
+  --br:rgba(255,255,255,.10);--brh:rgba(255,255,255,.20);--bra:rgba(53,184,216,.5);
+  --glass-blur:blur(18px) saturate(1.5);--glass-hi:inset 0 1px 0 rgba(255,255,255,.09);
+  --sh-sm:0 2px 10px rgba(0,0,0,.25);--sh-md:0 8px 28px rgba(0,0,0,.32);--sh-lg:0 18px 50px rgba(0,0,0,.45);
+  --sh-ac:0 0 0 1px rgba(53,184,216,.35),0 6px 22px rgba(53,184,216,.28);
+  --r2:12px;--r3:16px;--r4:22px;
+}
+body.light{
+  --s0:#e8f0f6;--s1:rgba(255,255,255,.62);--s2:rgba(255,255,255,.5);--s3:rgba(12,40,70,.05);--s4:rgba(12,40,70,.085);--s5:rgba(12,40,70,.13);
+  --tp:#0f2336;--ts:#3d576e;--tm:#778fa4;--ti:#ffffff;
+  --ac:#1b94b4;--acl:#35b8d8;--acd:rgba(27,148,180,.12);--acg:rgba(27,148,180,.25);
+  --br:rgba(12,40,70,.10);--brh:rgba(12,40,70,.18);--bra:rgba(27,148,180,.4);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-sm:0 2px 8px rgba(20,60,100,.08);--sh-md:0 8px 26px rgba(20,60,100,.12);--sh-lg:0 18px 50px rgba(20,60,100,.16);
+  --sh-ac:0 0 0 1px rgba(27,148,180,.3),0 6px 20px rgba(27,148,180,.22);
+}
+/* fondo: degradados + malla fina (el body debe ser transparente para que se vea) */
+body,body.light{background:transparent!important}
+html{background:var(--s0)}
+#cosmos{width:100vw;height:100vh;opacity:1!important;background:
+  radial-gradient(60% 55% at 12% 8%,rgba(53,184,216,.42),transparent 65%),
+  radial-gradient(55% 50% at 92% 18%,rgba(99,102,241,.34),transparent 62%),
+  radial-gradient(60% 55% at 78% 100%,rgba(45,212,191,.26),transparent 65%),
+  linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(160deg,#0a111b,#0d1827 55%,#0a1420)}
+body.light #cosmos{opacity:1!important;background:
+  radial-gradient(60% 55% at 10% 6%,rgba(53,184,216,.30),transparent 62%),
+  radial-gradient(55% 50% at 94% 14%,rgba(129,140,248,.22),transparent 60%),
+  radial-gradient(60% 55% at 80% 100%,rgba(45,212,191,.20),transparent 62%),
+  linear-gradient(rgba(12,40,70,.035) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(90deg,rgba(12,40,70,.035) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(160deg,#eaf3f8,#e3eef6)}
+/* estructura */
+#sidebar,body.light #sidebar{background:var(--s1);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-right:1px solid var(--br);box-shadow:var(--glass-hi)}
+#topbar,body.light #topbar{background:var(--s1);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-bottom:1px solid var(--br);box-shadow:var(--glass-hi)}
+.sb-item{border-radius:12px;margin:1px 8px;transition:background .18s,box-shadow .18s,transform .18s}
+.sb-item:hover{background:var(--s3);transform:translateX(2px)}
+.sb-item.active{background:linear-gradient(90deg,var(--acd),transparent 95%);color:var(--acl);box-shadow:inset 0 0 0 1px var(--bra)}
+body.light .sb-item.active{color:var(--ac)}
+.sb-item.active::before{background:linear-gradient(var(--acl),var(--ac));box-shadow:0 0 12px var(--ac);width:3px}
+/* superficies de vidrio */
+.hm-box,.cal-wrap,.cg-scroll,.cw-scroll,.cg-today,.cw-tray,.dn-box,.teacher-card,.cls-card,.res-card,.vc-card,.ai-config,.ai-chat,.qnotes,.stat-chip,.grp-code-box,.pl-wrap,.cg-mgrid,.act-empty{
+  background:var(--s1)!important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--br);box-shadow:var(--glass-hi),var(--sh-sm);border-radius:var(--r3)}
+.hm-box,.cal-wrap{border-radius:var(--r4)}
+.cls-card:hover,.res-card:hover,.vc-card:hover,.teacher-card:hover{border-color:var(--bra);box-shadow:var(--glass-hi),var(--sh-ac);transform:translateY(-2px)}
+#overlay{background:rgba(5,10,18,.55);backdrop-filter:blur(10px) saturate(1.2)}
+body.light #overlay{background:rgba(220,235,245,.55)}
+.modal{background:var(--s1);backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);border:1px solid var(--brh);box-shadow:var(--glass-hi),var(--sh-lg);border-radius:24px}
+body:not(.light) .modal{background:rgba(16,26,40,.82)}
+body.light .modal{background:rgba(255,255,255,.82)}
+/* botones */
+.btn-s,.cx-btn.primary{background:linear-gradient(135deg,var(--ac),var(--acl));color:var(--ti,#06222d);border:0;box-shadow:var(--sh-ac);font-weight:800}
+body.light .btn-s,body.light .cx-btn.primary{color:#fff}
+.btn-s:hover,.cx-btn.primary:hover{filter:brightness(1.07);box-shadow:0 0 0 1px var(--bra),0 8px 28px var(--acg)}
+.cx-btn,.tb-btn,.btn-c,.cal-nav-btn,.cx-mini{background:var(--s2);border:1px solid var(--brh);backdrop-filter:blur(8px);box-shadow:var(--glass-hi);border-radius:12px}
+.cx-btn:hover,.tb-btn:hover,.btn-c:hover,.cal-nav-btn:hover,.cx-mini:hover{background:var(--s3);border-color:var(--bra)}
+input,select,textarea{background:var(--s2);border-color:var(--br);border-radius:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)!important;box-shadow:0 0 0 3px var(--acd);outline:none}
+/* tarjetas de grado: cristal teñido */
+.gt-tile{background:linear-gradient(155deg,color-mix(in srgb,var(--gc) 74%,transparent),color-mix(in srgb,var(--gd) 62%,transparent))!important;
+  border:1px solid rgba(255,255,255,.26);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -20px 40px -30px rgba(0,0,0,.35),0 14px 36px -14px color-mix(in srgb,var(--gc) 70%,#000);transition:transform .25s,box-shadow .25s}
+.gt-tile:hover{transform:translateY(-4px)}
+.gt-tile::after{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.28),rgba(255,255,255,.04) 65%)}
+.pl-banner{background:linear-gradient(135deg,color-mix(in srgb,var(--gc) 72%,transparent),color-mix(in srgb,var(--gd) 60%,transparent));border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),var(--sh-md)}
+table.pl thead th{background:color-mix(in srgb,var(--gc) 82%,#06121c);backdrop-filter:blur(6px)}
+table.pl td{background:transparent}
+.sb-item-icon{filter:saturate(.9)}
+/* brillo en el logo del nombre y títulos */
+.wlc-title{background:linear-gradient(90deg,var(--tp),var(--acl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hm-box.late{border-left:3px solid var(--rd)}
+.cg-day,.cw-day{background:transparent!important;border-radius:0;box-shadow:none}
+.cg-day.today,.cw-day.today{background:var(--acd)!important}
+.cg-card,.cg-ses,.cw-chip{background:var(--s2);border:1px solid var(--br);backdrop-filter:blur(6px);box-shadow:var(--glass-hi);border-radius:12px}
+.cg-ses.now{box-shadow:0 0 0 1px var(--ac),0 0 22px var(--acg)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--s5);border-radius:10px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-track{background:transparent}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-transparency:reduce){:root{--glass-blur:none}}
+</style>
+<script>
+/* El fondo ahora es un degradado CSS: se desactiva la animación de partículas (ahorra procesador y batería). */
+initCosmosCanvas=function(){};
+</script>
 </body>
 </html>
