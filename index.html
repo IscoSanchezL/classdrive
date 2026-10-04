@@ -8123,7 +8123,7 @@ homeRender=function(){let h=_homeRenderColor();if(!canColorGrades())return h;
 /* ── Modo seguro: Supabase verifica quién es cada profesor con su sesión de Google (Firebase).
    Déjalo en false hasta activar "Third-party Auth → Firebase" en Supabase y ejecutar supabase_seguridad.sql.
    Si lo activas antes, la app no podrá cargar datos. ── */
-const CD_SECURE=false;
+const CD_SECURE=true;
 /* ── Solo cuentas con estos dominios pueden usar la plataforma (vacío = cualquier cuenta de Google).
    Ejemplo: ['gi.edu.co'].  El administrador siempre puede entrar. ── */
 const CD_ALLOWED_DOMAINS=[];
