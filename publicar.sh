@@ -1,10 +1,10 @@
 #!/bin/bash
 # Publica Class Drive: trae lo último de GitHub y despliega en Firebase.
-# Uso:  ./publicar.sh            (usa la rama de trabajo actual)
-#       ./publicar.sh main       (publica otra rama)
+# Uso:  ./publicar.sh            (publica la rama main)
+#       ./publicar.sh otra-rama  (publica otra rama)
 set -e
 cd "$(dirname "$0")"
-RAMA="${1:-claude/gifted-dijkstra-d32a7d}"
+RAMA="${1:-main}"
 git fetch origin "$RAMA"
 git checkout "$RAMA"
 git pull origin "$RAMA"
