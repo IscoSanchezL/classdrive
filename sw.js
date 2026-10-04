@@ -1,5 +1,5 @@
 // Class Drive — Service Worker (red primero: siempre intenta la versión más nueva)
-const CACHE = 'classdrive-v' + '202609290812';
+const CACHE = 'classdrive-v' + '202610041600';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -17,6 +17,15 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   // Nunca cachear Supabase, Firebase Auth ni APIs externas: los datos siempre van a la nube
   if (url.origin !== location.origin) return;
+
+  // Imágenes de /assets/ (nombre con huella): caché primero, no se vuelven a descargar
+  if (url.pathname.startsWith('/assets/')) {
+    e.respondWith(caches.match(req).then(r => r || fetch(req).then(res => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+      return res;
+    })));
+    return;
+  }
 
   // Red primero; si no hay conexión, usa lo guardado
   e.respondWith(
