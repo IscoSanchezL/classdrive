@@ -7248,7 +7248,7 @@ openLesson=function(id,focus){
   _openLessonCoord(id,focus);
   const l=curGrade()?.lessons?.[id];const body=document.querySelector('#lesson-drawer .ld-body');if(!l||!body)return;
   const box=document.createElement('div');box.className='form-group';
-  box.innerHTML=`<label>📅 Fecha planeada</label><input type="date" value="${escA(l.planDate||'')}" oninput="setLessonField('${id}','planDate',this.value)">
+  box.innerHTML=`<label>📅 Fecha planeada (todo el grado)</label><input type="date" value="${escA(l.planDate||'')}" oninput="setLessonField('${id}','planDate',this.value)">
     <div class="cx-muted" style="margin-top:4px">La coordinación ve en su vista semanal qué clase toca cada semana.</div>`;
   const first=body.querySelector('.form-2col');if(first)first.before(box);else body.appendChild(box);
 };
@@ -7270,7 +7270,7 @@ renderClasses2=function(){
   const g=curGrade(),grp=curGrp();if(!g||!grp)return;
   document.querySelectorAll('#cls-list2 .gl-row').forEach(row=>{
     const m=row.querySelector('.gl-main')?.getAttribute('onclick')?.match(/openLesson\('([^']+)'/);const l=m&&g.lessons?.[m[1]];
-    if(l?.planDate&&!l.done?.[grp.id]){const s=document.createElement('span');s.className='gl-plan'+(l.planDate<todayIso()?' late':'');s.textContent='📅 '+dayLbl(l.planDate);row.querySelector('.gl-main')?.after(s);}
+    if(l&&lDate(l,grp.id)&&!l.done?.[grp.id]){const s=document.createElement('span');s.className='gl-plan'+(lDate(l,grp.id)<todayIso()?' late':'');s.textContent='📅 '+dayLbl(lDate(l,grp.id));row.querySelector('.gl-main')?.after(s);}
   });
 };
 function openScheduler(){
@@ -7449,7 +7449,7 @@ function cwCell(date){if(cwSel){cwSet(cwSel,date);showToast('Fecha asignada ✓'
 function cwToggleSel(id){cwSel=cwSel===id?null:id;renderCalendar();}
 function cwPick(date){
   const g=curGrade(),grp=curGrp();if(!g||!grp)return;
-  const opts=lessonsOf(g).filter(l=>!l.planDate&&!l.done?.[grp.id]);
+  const opts=lessonsOf(g).filter(l=>!cwDate(l,grp)&&!l.done?.[grp.id]);
   if(!opts.length){showToast('No quedan clases sin fecha en este grado');return;}
   openModal('📅 Clase para el '+dayLbl(date),`<div class="form-group"><label>¿Qué clase toca ese día?</label><select id="cw-pick">${opts.map(l=>`<option value="${escA(l.id)}">${l.n}. ${escH(l.title||'Sin tema')}</option>`).join('')}</select></div>
     <div class="cx-muted">También puedes arrastrar una clase de "Sin fecha" hasta el día.</div>`,()=>{const v=document.getElementById('cw-pick').value;closeModal();cwSet(v,date);});
@@ -7471,7 +7471,7 @@ renderCalendar=function(){
   const chip=l=>{const done=!!l.done?.[grp.id],late=!done&&cwDate(l,grp)<today;
     return`<div class="cw-chip${done?' ok':late?' late':''}" draggable="true" ondragstart="cwDrag(event,'${escA(l.id)}')" onclick="event.stopPropagation();openLesson('${escA(l.id)}')" title="${escA(l.objective||l.title||'')}">
       <span class="cw-n">${done?'✓':late?'⚠':'○'} ${l.n}</span><span class="cw-t">${escH(l.title||'Sin tema')}</span>
-      ${l.planDate?`<button class="cw-x" onclick="event.stopPropagation();cwSet('${escA(l.id)}','')" title="Quitar fecha">✕</button>`:''}</div>`;};
+      ${cwDate(l,grp)?`<button class="cw-x" onclick="event.stopPropagation();cwSet('${escA(l.id)}','')" title="Quitar fecha">✕</button>`:''}</div>`;};
   const cols=idx.map(i=>{const k=iso[i],d=days[i];const isT=k===today;
     const lg=legacy.filter(c=>c.date===k).map(c=>`<div class="cw-chip old" onclick="event.stopPropagation();goToClassFromCal('${escA(c.id)}')" title="${escA(c.title)}"><span class="cw-t">${escH(c.title)}</span></div>`).join('');
     return`<div class="cw-day${isT?' today':''}${cwSel?' pick':''}" data-d="${k}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="cwDrop(event,'${k}')" onclick="cwCell('${k}')">
@@ -7557,10 +7557,10 @@ function renderCalendarGeneral(){
       <div class="cg-mcells">${cells.map(d=>{const k=isoDay(d),ev=by[k]||[],out=d.getMonth()!==first.getMonth();
         return`<div class="cg-mc${out?' out':''}${k===today?' today':''}" data-d="${k}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="cgDrop(event,'${k}')" onclick="cgGoDay('${k}')">
           <div class="cg-mn">${d.getDate()}</div>
-          ${ev.slice(0,3).map(e=>{const done=e.grps.length&&e.grps.every(x=>e.l.done?.[x.id]);return`<div class="cg-mchip${done?' ok':''}" style="--gc:${gTheme(e.g).c}" draggable="true" ondragstart="cgDrag(event,'${escA(e.g.id)}','${escA(e.l.id)}')" onclick="event.stopPropagation();cgOpenLesson('${escA(e.g.id)}','${escA(e.l.id)}')" title="${escA(e.l.title||'')}">${e.g.number}° ${done?'✓ ':''}${escH(e.l.title||'')}</div>`;}).join('')}
+          ${ev.slice(0,3).map(e=>{const done=e.grps.length&&e.grps.every(x=>e.l.done?.[x.id]);return`<div class="cg-mchip${done?' ok':''}" style="--gc:${gTheme(e.g).c}" draggable="true" ondragstart="cgDrag(event,'${escA(e.g.id)}','${escA(e.l.id)}','${k}')" onclick="event.stopPropagation();cgOpenLesson('${escA(e.g.id)}','${escA(e.l.id)}')" title="${escA(e.l.title||'')}">${e.g.number}° ${done?'✓ ':''}${escH(e.l.title||'')}</div>`;}).join('')}
           ${ev.length>3?`<div class="cg-more">+${ev.length-3} más</div>`:''}</div>`;}).join('')}</div></div></div>`;
   }
-  let late=0;Object.values(by).forEach((a)=>a.forEach(e=>{const d=cgDate(e.l);if(d<today&&e.grps.length&&!e.grps.every(x=>e.l.done?.[x.id]))late++;}));
+  let late=0;Object.values(by).forEach((a)=>a.forEach(e=>{const d=e.d||cgDate(e.l);if(d<today&&e.grps.length&&!e.grps.every(x=>e.l.done?.[x.id]))late++;}));
   p.innerHTML=`<div class="cg-head"><div><h2 class="cg-h2">📅 Mi calendario</h2><div class="cx-muted">Las clases de todos tus grados por día. Las fechas se ponen en la planeación o en el 📅 Calendario de cada salón.${late?` · <b style="color:var(--rd)">⚠ ${plural(late,'clase atrasada','clases atrasadas')}</b>`:''}</div></div>
     <div class="cg-ctl"><div class="cal-vt-btns"><button class="cal-vt-btn${cgMode==='week'?' active':''}" onclick="cgMode='week';renderCalendarGeneral()">Semana</button><button class="cal-vt-btn${cgMode==='month'?' active':''}" onclick="cgMode='month';renderCalendarGeneral()">Mes</button></div>
       <button class="cal-nav-btn" onclick="${cgMode==='week'?'cgOff--':'cgMonth--'};renderCalendarGeneral()">‹</button><span class="cal-title-txt">${nav}</span>
@@ -7858,6 +7858,107 @@ body.light #cosmos{background:#f3f4f1;opacity:.5}
     if(st&&['#6366f1','#4f46e5'].includes(st.toLowerCase())){localStorage.removeItem('cd-accent');}
   }catch(e){console.warn('calm theme',e);}
 })();
+</script>
+<style id="home-style">
+#welcome{justify-content:flex-start;padding-top:18px;overflow-y:auto}
+#welcome .wlc-logo-wrap,#welcome .wlc-sub{display:none}
+#welcome .wlc-title{font-size:26px;margin:0 0 14px}
+#welcome .feat-grid{display:none}
+#wlc-dashboard{max-width:1080px!important;width:100%}
+.hm-box{background:var(--s1);border:1px solid var(--br);border-radius:var(--r3);padding:14px 16px;margin-bottom:14px;text-align:left}
+.hm-box.late{border-left:3px solid var(--rd)}
+.hm-h{font-weight:800;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hm-h small{font-weight:600;color:var(--tm);font-size:12px}
+.hm-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.hm-late-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--br);flex-wrap:wrap}
+.hm-late-row:first-of-type{border-top:0}
+.hm-late-t{flex:1;min-width:180px;cursor:pointer}
+.hm-late-t b{display:block}.hm-late-t span{font-size:12px;color:var(--tm)}
+.hm-more{margin-top:8px}
+.hm-info{color:var(--tm);font-size:13px}
+</style>
+<script>
+/* ══════════ FECHA POR SALÓN + INICIO CON PRIORIDADES ══════════
+   l.planDate sigue siendo la fecha del grado. Si un salón necesita otra,
+   se guarda en l.secDate[idSalón] ('' = sin fecha para ese salón). */
+function lDate(l,grpId){const sd=l.secDate;if(sd&&grpId in sd)return sd[grpId]||'';return l.planDate||'';}
+function lEff(l,x){const d=lDate(l,x.id);if(d)return d;const t=l.doneAt?.[x.id];return t?isoDay(t):'';}
+function lSetSec(g,l,grpId,date){
+  l.secDate=l.secDate||{};l.secDate[grpId]=date||'';
+  const v=sortedGroups(g).map(x=>lDate(l,x.id));
+  if(v.every(z=>z===v[0])){if(v[0])l.planDate=v[0];else delete l.planDate;delete l.secDate;}
+}
+cwDate=function(l,grp){return lEff(l,grp);};
+cwSet=function(id,date){const g=curGrade(),grp=curGrp(),l=g?.lessons?.[id];if(!l||!grp)return;lSetSec(g,l,grp.id,date);cwSel=null;saveState();renderCalendar();};
+schedLesson=function(g,x,iso){const ls=lessonsOf(g);
+  let l=ls.find(z=>lDate(z,x.id)===iso&&!z.done?.[x.id])||ls.find(z=>lDate(z,x.id)===iso);if(l)return{l,kind:'plan'};
+  l=ls.find(z=>z.done?.[x.id]&&z.doneAt?.[x.id]&&isoDay(z.doneAt[x.id])===iso);if(l)return{l,kind:'done'};
+  if(iso<todayIso())return null;
+  l=nextLesson(g,x.id);return l?{l,kind:'next'}:null;};
+cgEvents=function(){const by={};
+  Object.values(state.grades||{}).sort((a,b)=>(a.number||0)-(b.number||0)).forEach(g=>{
+    const grps=sortedGroups(g);
+    lessonsOf(g).forEach(l=>{const m={};grps.forEach(x=>{const d=lEff(l,x);if(d)(m[d]=m[d]||[]).push(x);});
+      Object.entries(m).forEach(([d,xs])=>(by[d]=by[d]||[]).push({g,l,grps:xs,d}));});});
+  return by;};
+cgDrag=function(e,gid,lid,src){e.dataTransfer.setData('text/plain',gid+'|'+lid+'|'+(src||''));e.dataTransfer.effectAllowed='move';};
+cgDrop=function(e,date){e.preventDefault();e.currentTarget.classList.remove('over');
+  const[gid,lid,src]=(e.dataTransfer.getData('text/plain')||'').split('|');const g=state.grades?.[gid],l=g?.lessons?.[lid];if(!l)return;
+  sortedGroups(g).forEach(x=>{if(lEff(l,x)===src)lSetSec(g,l,x.id,date);});saveState();renderCalendarGeneral();};
+cgCard=function(ev,today,full){
+  const{g,l,grps}=ev,t=gTheme(g),d=ev.d;
+  const allDone=grps.length&&grps.every(x=>l.done?.[x.id]),late=!allDone&&d<today;
+  const secs=grps.map(x=>{const ok=!!l.done?.[x.id];return`<button class="cg-sec${ok?' ok':''}" onclick="cgToggleDone(event,'${escA(g.id)}','${escA(l.id)}','${escA(x.id)}')" title="${ok?'Ya la diste. Toca para desmarcar':'Toca para marcar como dada'}">${ok?'✓ ':''}${escH(x.name)}</button>`;}).join('');
+  return`<div class="cg-card${allDone?' ok':late?' late':''}" data-g="${escA(g.id)}" style="--gc:${t.c}" draggable="true" ondragstart="cgDrag(event,'${escA(g.id)}','${escA(l.id)}','${d}')" onclick="event.stopPropagation();cgOpenLesson('${escA(g.id)}','${escA(l.id)}')" title="${escA(l.objective||'')}">
+    <div class="cg-k">${t.m} ${g.number}° · Clase ${l.n}${late?' · ⚠ atrasada':''}</div>
+    <div class="cg-t">${escH(l.title||'Sin tema')}</div>
+    ${grps.length?`<div class="cg-secs">${secs}</div>`:''}</div>`;};
+/* editar la fecha general desde la ficha borra las fechas por salón */
+const _slfSec=setLessonField;
+setLessonField=function(id,f,val){if(f==='planDate'){const l=curGrade()?.lessons?.[id];if(l)delete l.secDate;}_slfSec(id,f,val);};
+/* ficha de la clase: fecha propia de cada salón */
+const _olSec=openLesson;
+openLesson=function(id,focus){_olSec(id,focus);
+  const g=curGrade(),l=g?.lessons?.[id],body=document.querySelector('#lesson-drawer .ld-body');if(!l||!body)return;
+  const grps=sortedGroups(g);if(grps.length<2)return;
+  const box=document.createElement('div');box.className='form-group';
+  box.innerHTML=`<label>📅 Fecha por salón</label>`+grps.map(x=>`<div style="display:flex;align-items:center;gap:8px;margin-top:4px"><span style="min-width:44px;font-weight:700">${escH(x.name)}</span><input type="date" value="${escA(lDate(l,x.id))}" onchange="lSecField('${escA(id)}','${escA(x.id)}',this.value)"></div>`).join('')+
+    `<div class="cx-muted" style="margin-top:4px">Útil cuando los salones van en días distintos. Si no pones nada, usa la fecha del grado.</div>`;
+  const first=body.querySelector('.form-2col');if(first)first.before(box);else body.appendChild(box);};
+function lSecField(id,grpId,val){const g=curGrade(),l=g?.lessons?.[id];if(!l)return;lSetSec(g,l,grpId,val);saveState();
+  if(document.getElementById('panel-calendar')?.classList.contains('show'))renderCalendar();}
+
+/* ── Inicio: hoy, atrasadas y siguiente por salón ── */
+function homeLate(){const today=todayIso(),out=[];
+  sortedGrades().forEach(g=>{const grps=sortedGroups(g);lessonsOf(g).forEach(l=>{
+    const xs=grps.filter(x=>{const d=lDate(l,x.id);return d&&d<today&&!l.done?.[x.id];});
+    if(xs.length)out.push({g,l,xs,d:xs.map(x=>lDate(l,x.id)).sort()[0]});});});
+  return out.sort((a,b)=>a.d.localeCompare(b.d));}
+function homeItems(iso){const cfg=schedCfg(),ses=schedSessions(iso,cfg),gids=new Set(ses.map(x=>x.g.id)),today=todayIso();
+  const items=ses.map(x=>sesCard(x,iso));
+  (cgEvents()[iso]||[]).filter(e=>!gids.has(e.g.id)).forEach(e=>items.push(cgCard(e,today,true)));
+  return items;}
+function homeDay(iso,title){
+  const items=homeItems(iso),c=cycleDay(iso);
+  const empty=c?(Object.values(schedCfg().grid).some(d=>Object.values(d||{}).some(Boolean))?'No tienes clases en tu horario.':'Configura tu horario en 📅 Calendario → ⚙ Ciclo y horario para ver aquí tus sesiones.'):'Sin clases (fin de semana o festivo).';
+  return`<div class="hm-box"><div class="hm-h">${title} · ${escH(dayLbl(iso))} ${cycBadge(iso)}</div>${items.length?`<div class="hm-l">${items.join('')}</div>`:`<div class="hm-info">${empty}</div>`}</div>`;}
+function homeRender(){
+  const today=todayIso();let h=homeDay(today,'📌 Hoy');
+  if(!homeItems(today).length){let k=today;for(let i=0;i<14;i++){k=isoDay(addDays(new Date(k+'T12:00:00'),1));if(cycleDay(k)&&homeItems(k).length){h+=homeDay(k,'⏭ Próximo día con clases');break;}}}
+  const late=homeLate();
+  if(late.length){h+=`<div class="hm-box late"><div class="hm-h">⚠ Clases atrasadas <small>${plural(late.length,'clase')} con fecha pasada sin marcar</small></div>`+
+    late.slice(0,6).map(e=>{const t=gTheme(e.g);return`<div class="hm-late-row"><div class="hm-late-t" onclick="cgOpenLesson('${escA(e.g.id)}','${escA(e.l.id)}')"><b>${t.m} ${e.g.number}° · Clase ${e.l.n} · ${escH(e.l.title||'Sin tema')}</b><span>Estaba para ${escH(dayLbl(e.d))}</span></div>
+      <div class="cg-secs">${e.xs.map(x=>`<button class="cg-sec" onclick="cgToggleDone(event,'${escA(e.g.id)}','${escA(e.l.id)}','${escA(x.id)}')" title="Marcar como dada">${escH(x.name)}</button>`).join('')}</div></div>`;}).join('')+
+    `${late.length>6?`<div class="hm-more"><button class="cx-mini" onclick="openCalendarGeneral()">Ver las ${late.length} en el calendario</button></div>`:''}</div>`;}
+  return h+renderGradeTiles()+renderDashboard();}
+const _cgtdHome=cgToggleDone;
+cgToggleDone=function(e,gid,lid,grpId){_cgtdHome(e,gid,lid,grpId);const w=document.getElementById('welcome'),d=document.getElementById('wlc-dashboard');if(w&&w.style.display!=='none'&&d)d.innerHTML=homeRender();};
+const _swHome=showWelcome;
+showWelcome=function(){
+  if(isAdminUser()&&window.userRole!=='blocked'){_showWelcomeBase();}   /* el admin también ve su Inicio; la Consola tiene su propio botón */
+  else _swHome();
+  const d=document.getElementById('wlc-dashboard');if(d&&window.userRole!=='blocked')d.innerHTML=homeRender();
+};
 </script>
 </body>
 </html>
