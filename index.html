@@ -8205,5 +8205,38 @@ function cdFlush(){if(window._dirty){clearTimeout(saveTimer);saveToDB();}if(_psP
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')cdFlush();});
 window.addEventListener('pagehide',cdFlush);
 </script>
+<script>
+/* ══════════ VERIFICAR EL SISTEMA (Ajustes → 🩺) ══════════
+   Comprueba en un clic que la sesión, los permisos, el guardado y el portal funcionan, y mide los tiempos. */
+async function cdHealthCheck(){
+  const box=document.getElementById('cd-hc');if(!box)return;
+  box.innerHTML='<div class="cx-muted">Comprobando…</div>';
+  initSB();const email=String(window.currentUser?.email||'').toLowerCase(),res=[];let diag=null;
+  const t=async(n,fn)=>{const s=performance.now();let ok=true,d='';
+    try{const r=await fn();if(r===false)ok=false;else if(typeof r==='string')d=r;}catch(e){ok=false;d=(e&&e.message)||String(e);}
+    res.push({n,ok,d,ms:Math.round(performance.now()-s)});};
+  await t('Sesión de Google reconocida por la base de datos',async()=>{
+    const{data,error}=await sb.rpc('diagnostico');if(error)throw error;diag=data;
+    return data.email===email?('Conectado como '+data.email+(data.admin?' · administrador':data.staff?' · personal':' · profesor')):false;});
+  await t('Leer mi planeación',async()=>{const{data,error}=await sb.from('user_data').select('rev,updated_at').eq('user_email',email).maybeSingle();if(error)throw error;return data?'Encontrada':'Aún no hay datos guardados (normal en una cuenta nueva)';});
+  await t('Guardar mi planeación',async()=>{const{data,error}=await sb.from('user_data').update({updated_at:new Date().toISOString()}).eq('user_email',email).select('user_email');if(error)throw error;return data&&data.length?'Guardado':'Sin fila que actualizar (cuenta nueva)';});
+  await t('Leer mi perfil',async()=>{const{data,error}=await sb.from('profiles').select('role').eq('email',email).maybeSingle();if(error)throw error;return data?('Rol: '+data.role):'Sin perfil todavía';});
+  await t('Respaldos (leer los míos)',async()=>{const{error}=await sb.from('respaldos').select('id').eq('user_email',email).limit(1);if(error)throw error;});
+  await t('Portal de estudiantes (lectura pública)',async()=>{const r=await fetch(SB_URL+'/rest/v1/aula_publica?select=user_email&limit=1',{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});if(!r.ok)throw new Error('HTTP '+r.status);});
+  await t('Protección: no puedo ver datos de otros',async()=>{
+    if(diag&&diag.staff)return 'Omitida (tu rol puede ver a todos)';
+    const{data,error}=await sb.from('user_data').select('user_email').neq('user_email',email).limit(1);if(error)throw error;
+    return data.length===0?'Correcto: solo veo lo mío':false;});
+  const bad=res.filter(r=>!r.ok).length,slow=res.some(r=>r.ms>1500),tot=res.reduce((a,r)=>a+r.ms,0);
+  box.innerHTML=`<div style="font-weight:800;margin-bottom:8px;color:var(--${bad?'rd':slow?'am':'gr'})">${bad?'⚠ Hay '+plural(bad,'problema')+' — copia esto y mándalo al soporte':slow?'✓ Funciona, pero algo responde lento':'✓ Todo funciona bien'} · ${tot} ms en total</div>`+
+    res.map(r=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--br);font-size:12px"><span>${r.ok?'✅':'❌'}</span><span style="flex:1"><b>${escH(r.n)}</b>${r.d?`<br><span class="cx-muted">${escH(r.d)}</span>`:''}</span><span class="cx-muted">${r.ms} ms</span></div>`).join('');
+}
+const _openSettingsHc=openSettings;
+openSettings=function(){_openSettingsHc();
+  const body=document.getElementById('modal-body');if(!body)return;
+  body.insertAdjacentHTML('beforeend',`<div style="margin-top:6px;padding-top:16px;border-top:1px solid var(--br)">
+    <div style="font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Estado del sistema</div>
+    <button type="button" class="cx-btn" onclick="cdHealthCheck()">🩺 Verificar que todo funciona</button><div id="cd-hc" style="margin-top:10px"></div></div>`);};
+</script>
 </body>
 </html>
