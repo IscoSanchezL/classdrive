@@ -1,0 +1,15 @@
+# Pruebas del adaptador de Firestore (no necesitan red ni dependencias)
+name: Pruebas
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  adaptador:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/cdb.test.mjs

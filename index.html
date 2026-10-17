@@ -1870,12 +1870,17 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- ADAPTADOR FIRESTORE (misma forma de llamada que Supabase) -->
+<script src="cdb.js"></script>
+
 <!-- FIREBASE AUTH -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,collection,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,orderBy,limit,writeBatch}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyCUIMsOJ628tz80fMEQXxWe8_fmRjzYf-A",authDomain:(/^classdrive-981c2\.(web\.app|firebaseapp\.com)$/.test(location.hostname)?location.hostname:"classdrive-981c2.firebaseapp.com"),projectId:"classdrive-981c2",storageBucket:"classdrive-981c2.firebasestorage.app",messagingSenderId:"296658855074",appId:"1:296658855074:web:025f4c3c8a69fe4ba323fb"});
 const auth=getAuth(app);const provider=new GoogleAuthProvider();
+window.cdFS={db:getFirestore(app),doc,collection,getDoc,getDocs,setDoc,addDoc,updateDoc,deleteDoc,query,where,orderBy,limit,writeBatch,me:()=>String(auth.currentUser?.email||'').toLowerCase()};
 window.cdGetToken=async()=>auth.currentUser?auth.currentUser.getIdToken():null;window.cdSignOut=()=>signOut(auth);
 provider.setCustomParameters({prompt:'select_account'});
 document.getElementById('google-btn').addEventListener('click',async()=>{
@@ -1920,6 +1925,11 @@ const SB_URL='https://pexlhyunjvggychywrst.supabase.co';
 const SB_KEY='sb_publishable_Z4MU-Ls9xvyh7fAEhVyDMw_7jLgNs0l';
 let sb=null;
 window.userRole='teacher';
+/* Base de datos: 'supabase' (actual) o 'firestore'. Se puede probar con  ?backend=firestore  (queda guardado en este navegador)
+   y volver con  ?backend=supabase . Para cambiar el valor por defecto de todos, cambiar 'supabase' por 'firestore' aquí. */
+const CD_DEFAULT_BACKEND='supabase';
+const CD_BACKEND=(function(){try{const q=new URLSearchParams(location.search).get('backend');if(q==='firestore'||q==='supabase')localStorage.setItem('cd-backend',q);return localStorage.getItem('cd-backend')||CD_DEFAULT_BACKEND;}catch(e){return CD_DEFAULT_BACKEND;}})();
+const cdUseFS=()=>CD_BACKEND==='firestore'&&!!window.cdFS&&!!window.cdMakeFirestoreSB;
 
 /* ═══════════════════════════════════════════
    SISTEMA DE COMPARTIR POR LINK PÚBLICO
@@ -1974,10 +1984,7 @@ async function checkPublicRoute(){
   document.getElementById('loading').style.display='none';
   try{
     // Cargar datos del usuario desde Supabase (key pública)
-    const resp=await fetch(SB_URL+'/rest/v1/user_data?user_email=eq.'+encodeURIComponent(uid)+'&select=state,settings',{
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-    });
-    const rows=await resp.json();
+    const rows=await cdRows('user_data','user_email',uid,'state,settings');
     if(!rows||!rows[0]?.state)throw new Error('Sin datos');
     const st=rows[0].state;
     const settings=rows[0].settings||{};
@@ -2037,8 +2044,22 @@ window.addEventListener('hashchange',()=>{
 });
 
 /* ── SUPABASE ── */
-function initSB(){if(!sb&&window.supabase){
-  sb=window.supabase.createClient(SB_URL,SB_KEY,CD_SECURE?{accessToken:async()=>(await window.cdGetToken?.())||null}:undefined);}}
+function initSB(){
+  if(sb)return;
+  if(cdUseFS()){sb=window.cdMakeFirestoreSB(window.cdFS,{admin:ADMIN});return;}
+  if(window.supabase){sb=window.supabase.createClient(SB_URL,SB_KEY,CD_SECURE?{accessToken:async()=>(await window.cdGetToken?.())||null}:undefined);}
+}
+/* Lectura sin sesión (portal de estudiantes, configuración): Supabase por REST o Firestore, según la bandera */
+async function cdRows(table,col,val,cols,lim){
+  if(cdUseFS()){
+    let q=window.cdMakeFirestoreSB(window.cdFS,{admin:ADMIN}).from(table).select(cols||'*');
+    if(col)q=q.eq(col,val);if(lim)q=q.limit(lim);
+    const r=await q;if(r.error)throw new Error(r.error.message||'Firestore');return r.data||[];
+  }
+  let url=SB_URL+'/rest/v1/'+table+'?select='+(cols||'*');if(col)url+='&'+col+'=eq.'+encodeURIComponent(val);if(lim)url+='&limit='+lim;
+  const r=await fetch(url,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});if(!r.ok)throw new Error('HTTP '+r.status);
+  const rows=await r.json();return Array.isArray(rows)?rows:[];
+}
 
 async function ensureProfile(){
   if(!sb||!window.currentUser)return;
@@ -4324,14 +4345,9 @@ function aulaParse(){
 }
 function aulaHash(email,code,cls){return'#/aula/'+encodeURIComponent(email)+(code?'/'+encodeURIComponent(code):'')+(cls?'/'+encodeURIComponent(cls):'');}
 async function fetchAula(email){
-  const h={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  try{
-    const r=await fetch(SB_URL+'/rest/v1/aula_publica?user_email=eq.'+encodeURIComponent(email)+'&select=data',{headers:h});
-    if(r.ok){const rows=await r.json();if(rows?.[0]?.data?.grades)return rows[0].data;}
-  }catch(e){}
-  const r2=await fetch(SB_URL+'/rest/v1/user_data?user_email=eq.'+encodeURIComponent(email)+'&select=state,settings',{headers:h});
-  const rows=await r2.json();
-  if(!Array.isArray(rows)||!rows[0]?.state)throw new Error('No encontramos esta aula.');
+  try{const rows=await cdRows('aula_publica','user_email',email,'data');if(rows?.[0]?.data?.grades)return rows[0].data;}catch(e){}
+  let rows=[];try{rows=await cdRows('user_data','user_email',email,'state,settings');}catch(e){}
+  if(!rows[0]?.state)throw new Error('No encontramos esta aula.');
   return sanitizeForStudents(rows[0].state,rows[0].settings);
 }
 function aulaFind(code){
@@ -5314,8 +5330,8 @@ function avatarHtml(t,cls){return t.photo?`<img class="${cls}" src="${escA(t.pho
 /* ── Plataforma: marca, colores y grados para todos ── */
 async function loadPlatform(){
   try{
-    const r=await fetch(SB_URL+'/rest/v1/plataforma?id=eq.1&select=config,updated_at',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
-    if(r.ok){const rows=await r.json();if(rows?.[0]?.config){window._platform=rows[0].config;window._platformAt=rows[0].updated_at;applyPlatform(window._platform);}}
+    const rows=await cdRows('plataforma','id',1,'config,updated_at');
+    if(rows?.[0]?.config){window._platform=rows[0].config;window._platformAt=rows[0].updated_at;applyPlatform(window._platform);}
   }catch(e){}
 }
 function applyPlatform(cfg){
@@ -5696,6 +5712,58 @@ function openAdminPanel(){
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('admin-nav')?.classList.add('active');
   renderAdminPanel();
 }
+/* ── Migración Supabase → Firestore (solo el administrador) ──
+   Copia perfiles, planeaciones, aula pública, configuración y respaldos. No borra nada de Supabase,
+   se puede repetir sin riesgo (no pisa lo que ya sea igual o más nuevo en Firestore) y verifica cada copia. */
+async function migrateToFirestore(){
+  const me=String(window.currentUser?.email||'').toLowerCase();
+  if(me!==ADMIN){showToast('Solo el administrador puede migrar');return;}
+  if(!window.cdFS||!window.cdMakeFirestoreSB){showToast('Firestore no está disponible en esta página');return;}
+  if(!confirm('¿Copiar los datos de Supabase a Firestore?\n\nNo borra nada de Supabase y se puede repetir. Lo que ya esté igual o más nuevo en Firestore no se pisa.'))return;
+  const lines=[];const say=t=>{lines.push(t);const el=document.getElementById('mig-log');if(el)el.textContent=lines.join('\n');};
+  openModal('☁️ Migrar a Firestore','<pre id="mig-log" style="white-space:pre-wrap;font-size:12px;max-height:55vh;overflow:auto">Preparando…</pre>',()=>closeModal());setModalBtn('Cerrar');
+  const problems=[];
+  try{
+    await waitSupabase(8000);
+    if(!window.supabase)throw new Error('No cargó la librería de Supabase');
+    const legacy=window.supabase.createClient(SB_URL,SB_KEY,CD_SECURE?{accessToken:async()=>(await window.cdGetToken?.())||null}:undefined);
+    const fsb=window.cdMakeFirestoreSB(window.cdFS,{admin:ADMIN});
+    const iso=v=>{if(!v)return v;const d=new Date(v);return isNaN(d.getTime())?v:d.toISOString();};
+    const fix=r=>{const o={...r};['created_at','updated_at'].forEach(k=>{if(o[k])o[k]=iso(o[k]);});return o;};
+    const ts=v=>v?new Date(v).getTime():0;
+    const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+    const jobs=[
+      {t:'profiles',label:'Perfiles',id:r=>fsb.idOf('profiles',r.email),skip:(ex,r)=>ex&&!(ts(r.updated_at)>ts(ex.updated_at)),cmp:['role','name']},
+      {t:'user_data',label:'Planeaciones',id:r=>fsb.idOf('user_data',r.user_email),skip:(ex,r)=>ex&&Number(ex.rev||0)>=Number(r.rev||0),cmp:['state','trash','settings']},
+      {t:'aula_publica',label:'Aula pública',id:r=>fsb.idOf('aula_publica',r.user_email),skip:(ex,r)=>ex&&ts(ex.updated_at)>=ts(r.updated_at),cmp:['data']},
+      {t:'plataforma',label:'Configuración',id:r=>String(r.id),skip:(ex,r)=>ex&&ts(ex.updated_at)>=ts(r.updated_at),cmp:['config']},
+      {t:'respaldos',label:'Respaldos',id:r=>String(r.id),skip:(ex)=>!!ex,cmp:['state']}
+    ];
+    for(const j of jobs){
+      say('› '+j.label+'…');
+      const{data,error}=await legacy.from(j.t).select('*');
+      if(error){problems.push(j.label+': no se pudo leer ('+error.message+')');say('  ✗ lectura: '+error.message);continue;}
+      let copied=0,skipped=0,okv=0,bad=0;
+      for(const row of data||[]){
+        const id=j.id(row);
+        try{
+          const ex=await fsb.getRaw(j.t,id);
+          if(j.skip(ex,row)){skipped++;continue;}
+          await fsb.setRaw(j.t,id,fix(row));copied++;
+          const back=await fsb.getRaw(j.t,id);
+          if(back&&j.cmp.every(k=>same(back[k]??null,row[k]??null)))okv++;else{bad++;problems.push(j.label+' '+id+': el contenido copiado no coincide');}
+        }catch(e){bad++;problems.push(j.label+' '+id+': '+(e.message||e));}
+      }
+      say('  leídas '+(data||[]).length+' · copiadas '+copied+' · ya estaban '+skipped+(bad?' · CON PROBLEMAS '+bad:copied?' · verificadas ✓':''));
+    }
+    const n={};for(const t of ['profiles','user_data','aula_publica','plataforma','respaldos'])n[t]=await fsb.countRaw(t);
+    say('\nDocumentos en Firestore: perfiles '+n.profiles+' · planeaciones '+n.user_data+' · aula '+n.aula_publica+' · configuración '+n.plataforma+' · respaldos '+n.respaldos);
+    say(problems.length?'\n⚠ Revisa estos avisos:\n- '+problems.join('\n- '):'\n✓ Todo copiado y verificado. Puedes probar con  ?backend=firestore  al final de la dirección.');
+  }catch(e){
+    const msg=String(e.message||e);
+    say('\n✗ Error: '+msg+(/permission|42501/i.test(msg)?'\n\nProbablemente faltan publicar las reglas de Firestore:  firebase deploy --only firestore':''));
+  }
+}
 function renderAdminPanel(){
   const p=document.getElementById('admin-panel');
   const tabs=CONSOLE_TABS.filter(t=>tabAllowed(t[0]));
@@ -5704,7 +5772,7 @@ function renderAdminPanel(){
   document.getElementById('breadcrumb').innerHTML=`<span>Class Drive</span><span class="bc-s">›</span><span class="bc-a">${d.icon} Consola</span>`;
   p.innerHTML=`<div class="cdp-head"><div><div class="cdp-title">${isSuper()?'Consola del super admin':'Consola de supervisión'}</div>
       <div class="cdp-sub">${isSuper()?'Control total: profesores, roles, planeaciones, plataforma y respaldos.':'Planeaciones y avance de todos los profesores, con las fechas en que se dio cada clase.'}</div></div>
-      <button class="cx-btn" onclick="adminRefresh()">↻ Actualizar datos</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="cx-btn" onclick="adminRefresh()">↻ Actualizar datos</button>${String(window.currentUser?.email||'').toLowerCase()===ADMIN?`<button class="cx-btn" onclick="migrateToFirestore()" title="Copia los datos de Supabase a Firestore (se puede repetir sin riesgo)">☁️ Migrar a Firestore</button>`:''}</div></div>
     <div class="cdp-tabs">${tabs.map(([k,l])=>`<button class="cdp-tab${adminView.tab===k?' on':''}" onclick="adminGo('${k}')">${l}</button>`).join('')}</div>
     <div id="admin-content"><div class="cx-muted" style="padding:20px">Cargando…</div></div>`;
   loadAdminTab(adminView.tab);
@@ -6842,7 +6910,7 @@ async function cdHealthCheck(){
   await t('Guardar mi planeación',async()=>{const{data,error}=await sb.from('user_data').update({updated_at:new Date().toISOString()}).eq('user_email',email).select('user_email');if(error)throw error;return data&&data.length?'Guardado':'Sin fila que actualizar (cuenta nueva)';});
   await t('Leer mi perfil',async()=>{const{data,error}=await sb.from('profiles').select('role').eq('email',email).maybeSingle();if(error)throw error;return data?('Rol: '+data.role):'Sin perfil todavía';});
   await t('Respaldos (leer los míos)',async()=>{const{error}=await sb.from('respaldos').select('id').eq('user_email',email).limit(1);if(error)throw error;});
-  await t('Portal de estudiantes (lectura pública)',async()=>{const r=await fetch(SB_URL+'/rest/v1/aula_publica?select=user_email&limit=1',{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});if(!r.ok)throw new Error('HTTP '+r.status);});
+  await t('Portal de estudiantes (lectura pública)',async()=>{await cdRows('aula_publica',null,null,'user_email',1);});
   await t('Protección: no puedo ver datos de otros',async()=>{
     if(diag&&diag.staff)return 'Omitida (tu rol puede ver a todos)';
     const{data,error}=await sb.from('user_data').select('user_email').neq('user_email',email).limit(1);if(error)throw error;
