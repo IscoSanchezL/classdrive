@@ -1927,7 +1927,7 @@ let sb=null;
 window.userRole='teacher';
 /* Base de datos: 'supabase' (actual) o 'firestore'. Se puede probar con  ?backend=firestore  (queda guardado en este navegador)
    y volver con  ?backend=supabase . Para cambiar el valor por defecto de todos, cambiar 'supabase' por 'firestore' aquí. */
-const CD_DEFAULT_BACKEND='supabase';
+const CD_DEFAULT_BACKEND='firestore';
 const CD_BACKEND=(function(){try{const q=new URLSearchParams(location.search).get('backend');if(q==='firestore'||q==='supabase')localStorage.setItem('cd-backend',q);return localStorage.getItem('cd-backend')||CD_DEFAULT_BACKEND;}catch(e){return CD_DEFAULT_BACKEND;}})();
 const cdUseFS=()=>CD_BACKEND==='firestore'&&!!window.cdFS&&!!window.cdMakeFirestoreSB;
 
