@@ -7,7 +7,7 @@ Gestor de clases y recursos escolares.
 | Código | Este repo (rama `main`) |
 | Publicación | Firebase Hosting, proyecto `classdrive-981c2` |
 | Login | Firebase Authentication |
-| Datos | Supabase hoy; en migración a Firestore (ver `docs/FIRESTORE.md`) |
+| Datos | Firestore (ver `docs/FIRESTORE.md`) |
 
 ## Publicar
 
