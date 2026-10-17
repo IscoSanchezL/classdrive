@@ -1,0 +1,20 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "respaldos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_email", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "respaldos", "fieldPath": "state", "indexes": [] },
+    { "collectionGroup": "user_data", "fieldPath": "state", "indexes": [] },
+    { "collectionGroup": "user_data", "fieldPath": "trash", "indexes": [] },
+    { "collectionGroup": "user_data", "fieldPath": "settings", "indexes": [] },
+    { "collectionGroup": "aula_publica", "fieldPath": "data", "indexes": [] },
+    { "collectionGroup": "plataforma", "fieldPath": "config", "indexes": [] }
+  ]
+}

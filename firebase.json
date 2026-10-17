@@ -10,7 +10,12 @@
       "*.md",
       "firebaserc",
       "*.bak",
-      "*.save"
+      "*.save",
+      "firestore.*",
+      "tests/**",
+      "package.json",
+      "node_modules/**",
+      "docs/**"
     ],
     "rewrites": [
       {
@@ -56,5 +61,9 @@
         ]
       }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
