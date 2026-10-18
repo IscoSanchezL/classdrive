@@ -96,7 +96,7 @@ Después de esto, **Inicio** y **Calendario** muestran tus sesiones con su hora.
 - **🎨 Pizarra** — pizarra interactiva para la clase (ver la sección 7b).
 - **🗑 Papelera** — recupera lo que borraste por error.
 - **⬇ Exportar / ⬆ Importar** — baja o sube un archivo con tu planeación.
-- **🎒 Portal de estudiantes** y **🖨 QR de grupos** (en Inicio) — enlace y códigos QR para que tus estudiantes vean las clases que decidas mostrarles.
+- **🎒 Portal de estudiantes** (en Inicio) — enlace para que tus estudiantes vean las clases que decidas mostrarles. Cada grupo tiene además su **código de acceso** y un enlace directo, que ves dentro del salón.
 
 ---
 

@@ -1191,8 +1191,6 @@ body.light .dash-today{background:rgba(255,255,255,.85)}
 .cx-ck{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--s3);border:1px solid var(--br);font-size:12px;color:var(--tp);cursor:pointer}
 .cx-ck input{accent-color:var(--ac)}
 .cx-access{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:var(--r3);background:color-mix(in srgb,var(--gc) 10%,var(--s2))}
-.cx-qr{width:160px;height:160px;background:#fff;border-radius:12px;padding:8px;display:grid;place-items:center;flex-shrink:0}
-.cx-qr img{width:100%;height:100%}
 .cx-code{font:900 32px var(--font-d);letter-spacing:5px;color:var(--gc)}
 
 /* Proyectar */
@@ -4110,7 +4108,7 @@ document.addEventListener('keydown',e=>{
    CLASS DRIVE 4.0 — AULAS PYP
    Grados 1°–6° con secciones, unidades de indagación, slides de
    Canva incrustadas, planeaciones (solo docente), modo proyectar,
-   copiar clases, QR y portal de estudiantes con misiones.
+   copiar clases y portal de estudiantes con misiones.
    Este bloque va al final del script y reemplaza las funciones
    anteriores que tienen el mismo nombre.
 ═══════════════════════════════════════════════════════════════ */
@@ -4300,22 +4298,11 @@ document.addEventListener('keydown',e=>{
   e.stopImmediatePropagation();
 },true);
 
-/* ══════════ QR Y ACCESO DE ESTUDIANTES ══════════ */
-function loadQR(){
-  if(window.QRCode)return Promise.resolve();
-  return new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-}
-function qrDataUrl(text,size){
-  const tmp=document.createElement('div');tmp.style.cssText='position:fixed;left:-9999px';document.body.appendChild(tmp);
-  new QRCode(tmp,{text,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
-  const c=tmp.querySelector('canvas');const url=c?c.toDataURL('image/png'):(tmp.querySelector('img')?.src||'');
-  tmp.remove();return url;
-}
+/* ══════════ ACCESO DE ESTUDIANTES ══════════ */
 function openGroupAccess(){
   const g=curGrade(),grp=curGrp();if(!grp)return;const t=gTheme(g);const link=aulaLink(grp.code);
   openModal(`📱 Acceso de ${grp.name}`,`
     <div class="cx-access" style="--gc:${t.c};--gs:${t.s}">
-      <div class="cx-qr" id="cx-qr"><div class="cx-muted">Generando QR…</div></div>
       <div style="flex:1;min-width:0">
         <div class="cx-muted">Código del grupo</div>
         <div class="cx-code">${escH(grp.code)}</div>
@@ -4327,47 +4314,14 @@ function openGroupAccess(){
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="cx-btn" onclick="window.open('${escA(link)}','_blank')">🎒 Abrir vista estudiante</button>
       <button class="cx-btn" onclick="regenCode()">↻ Cambiar código</button>
-      <button class="cx-btn" onclick="printAllQR()">🖨 Imprimir todos</button>
     </div>`,()=>closeModal());
   setModalBtn('Listo');
-  loadQR().then(()=>{const b=document.getElementById('cx-qr');if(b)b.innerHTML=`<img src="${qrDataUrl(link,220)}" alt="QR de ${escA(grp.name)}">`;}).catch(()=>{const b=document.getElementById('cx-qr');if(b)b.innerHTML='<div class="cx-muted">Sin conexión para generar el QR</div>';});
 }
 function regenCode(){
   const grp=curGrp();if(!grp)return;
-  if(!confirm('El código y el QR anteriores dejarán de funcionar. ¿Continuar?'))return;
+  if(!confirm('El código y el enlace anteriores dejarán de funcionar. ¿Continuar?'))return;
   grp.code=genCode();saveState();closeModal();openGroupAccess();renderGroupView();
 }
-function printAllQR(){
-  const w=window.open('','_blank');if(!w){showToast('Permite las ventanas emergentes para imprimir');return;}
-  w.document.write('<p style="font-family:sans-serif;padding:20px">Generando códigos QR…</p>');
-  loadQR().then(()=>{
-    const cards=sortedGrades().map(g=>{const t=gTheme(g);return Object.values(g.groups||{}).map(grp=>`
-      <div class="card" style="--c:${t.c};--s:${t.s}">
-        <div class="top"><span class="m">${t.m}</span><span class="n">${escH(grp.name)}</span></div>
-        <img src="${qrDataUrl(aulaLink(grp.code),300)}" alt="">
-        <div class="lbl">Código</div><div class="code">${escH(grp.code)}</div>
-        <div class="ins">Escanea con la cámara para entrar a tu aula de Tecnología</div>
-      </div>`).join('');}).join('');
-    w.document.open();
-    w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>QR de grupos</title>
-      <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-      <style>*{box-sizing:border-box;margin:0}body{font-family:Nunito,system-ui,sans-serif;padding:14mm;background:#fff}
-      h1{font-family:'Baloo 2',sans-serif;font-size:22px;margin-bottom:10mm}
-      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}
-      .card{border:3px solid var(--c);border-radius:18px;padding:14px;text-align:center;break-inside:avoid;background:linear-gradient(var(--s),#fff 38%)}
-      .top{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}.m{font-size:30px}
-      .n{font-family:'Baloo 2',sans-serif;font-size:34px;font-weight:800;color:var(--c);line-height:1}
-      img{width:100%;max-width:190px;display:block;margin:0 auto 8px}
-      .lbl{font-size:11px;color:#667}.code{font-family:'Baloo 2',sans-serif;font-size:26px;letter-spacing:4px;font-weight:800;color:#1b1b2f}
-      .ins{font-size:11px;color:#556;margin-top:6px}
-      @media print{body{padding:8mm}.np{display:none}}</style></head>
-      <body><h1>Aulas de Tecnología · códigos de acceso</h1><div class="grid">${cards}</div>
-      <p class="np" style="margin-top:10mm"><button onclick="print()" style="font:inherit;padding:10px 18px;border-radius:10px;border:0;background:#1b1b2f;color:#fff;cursor:pointer">🖨 Imprimir</button></p>
-      <script>setTimeout(()=>print(),700)<\/script></body></html>`);
-    w.document.close();
-  }).catch(()=>{w.document.body.innerHTML='<p style="font-family:sans-serif;padding:20px">No se pudo cargar el generador de QR. Revisa la conexión.</p>';});
-}
-
 /* ══════════ PUBLICACIÓN PARA ESTUDIANTES (sin planeaciones) ══════════ */
 async function publishSnapshot(){
   if(!sb||!window.currentUser?.email)return;
@@ -4734,7 +4688,6 @@ function renderGradeTiles(){
       <div><div class="gt-h">Tus grados</div><div class="gt-sub">La planeación es una por grado; cada sección marca lo que ya dio.</div></div>
       <div class="gt-actions">
         <button class="cx-btn" onclick="openImportModal()">📥 Importar planeación</button>
-        <button class="cx-btn" onclick="printAllQR()">🖨 QR de grupos</button>
         <button class="cx-btn" onclick="window.open(aulaLink(),'_blank')">🎒 Portal de estudiantes</button>
       </div></div>
     <div class="gt-grid">${tiles}</div>`;
