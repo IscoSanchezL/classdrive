@@ -7430,7 +7430,8 @@ async function cdHealthCheck(){
   await t('Portal de estudiantes (lectura pública)',async()=>{await cdRows('aula_publica',null,null,'user_email',1);});
   await t('Protección: no puedo ver datos de otros',async()=>{
     if(diag&&diag.staff)return 'Omitida (tu rol puede ver a todos)';
-    const{data,error}=await sb.from('user_data').select('user_email').neq('user_email',email).limit(1);if(error)throw error;
+    const{data,error}=await sb.from('user_data').select('user_email').neq('user_email',email).limit(1);
+    if(error){if(/permission|denied|insufficient/i.test(String(error.message||error.code||'')))return 'Correcto: la base de datos rechaza ver lo de otros';throw error;}   // en Firestore las reglas rechazan la consulta en vez de devolverla vacía
     return data.length===0?'Correcto: solo veo lo mío':false;});
   const bad=res.filter(r=>!r.ok).length,slow=res.some(r=>r.ms>1500),tot=res.reduce((a,r)=>a+r.ms,0);
   box.innerHTML=`<div style="font-weight:800;margin-bottom:8px;color:var(--${bad?'rd':slow?'am':'gr'})">${bad?'⚠ Hay '+plural(bad,'problema')+' — copia esto y mándalo al soporte':slow?'✓ Funciona, pero algo responde lento':'✓ Todo funciona bien'} · ${tot} ms en total</div>`+
