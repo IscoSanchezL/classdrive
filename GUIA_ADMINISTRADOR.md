@@ -5,7 +5,7 @@ Esta guía es **solo para ti** (no se publica en el sitio). Reúne lo necesario 
 ---
 
 ## 1. Cómo se publica
-El proyecto vive en GitHub: https://github.com/IscoSanchezL/classdrive (rama `main`) y se publica en Firebase Hosting: https://classdrive-981c2.web.app
+El proyecto vive en GitHub: https://github.com/IscoSanchezL/classdrive (rama `main`) y se publica en Firebase Hosting: https://classdrive.iscosanchez.com
 
 **Primera vez en un Mac**
 ```

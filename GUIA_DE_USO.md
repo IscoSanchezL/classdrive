@@ -2,7 +2,7 @@
 
 Class Drive es tu planeación de Tecnología (IB PYP) en un solo lugar: planeas por grado, marcas lo que ya diste en cada salón, ves tu calendario y compartes lo que quieras con tus estudiantes.
 
-**Dirección:** https://classdrive-981c2.web.app
+**Dirección:** https://classdrive.iscosanchez.com
 
 ---
 
