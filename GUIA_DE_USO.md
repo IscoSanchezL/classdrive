@@ -101,29 +101,39 @@ Después de esto, **Inicio** y **Calendario** muestran tus sesiones con su hora.
 ---
 
 ## 7b. La pizarra
-En el menú lateral, **🎨 Pizarra**. La barra de arriba tiene todo:
+En el menú lateral, **🎨 Pizarra**. La barra de arriba tiene todo (pasa el cursor sobre un botón para ver su nombre y su **tecla rápida**):
 
 | Botón | Para qué sirve |
 |---|---|
-| ✋ **Mover** | Toca una imagen, emoji, texto o nota para moverla. Arrastra el círculo azul de la esquina para cambiar su tamaño. La ✕ roja o la tecla **Supr** la quita. |
-| ✏️ **Lápiz** | Dibujo libre. El grosor se cambia con la barra deslizante. |
-| ╱ ▭ ○ → | Línea, rectángulo, círculo y flecha: arrastra para dibujarlos. **Relleno** pinta rectángulos y círculos por dentro. |
-| **T** **Texto** | Haz clic en la pizarra y escribe. Para editarlo después, doble clic sobre el texto. Elige la letra en el menú de al lado. |
-| 📌 **Nota adhesiva** | Una notita de color: escribe dentro y muévela desde su borde superior. |
-| 😀 **Emoji** | Elige uno y aparece en la pizarra; arrástralo donde quieras y cámbiale el tamaño. |
-| 🖼️ **Imagen** | Pega un **enlace** o **sube un archivo** de tu equipo. También puedes pegar una imagen con **Ctrl + V** o arrastrarla sobre la pizarra. |
-| 🧹 **Borrador** | Arrastra para borrar trazos (se ve un círculo del tamaño del borrador). Haz **clic sobre una imagen, emoji, texto o nota** para quitarla. |
-| ↩ ↪ | **Deshacer** y **Rehacer** (Ctrl + Z / Ctrl + Shift + Z). Cubren trazos y objetos. |
-| 🗑 | Limpia toda la pizarra (se puede deshacer). |
-| 💾 | Guarda la pizarra como imagen **PNG**, con el fondo y todos los objetos. |
-| ⛶ | Modo presentación a pantalla completa (Esc para salir). |
+| ✋ **Mover** (V) | Toca una imagen, emoji, texto, nota o herramienta de clase para moverla. Arrastra el círculo azul de la esquina para **cambiar el tamaño** y el círculo morado de arriba (↻) para **girarla**. La ✕ roja o **Supr** la quita. |
+| ✏️ **Lápiz** (L) | Dibujo libre. El grosor se cambia con la barra deslizante o con las teclas **[** y **]**. |
+| 🖍️ **Resaltador** (H) | Trazo ancho y translúcido para marcar texto o imágenes sin taparlos. |
+| 🧹 **Borrador** (E) | Arrastra para borrar trazos. Haz **clic sobre un objeto** para quitarlo. |
+| ◻ **Formas** | Menú con línea, rectángulo, rectángulo redondeado, círculo, triángulo, rombo, estrella y flecha. **Relleno** las pinta por dentro; **Punteado** hace el contorno con rayitas. |
+| **T** **Texto** (T) | Haz clic y escribe. Doble clic sobre un texto lo edita. Elige la letra en el menú de al lado. |
+| 📌 **Nota adhesiva** (N) | Una notita de color: escribe dentro; con 🎨 en la barra del objeto cambias su color. |
+| 😀 **Emoji** | Elige uno y aparece; muévelo, gíralo y cámbiale el tamaño. |
+| 🖼️ **Imagen** (I) | Pega un **enlace** o **sube un archivo**. También con **Ctrl + V** o arrastrándola sobre la pizarra. |
+| 🧰 **Herramientas de clase** | **⏱️ Temporizador** (suena al terminar), **🎲 Dado** (1 o 2), **🎯 Sorteo de nombres** (escribe la lista; «No repetir» evita que salga el mismo dos veces) y **🏅 Marcador de equipos** (2 a 4 equipos). Se mueven desde su título y puedes tener varios. |
+| 🔴 **Puntero láser** (Z) | Señala con el ratón o el lápiz: deja una marca roja que se desvanece sola, sin dibujar. |
+| ↩ ↪ | **Deshacer** y **Rehacer** (Ctrl + Z / Ctrl + Shift + Z). Cubren trazos, objetos y fondos. |
+| 🗑 | Limpia la hoja actual (se puede deshacer). |
+| 💾 | Menú de archivo: **guardar como imagen PNG**, **guardar tablero (.json)** para continuarlo otro día, **abrir tablero** y **pizarra nueva**. |
+| ⛶ | **Modo presentación** a pantalla completa: aparece una paleta flotante arriba con lápiz, resaltador, borrador, láser, colores y deshacer. **Esc** para salir. |
 
-**Colores:** elige uno de la paleta o usa el selector del final para un color propio.
+**Fondos:** el menú junto al grosor cambia el fondo de la hoja: cosmos, blanco, negro, pizarra verde, cuadrícula, puntos o renglones.
+
+**Hojas:** abajo, en el centro, ◀ ▶ (o las teclas **Re Pág / Av Pág**) cambian de hoja, **＋** añade una (hasta 30) y **✕** quita la actual. Cada hoja tiene su propio dibujo, objetos y fondo.
+
+**Barra del objeto:** al seleccionar un objeto aparece una barrita con **⧉ duplicar** (Ctrl + D), **⤒ al frente**, **⤓ al fondo**, **A− / A+** (tamaño) y 🗑. Con las **flechas del teclado** lo mueves de a poquito (con Shift, de a más). **Ctrl + C** y **Ctrl + V** copian y pegan el objeto seleccionado.
+
+**Colores:** elige uno de la paleta o usa el selector del final para un color propio. Si cambias a un fondo claro, el blanco pasa solo a un color oscuro.
 
 **Tableta con lápiz (por ejemplo Wacom):** funciona directamente. Con el **Lápiz** (✏️) el grosor sigue la fuerza con que aprietas: poca fuerza, trazo fino; mucha fuerza, trazo grueso. Si prefieres un grosor fijo, desmarca **Presión** en la barra. Con ratón o dedo no cambia nada. En Mac y Windows instala antes el controlador del fabricante; las teclas rápidas de la tableta se pueden configurar como Ctrl+Z (deshacer), Ctrl+Shift+Z (rehacer) y Supr (quitar el objeto seleccionado).
 
 **Notas útiles**
-- Mientras no salgas de la página, la pizarra **conserva tu trabajo** aunque cambies de sección y vuelvas.
+- La pizarra **se guarda sola** en tu navegador: si cierras la página o el computador y vuelves, recuperas tu última pizarra. Es una copia de ese navegador; para llevarla a otro equipo o conservarla, usa **💾 → Guardar tablero (.json)**.
+- Con la pizarra abierta, las teclas de letra son de la pizarra (por ejemplo **T** es Texto y no el temporizador del menú).
 - Algunas imágenes de otros sitios web **no se pueden incluir al guardar el PNG** por restricciones del sitio de origen (se ven en pantalla, pero el archivo las omite y la página te avisa). Si necesitas que salgan en el PNG, **descárgalas y súbelas desde tu equipo**.
 - Para volver a dibujar después de mover objetos, elige de nuevo el lápiz o una forma: con **✋ Mover** activo no se dibuja.
 
