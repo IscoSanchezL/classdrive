@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#161b22">
 <title>Class Drive</title>
 <link rel="manifest" href="/manifest.webmanifest">
+<script src="i18n.js"></script>
+<script src="i18n-en.js"></script>
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1624,6 +1626,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
   </div>
   <div class="ln-right">
     <div style="width:100%">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:18px"><div class="lang-slot"></div></div>
       <div class="ln-card-title">Iniciar sesión</div>
       <div class="ln-card-sub">Usa tu cuenta de Google para acceder a Class Drive.</div>
       <button class="g-btn" id="google-btn">
@@ -1645,6 +1648,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
     <div class="pub-logo-emoji" id="pub-logo-emoji" style="display:none">🎓</div>
     <span class="pub-app-lbl" id="pub-app-lbl">CLASS DRIVE</span>
     <div style="flex:1"></div>
+    <div class="lang-slot" style="margin-right:10px"></div>
     <button class="pub-back" onclick="window.location.hash=''">← Ir al inicio</button>
   </div>
   <div id="pub-content"><div class="pub-loading">⏳ Cargando actividad...</div></div>
@@ -1703,6 +1707,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
       <div id="topbar">
         <div id="breadcrumb"><span>Class Drive</span></div>
         <div class="tb-right">
+          <div class="lang-slot"></div>
           <button class="focus-btn" id="focus-btn" onclick="toggleFocusMode()" title="Modo enfoque (F)">⊡</button>
           <button class="theme-tog" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
           <button class="tb-btn" onclick="openGlobalSearch()" title="Buscar (Ctrl+K)" style="gap:6px">🔍 <span style="font-size:10px;color:var(--tm)">Ctrl+K</span></button>
@@ -2315,7 +2320,7 @@ function renderActivities(){
 }
 function buildActCard(a){
   const t=tod(),due=a.dateDue?new Date(a.dateDue+'T00:00:00'):null,ov=due&&due<t&&a.status!=='completed';
-  const dueStr=due?due.toLocaleDateString('es-CO',{day:'numeric',month:'short'}):'Sin fecha';
+  const dueStr=due?due.toLocaleDateString(I18N.locale(),{day:'numeric',month:'short'}):'Sin fecha';
   const attH=(a.attachments||[]).map(att=>`<a class="att-pill" href="${escA(att.url)}" target="_blank" rel="noopener"><span>${att.icon||'📎'}</span> ${escH(att.name)}</a>`).join('');
   const notes=a.comments||[];const ln=notes.length?`<div class="act-note">💬 ${escH(notes[notes.length-1].text)} <span style="color:var(--tm)">(${notes[notes.length-1].date})</span></div>`:'';
   const sl={pending:'⏳ Pendiente',inProgress:'▶ En Progreso',completed:'✓ Completada'};
@@ -2335,7 +2340,7 @@ function buildActCard(a){
     ${ln}
     ${attH?`<div class="act-atts">${attH}</div>`:''}
     <div class="act-foot">
-      <span class="act-date">${a.dateCreated?new Date(a.dateCreated).toLocaleDateString('es-CO'):''}</span>
+      <span class="act-date">${a.dateCreated?new Date(a.dateCreated).toLocaleDateString(I18N.locale()):''}</span>
       <div class="act-acts">
         <button class="act-btn accent" onclick="addNote('${a.id}')">💬</button>
         <button class="act-btn accent" onclick="cycleStatus('${a.id}')">${a.status==='completed'?'↩':'▶'}</button>
@@ -2425,7 +2430,7 @@ TÍTULO: [título concreto de la actividad]
 INSTRUCCIONES: [3 a 5 pasos claros y específicos para que los estudiantes realicen la actividad]
 RECURSO: [un enlace real y útil: puede ser un video de YouTube, un kahoot, un padlet, una presentación de Google, o una página educativa relacionada con el tema]
 
-Responde directamente sin introducción ni explicaciones adicionales.`;
+Responde directamente sin introducción ni explicaciones adicionales.${I18N.lang()==='en'?'\nWrite the content of the activity in English, but keep the labels TÍTULO:, INSTRUCCIONES: and RECURSO: exactly as they are.':''}`;
 
   try{
     const MODELS=['gemini-1.5-flash-8b','gemini-1.5-flash','gemini-2.0-flash'];
@@ -2535,7 +2540,7 @@ function buildUnifiedCard(cls){
     </div>`;
   }).join('');
   const actsHtml=activities.length?activities.map(a=>{
-    const due=a.dateDue?new Date(a.dateDue+'T00:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short'}):'';
+    const due=a.dateDue?new Date(a.dateDue+'T00:00:00').toLocaleDateString(I18N.locale(),{day:'numeric',month:'short'}):'';
     const typeIcon={tarea:'✏️',anuncio:'📢',material:'📚',cuestionario:'❓',presentacion:'📊',video:'🎬'}[a.type]||'📋';
     return`<div class="cls-act-item">
       <div class="cls-act-dot ${a.status}"></div>
@@ -2553,9 +2558,9 @@ function buildUnifiedCard(cls){
         <div class="cls-u-meta">
           ${cls.date?`<span>📅 ${cls.date}</span>`:''}
           ${cls.groups?`<span>👥 ${escH(cls.groups)}</span>`:''}
-          <span>📎 ${resources.length} recurso${resources.length!==1?'s':''}</span>
-          <span>📋 ${activities.length} actividad${activities.length!==1?'es':''}</span>
-          ${pending?`<span style="color:var(--am)">⏳ ${pending} pendiente${pending!==1?'s':''}</span>`:''}
+          <span>📎 ${plural(resources.length,'recurso')}</span>
+          <span>📋 ${plural(activities.length,'actividad','actividades')}</span>
+          ${pending?`<span style="color:var(--am)">⏳ ${plural(pending,'pendiente')}</span>`:''}
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
@@ -2835,7 +2840,7 @@ function renderClasses(){
       </div>
       <div class="cls-badges">${badges||'<span class="chip chip-def">Sin recursos</span>'}</div>
       <div class="cls-desc">${escH(c.desc||'Sin descripción')}</div>
-      <div class="cls-foot"><span class="cls-meta">${res.length} recurso${res.length!==1?'s':''} · ${c.date||'Sin fecha'}</span></div>
+      <div class="cls-foot"><span class="cls-meta">${plural(res.length,'recurso')} · ${c.date||'Sin fecha'}</span></div>
     </div>`;
   }).join('');
 }
@@ -3140,7 +3145,7 @@ async function sendAiMsg(msg){
   const ctx=grps.length?'\n\nGrupos del profesor: '+grps.slice(0,8).join(' | '):'';
 
   // Build FULL conversation history for Gemini
-  const SYSTEM=`Eres ProfeBot, un asistente educativo experto para profesores de primaria y secundaria. Hablas en español colombiano. Eres muy capaz, creativo y directo. Cuando te pidan crear algo (actividad, clase, evaluación, planeación, logo conceptual, recurso) lo creas INMEDIATAMENTE y COMPLETO sin pedir más información. Usas formato Markdown: # para títulos, ** para negrita, - para listas. Tus respuestas son útiles, detalladas y listas para usar en el aula.${ctx}`;
+  const SYSTEM=`Eres ProfeBot, un asistente educativo experto para profesores de primaria y secundaria. Hablas en español colombiano. Eres muy capaz, creativo y directo. Cuando te pidan crear algo (actividad, clase, evaluación, planeación, logo conceptual, recurso) lo creas INMEDIATAMENTE y COMPLETO sin pedir más información. Usas formato Markdown: # para títulos, ** para negrita, - para listas. Tus respuestas son útiles, detalladas y listas para usar en el aula.${I18N.lang()==='en'?' Always answer in English.':''}${ctx}`;
 
   // Convert history to Gemini multi-turn format
   const history=aiMsgs.slice(0,-1).slice(-8); // last 8 messages for context
@@ -3694,7 +3699,7 @@ function renderTL(){
   const t=getTrash();const items=(t[trashTab]||[]);const list=document.getElementById('trash-list');if(!list)return;
   if(!items.length){list.innerHTML='<div class="trash-empty">✅ Vacía</div>';return;}
   list.innerHTML=items.map((item,i)=>{
-    const date=item._del?new Date(item._del).toLocaleDateString('es-CO'):'';
+    const date=item._del?new Date(item._del).toLocaleDateString(I18N.locale()):'';
     const g=state.grades[item._meta?.gradeId];const grp=g?.groups[item._meta?.groupId];
     const meta=trashTab==='classes'?(g?.name+' › '+(grp?.name||'?')):trashTab==='groups'?(g?.name||'?'):'';
     return`<div class="trash-item"><div class="ti-info"><div class="ti-title">${escH(item.title||item.name||'Sin título')}</div><div class="ti-meta">${escH(meta)} · ${date}</div></div><button class="btn-s" style="padding:5px 10px;font-size:11px" onclick="restoreT('${trashTab}',${i})">↩</button><button class="icon-btn danger" onclick="permDel('${trashTab}',${i})">✕</button></div>`;
@@ -4077,7 +4082,8 @@ function aulaLink(code){
   const email=window.currentUser?.email||ADMIN;
   return location.origin+location.pathname+'#/aula/'+encodeURIComponent(email)+(code?'/'+encodeURIComponent(code):'');
 }
-function plural(n,s,p){return n+' '+(n===1?s:(p||s+'s'));}
+const PLEN={'clase':['class','classes'],'atrasada':['overdue','overdue'],'clase atrasada':['overdue class','overdue classes'],'clase dada':['class taught','classes taught'],'día':['day','days'],'enlace':['link','links'],'problema':['problem','problems'],'profesor':['teacher','teachers'],'respaldo borrado':['backup deleted','backups deleted'],'respaldo':['backup','backups'],'recurso':['resource','resources'],'actividad':['activity','activities'],'pendiente':['pending','pending']};
+function plural(n,s,p){if(window.I18N&&I18N.lang()==='en'&&PLEN[s]){const e=PLEN[s];return n+' '+(n===1?e[0]:e[1]);}return n+' '+(n===1?s:(p||s+'s'));}
 
 /* ── Migración segura del estado (no borra nada existente) ── */
 
@@ -4449,7 +4455,7 @@ function aulaGroup(g,grp){
     ${badges?`<div class="au-badges">${badges}</div>`:''}
     <main class="au-main" style="--gc:${t.c}">${sections||'<div class="au-empty">Tu profe todavía no ha publicado clases. ¡Vuelve pronto!</div>'}</main>`;
 }
-function fmtDate(d){try{const t=new Date(d+'T12:00:00').toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});return t.charAt(0).toUpperCase()+t.slice(1);}catch(e){return d;}}
+function fmtDate(d){try{const t=new Date(d+'T12:00:00').toLocaleDateString(I18N.locale(),{weekday:'long',day:'numeric',month:'long'});return t.charAt(0).toUpperCase()+t.slice(1);}catch(e){return d;}}
 function aulaClass(g,grp,clsId){
   const t=gTheme(g);const el=document.getElementById('aula');
   const cls=(grp.classes||[]).find(c=>c.id===clsId);
@@ -5279,7 +5285,7 @@ async function openBackups(){
   let cloud=[];
   try{const{data,error}=await sb.from('respaldos').select('id,created_at,lessons,label').eq('user_email',window.currentUser.email).order('created_at',{ascending:false}).limit(20);if(!error)cloud=data||[];}catch(e){}
   const loc=getLocalBackups();
-  const fmt=t=>new Date(t).toLocaleString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const fmt=t=>new Date(t).toLocaleString(I18N.locale(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
   const rows=[...cloud.map(c=>`<div class="bk-row"><span class="bk-i">☁️</span><div style="flex:1"><div class="bk-t">${fmt(c.created_at)}</div><div class="cx-muted">${plural(c.lessons||0,'clase')} · ${escH(c.label||'')}</div></div><button class="cx-mini solid" onclick="restoreBackup('cloud','${c.id}')">Restaurar</button></div>`),
     ...loc.map((c,i)=>`<div class="bk-row"><span class="bk-i">💻</span><div style="flex:1"><div class="bk-t">${fmt(c.t)}</div><div class="cx-muted">${plural(c.n||0,'clase')} · Este navegador · ${escH(c.label||'')}</div></div><button class="cx-mini solid" onclick="restoreBackup('local',${i})">Restaurar</button></div>`)].join('');
   document.getElementById('modal-body').innerHTML=`<div class="cx-muted" style="margin-bottom:12px">Ahora tienes ${plural(stateLessons(state),'clase')}. Restaurar reemplaza la planeación actual (antes se guarda un respaldo de lo que hay).</div>
@@ -5321,7 +5327,7 @@ const adminView={tab:'resumen',email:null,grade:null};
 function timeAgo(t){if(!t)return'—';const s=(Date.now()-new Date(t).getTime())/1000;
   if(s<90)return'hace un momento';if(s<3600)return'hace '+Math.round(s/60)+' min';if(s<86400)return'hace '+Math.round(s/3600)+' h';
   const d=Math.round(s/86400);return d===1?'ayer':'hace '+d+' días';}
-function fmtDT(t){return new Date(t).toLocaleString('es-CO',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function fmtDT(t){return new Date(t).toLocaleString(I18N.locale(),{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
 function mixHex(a,b,p){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=h(a),B=h(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*p).toString(16).padStart(2,'0')).join('');}
 function avatarHtml(t,cls){return t.photo?`<img class="${cls}" src="${escA(t.photo)}" alt="" referrerpolicy="no-referrer">`:`<span class="${cls}">${escH((t.name||t.email||'?')[0].toUpperCase())}</span>`;}
 
@@ -5649,7 +5655,7 @@ function can(p){if(isSuper())return p!=='ensenar';return(roleDef(myRole()).perms
 function hasConsole(){return['resumen','planeaciones','profesores','gestionar','plataforma','respaldos'].some(can);}
 function isAdminUser(){return hasConsole()&&!can('ensenar');}
 function roleLabel(r){const d=roleDef(r);return d.icon+' '+d.name;}
-function shortDate(t){try{return new Date(t).toLocaleDateString('es-CO',{day:'numeric',month:'short'});}catch(e){return'';}}
+function shortDate(t){try{return new Date(t).toLocaleDateString(I18N.locale(),{day:'numeric',month:'short'});}catch(e){return'';}}
 
 function renderRoleBadge(){
   const r=myRole();if(r!=='superadmin')window.userRole=r;
@@ -5905,7 +5911,7 @@ function adminFechas(){
     ${Object.entries(byDay).map(([day,list])=>`<div class="cdp-day"><div class="cdp-day-h">${escH(fmtDate(day))}</div>
       ${list.map(e=>{const th=gTheme(e.g);return`<div class="cdp-ev" style="--gc:${th.c}"><span class="cdp-ev-sec">${th.m} ${escH(e.x.name)}</span>
         <div style="flex:1;min-width:0"><div class="cdp-nm">${e.l.n}. ${escH(e.l.title||'')}</div>${e.l.objective?`<div class="cdp-em">${escH(e.l.objective)}</div>`:''}</div>
-        <span class="cdp-when">${new Date(e.d).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span></div>`;}).join('')}</div>`).join('')
+        <span class="cdp-when">${new Date(e.d).toLocaleTimeString(I18N.locale(),{hour:'2-digit',minute:'2-digit'})}</span></div>`;}).join('')}</div>`).join('')
       ||'<div class="cdp-card cx-muted">Aún no hay clases con fecha. Las fechas se guardan desde ahora cada vez que el profe marca una clase como dada.</div>'}`;
 }
 
@@ -5946,7 +5952,7 @@ CONSOLE_TABS.splice(1,0,['semana','📆 Semana','planeaciones']);
 function isoDay(d){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
 function weekStart(d){const x=new Date(d);x.setHours(0,0,0,0);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return x;}
 function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
-function dayLbl(d){return new Date(d+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});}
+function dayLbl(d){return new Date(d+'T12:00:00').toLocaleDateString(I18N.locale(),{weekday:'short',day:'numeric',month:'short'});}
 function todayIso(){return isoDay(new Date());}
 
 /* ── Botones del menú para el super admin ── */
