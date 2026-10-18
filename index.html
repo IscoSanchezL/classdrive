@@ -3217,6 +3217,8 @@ const WB_TOOLS=[
   {id:'eraser',icon:'🧹',tip:'Borrador',hint:'Borrador: arrastra para borrar trazos. Haz clic sobre una imagen, emoji, texto o nota para quitarla.'}
 ];
 let wbTool='pen',wbColor='#35b8d8',wbSize=4,wbFill=false,wbFont=WB_FONTS[0][0];
+let wbPressureOn=(function(){try{return localStorage.getItem('cd-wb-pressure')!=='0';}catch(e){return true;}})();   // lápiz de tableta: el grosor sigue la fuerza
+let wbPF=null;
 const WB={cv:null,ctx:null,cosmos:null,panel:null,W:0,H:0,dpr:1,objs:[],sel:null,hist:[],redo:[],mem:null,imgSrc:{},ro:null,boot:false,drawing:false,seq:0,pre:null};
 
 function openWhiteboard(inlineEl){
@@ -3262,6 +3264,7 @@ function initWhiteboard(panel){
       <div class="wb-sep"></div>
       <span class="wb-sz"><span id="wb-size-lbl">${wbSize}</span>px</span>
       <input type="range" class="wb-size" id="wb-size" min="1" max="40" value="${wbSize}" title="Grosor del lápiz, formas y borrador" oninput="wbSize=parseInt(this.value);document.getElementById('wb-size-lbl').textContent=wbSize;wbCursorSize()">
+      <label class="wb-fill-toggle" title="Con un lápiz de tableta, el trazo se afina o engrosa según la fuerza"><input type="checkbox" id="wb-pressure" ${wbPressureOn?'checked':''} onchange="wbSetPressure(this.checked)" style="accent-color:var(--ac)"> Presión</label>
       <div class="wb-sep"></div>
       <div class="wb-grp">
         <button type="button" class="wb-tool" onclick="wbUndo()" title="Deshacer (Ctrl+Z)" aria-label="Deshacer">↩</button>
@@ -3338,11 +3341,20 @@ function wbRemember(){if(!WB.cv)return;const c=document.createElement('canvas');
 
 /* ── dibujo con el puntero ── */
 function wbPos(e){const r=WB.cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
-function wbStyle(c){
+/* Presión del lápiz: solo con lápiz de tableta y la herramienta Lápiz. Con ratón o dedo el factor es siempre 1.
+   Poca fuerza ≈ 20 % del grosor, fuerza media ≈ el grosor elegido, fuerza máxima ≈ 180 %. Se suaviza para evitar saltos. */
+function wbPressure(e,first){
+  if(!wbPressureOn||wbTool!=='pen'||!e||e.pointerType!=='pen')return 1;
+  const target=.2+1.6*Math.min(Math.max(e.pressure||0,.05),1);
+  wbPF=(first||wbPF==null)?target:wbPF*.6+target*.4;
+  return wbPF;
+}
+function wbSetPressure(on){wbPressureOn=!!on;try{localStorage.setItem('cd-wb-pressure',on?'1':'0');}catch(e){}}
+function wbStyle(c,k){
   const er=wbTool==='eraser';
   c.globalCompositeOperation=er?'destination-out':'source-over';
   c.strokeStyle=wbColor;c.fillStyle=wbColor;
-  c.lineWidth=er?Math.max(wbSize*3,12):Math.max(wbSize,1);
+  c.lineWidth=er?Math.max(wbSize*3,12):Math.max(wbSize*(k||1),.8);
   c.lineCap='round';c.lineJoin='round';
 }
 function wbDrawShape(c,x1,y1,x2,y2){
@@ -3368,9 +3380,9 @@ function wbBindStage(){
     const p=wbPos(e);
     if(wbTool==='text'){e.preventDefault();const ed=document.querySelector('#wb-objs .wb-obj.editing .wb-tx');if(ed){ed.blur();return;}wbAddText(p.x,p.y);return;}   // si se estaba escribiendo, el clic solo confirma el texto
     if(!freehand()&&!shape())return;
-    e.preventDefault();cv.setPointerCapture(e.pointerId);
+    e.preventDefault();try{cv.setPointerCapture(e.pointerId);}catch(x){}
     WB.base=wbPush();WB.drawing=true;WB.sx=p.x;WB.sy=p.y;WB.last=p;WB.mid=p;WB.moved=false;
-    if(freehand()){const c=WB.ctx;wbStyle(c);c.beginPath();c.arc(p.x,p.y,c.lineWidth/2,0,Math.PI*2);c.fill();c.globalCompositeOperation='source-over';}
+    if(freehand()){const c=WB.ctx;wbStyle(c,wbPressure(e,true));c.beginPath();c.arc(p.x,p.y,c.lineWidth/2,0,Math.PI*2);c.fill();c.globalCompositeOperation='source-over';}
   });
   cv.addEventListener('pointermove',e=>{
     wbCursorMove(e);
@@ -3380,7 +3392,7 @@ function wbBindStage(){
     const c=WB.ctx;
     if(freehand()){
       const mid={x:(WB.last.x+p.x)/2,y:(WB.last.y+p.y)/2};
-      wbStyle(c);c.beginPath();c.moveTo(WB.mid.x,WB.mid.y);c.quadraticCurveTo(WB.last.x,WB.last.y,mid.x,mid.y);c.stroke();c.globalCompositeOperation='source-over';
+      wbStyle(c,wbPressure(e));c.beginPath();c.moveTo(WB.mid.x,WB.mid.y);c.quadraticCurveTo(WB.last.x,WB.last.y,mid.x,mid.y);c.stroke();c.globalCompositeOperation='source-over';
       WB.mid=mid;WB.last=p;
     }else{
       c.save();c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,WB.cv.width,WB.cv.height);c.drawImage(WB.base.img,0,0);c.restore();
@@ -3390,13 +3402,14 @@ function wbBindStage(){
   const end=e=>{
     if(!WB.drawing)return;WB.drawing=false;
     const p=wbPos(e),c=WB.ctx;
-    if(freehand()){wbStyle(c);c.beginPath();c.moveTo(WB.mid.x,WB.mid.y);c.lineTo(p.x,p.y);c.stroke();c.globalCompositeOperation='source-over';}
+    if(freehand()){wbStyle(c,wbPF!=null&&wbTool==='pen'?wbPF:1);c.beginPath();c.moveTo(WB.mid.x,WB.mid.y);c.lineTo(p.x,p.y);c.stroke();c.globalCompositeOperation='source-over';}
     else if(WB.moved){c.save();c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,WB.cv.width,WB.cv.height);c.drawImage(WB.base.img,0,0);c.restore();wbDrawShape(c,WB.sx,WB.sy,p.x,p.y);}
     else{c.save();c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,WB.cv.width,WB.cv.height);c.drawImage(WB.base.img,0,0);c.restore();WB.hist.pop();}   // un clic sin arrastrar no crea forma
     wbRemember();
   };
   cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   st.addEventListener('pointermove',wbCursorMove);
+  st.addEventListener('contextmenu',e=>e.preventDefault());   // el botón lateral del lápiz suele ser clic derecho
   st.addEventListener('pointerleave',()=>{const k=document.getElementById('wb-eraser-cursor');if(k)k.style.display='none';});
   st.addEventListener('dragover',e=>{if([...(e.dataTransfer?.types||[])].includes('Files'))e.preventDefault();});
   st.addEventListener('drop',e=>{const f=[...(e.dataTransfer?.files||[])].find(x=>x.type.startsWith('image/'));if(!f)return;e.preventDefault();const r=st.getBoundingClientRect();wbReadFile(f,e.clientX-r.left,e.clientY-r.top);});

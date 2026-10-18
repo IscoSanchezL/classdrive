@@ -980,3 +980,8 @@ I18N.add({
  "Guardado. {0} imágenes externas no se pudieron incluir (súbelas desde tu equipo para incluirlas).": "Saved. {0} external images could not be included (upload them from your computer to include them).",
  "¿Limpiar toda la pizarra? Podrás deshacerlo con ↩.": "Clear the whole whiteboard? You can undo it with ↩."
 });
+
+I18N.add({
+ "Presión": "Pressure",
+ "Con un lápiz de tableta, el trazo se afina o engrosa según la fuerza": "With a tablet pen, the stroke gets thinner or thicker depending on how hard you press"
+});

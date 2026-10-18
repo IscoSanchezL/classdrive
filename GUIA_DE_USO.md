@@ -120,6 +120,8 @@ En el menú lateral, **🎨 Pizarra**. La barra de arriba tiene todo:
 
 **Colores:** elige uno de la paleta o usa el selector del final para un color propio.
 
+**Tableta con lápiz (por ejemplo Wacom):** funciona directamente. Con el **Lápiz** (✏️) el grosor sigue la fuerza con que aprietas: poca fuerza, trazo fino; mucha fuerza, trazo grueso. Si prefieres un grosor fijo, desmarca **Presión** en la barra. Con ratón o dedo no cambia nada. En Mac y Windows instala antes el controlador del fabricante; las teclas rápidas de la tableta se pueden configurar como Ctrl+Z (deshacer), Ctrl+Shift+Z (rehacer) y Supr (quitar el objeto seleccionado).
+
 **Notas útiles**
 - Mientras no salgas de la página, la pizarra **conserva tu trabajo** aunque cambies de sección y vuelvas.
 - Algunas imágenes de otros sitios web **no se pueden incluir al guardar el PNG** por restricciones del sitio de origen (se ven en pantalla, pero el archivo las omite y la página te avisa). Si necesitas que salgan en el PNG, **descárgalas y súbelas desde tu equipo**.
