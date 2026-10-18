@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Exploradores de Google Drive</title>
+<script src="i18n.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -476,6 +477,7 @@
 
 <!-- ══════════ BIENVENIDA ══════════ -->
 <div id="screen-welcome">
+  <div style="position:absolute;top:12px;right:12px;z-index:5"><div class="lang-slot"></div></div>
   <div class="welcome-cloud">☁️</div>
   <div class="welcome-title">¡Exploradores de Google Drive!</div>
   <div class="welcome-sub">5 misiones épicas te esperan en la nube</div>
@@ -493,6 +495,7 @@
 <div id="screen-activity">
   <div class="top-bar">
     <div class="top-bar-left">
+      <div class="lang-slot" style="margin-right:10px"></div>
       <span class="greeting" id="greeting-name">¡Hola, explorador!</span>
       <span class="top-title">Misiones de Google Drive</span>
     </div>
@@ -725,8 +728,8 @@
     btn.disabled = true;
 
     var now = new Date();
-    var hora = now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-    var fecha = now.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var hora = now.toLocaleTimeString(I18N.locale(), { hour: '2-digit', minute: '2-digit' });
+    var fecha = now.toLocaleDateString(I18N.locale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwxa1tNhz0yEzxd39CsuwXtLRMiXYVimJfqVSctYGtk8hN1B1XPCOXR_WeTYSySzeoWmQ/exec';
 
@@ -783,6 +786,92 @@
   var styleSheet = document.createElement('style');
   styleSheet.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }';
   document.head.appendChild(styleSheet);
+</script>
+<script>
+I18N.add({
+ "Escribe tu nombre aquí...": "Type your name here...",
+ "Exploradores de Google Drive": "Google Drive Explorers",
+ "¡Exploradores de Google Drive!": "Google Drive Explorers!",
+ "5 misiones épicas te esperan en la nube": "5 epic missions await you in the cloud",
+ "¿Cuál es tu nombre?": "What is your name?",
+ "¿En qué grado estás?": "What grade are you in?",
+ "¡Comenzar la aventura! 🚀": "Start the adventure! 🚀",
+ "¡Hola, explorador!": "Hello, explorer!",
+ "Misiones de Google Drive": "Google Drive Missions",
+ "🗺️ Tus misiones de hoy": "🗺️ Your missions today",
+ "¡Entra a la nube!": "Enter the cloud!",
+ "Accede a Google Drive con tu cuenta": "Access Google Drive with your account",
+ "Google Drive es como una mochila mágica en internet. Puedes guardar todo allí sin ocupar espacio en tu computador.": "Google Drive is like a magic backpack on the internet. You can store everything there without using space on your computer.",
+ "Abre el navegador (Chrome, Edge o el que uses en el colegio)": "Open the browser (Chrome, Edge or the one you use at school)",
+ "Escribe": "Type",
+ "en la barra de direcciones y presiona Enter": "in the address bar and press Enter",
+ "Inicia sesión con tu correo de Gmail": "Sign in with your Gmail account",
+ "Explora la pantalla — cuéntale al profe qué botones ves": "Explore the screen — tell your teacher which buttons you see",
+ "¡Misión 1 cumplida! 🚀": "Mission 1 accomplished! 🚀",
+ "Crea tu primera carpeta": "Create your first folder",
+ "Organiza tus archivos como un pro": "Organize your files like a pro",
+ "Las carpetas son como cajones en tu escritorio. Puedes tener una para Matemáticas, otra para Español, ¡y las que quieras!": "Folders are like drawers in your desk. You can have one for Math, another for Spanish, and as many as you like!",
+ "Haz clic en el botón": "Click the button",
+ "\"+ Nuevo\"": "\"+ New\"",
+ "(arriba a la izquierda, azul)": "(top left, blue)",
+ "Selecciona": "Select",
+ "\"Carpeta\"": "\"Folder\"",
+ "del menú que aparece": "from the menu that appears",
+ "Escríbele el nombre:": "Type its name:",
+ "Haz clic en": "Click",
+ "\"Crear\"": "\"Create\"",
+ "— ¡ya tienes tu primera carpeta!": "— you now have your first folder!",
+ "Entra a la carpeta y crea dentro una subcarpeta llamada": "Go into the folder and create a subfolder inside it called",
+ "\"Mis Tareas\"": "\"My Homework\"",
+ "¡Misión 2 cumplida! 📁": "Mission 2 accomplished! 📁",
+ "Sube tu primera imagen": "Upload your first image",
+ "¡Lleva tus fotos a la nube!": "Take your photos to the cloud!",
+ "Subir un archivo es como teletransportarlo al espacio digital. ¡Desde cualquier dispositivo podrás verlo después!": "Uploading a file is like teleporting it to digital space. You'll be able to see it later from any device!",
+ "Entra a la carpeta": "Go into the folder",
+ "(doble clic)": "(double click)",
+ "\"Subir archivo\"": "\"File upload\"",
+ "Busca una imagen en tu computador (dibujo, foto del colegio, lo que tengas)": "Find an image on your computer (a drawing, a school photo, whatever you have)",
+ "Espera que suba — verás una barra de progreso en la esquina 🎉": "Wait for it to upload — you'll see a progress bar in the corner 🎉",
+ "Haz doble clic en la imagen para verla en Drive": "Double-click the image to view it in Drive",
+ "¡Misión 3 cumplida! 🖼️": "Mission 3 accomplished! 🖼️",
+ "Crea un documento": "Create a document",
+ "Escribe en la nube con Google Docs": "Write in the cloud with Google Docs",
+ "Google Docs guarda solo automáticamente. ¡Nunca más perderás una tarea por olvidar guardar!": "Google Docs saves automatically. You'll never lose homework again by forgetting to save!",
+ "Dentro de tu carpeta:": "Inside your folder:",
+ "\"Documentos de Google\"": "\"Google Docs\"",
+ "Ponle título: haz clic donde dice \"Documento sin título\" y escribe": "Give it a title: click where it says \"Untitled document\" and type",
+ "\"Sobre mí\"": "\"About me\"",
+ "Escribe 3 cosas que te gusten: tu color, comida y animal favorito 🐾": "Write 3 things you like: your favorite color, food and animal 🐾",
+ "Espera 2 segundos — verás que dice": "Wait 2 seconds — you'll see it says",
+ "\"Guardado en Drive\"": "\"Saved in Drive\"",
+ "solo ¡magia!": "by itself — magic!",
+ "¡Misión 4 cumplida! 📝": "Mission 4 accomplished! 📝",
+ "¡Comparte con un amigo!": "Share with a friend!",
+ "El poder de trabajar en la nube": "The power of working in the cloud",
+ "Google Drive permite trabajar con amigos al mismo tiempo, ¡aunque estén en casas distintas!": "Google Drive lets you work with friends at the same time, even if they're in different homes!",
+ "Abre el documento": "Open the document",
+ "que escribiste": "you wrote",
+ "\"Compartir\"": "\"Share\"",
+ "(arriba a la derecha)": "(top right)",
+ "Escribe el correo del profe o de un compañero": "Type your teacher's or a classmate's email",
+ "\"Puede ver\"": "\"Viewer\"",
+ "en el menú de permisos": "in the permissions menu",
+ "\"Enviar\"": "\"Send\"",
+ "— ¡primer archivo compartido! 🥳": "— first file shared! 🥳",
+ "¡Misión 5 cumplida! 🤝": "Mission 5 accomplished! 🤝",
+ "¡Misión completada!": "Mission complete!",
+ "Explorador": "Explorer",
+ "¡Felicitaciones! Completaste las 5 misiones y ya sabes usar Google Drive como un profesional de la tecnología.": "Congratulations! You completed the 5 missions and now know how to use Google Drive like a tech professional.",
+ "Tu resultado ha sido registrado. ¡Muéstraselo al profe!": "Your result has been recorded. Show it to your teacher!",
+ "✅ Registrar mi resultado": "✅ Record my result",
+ "¡Listo! Tu nombre quedó guardado en el registro del profe 🎉": "Done! Your name was saved in your teacher's record 🎉",
+ "¡Hola, {0}!": "Hello, {0}!",
+ "¡Completado! ✓": "Completed! ✓",
+ "⏳ Guardando...": "⏳ Saving...",
+ "{0} a las {1}": "{0} at {1}",
+ "Ej: 4° A": "E.g. 4th A"
+});
+I18N.refresh();
 </script>
 </body>
 </html>
