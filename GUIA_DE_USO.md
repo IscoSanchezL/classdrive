@@ -93,10 +93,37 @@ Después de esto, **Inicio** y **Calendario** muestran tus sesiones con su hora.
 - **🔍 Buscar** (o **Ctrl + K**) — encuentra clases y recursos en todo lo tuyo.
 - **⏱ Cronómetro** — botón flotante abajo a la derecha, para controlar el tiempo en clase.
 - **🤖 Asistente IA** — ayuda para ideas de clases. Funciona con tu propia clave de IA (Claude, OpenAI o Gemini) que escribes en el asistente. **Tu clave queda solo en tu navegador**, no se sube a la nube.
-- **🎨 Pizarra** — pizarra interactiva.
+- **🎨 Pizarra** — pizarra interactiva para la clase (ver la sección 7b).
 - **🗑 Papelera** — recupera lo que borraste por error.
 - **⬇ Exportar / ⬆ Importar** — baja o sube un archivo con tu planeación.
 - **🎒 Portal de estudiantes** y **🖨 QR de grupos** (en Inicio) — enlace y códigos QR para que tus estudiantes vean las clases que decidas mostrarles.
+
+---
+
+## 7b. La pizarra
+En el menú lateral, **🎨 Pizarra**. La barra de arriba tiene todo:
+
+| Botón | Para qué sirve |
+|---|---|
+| ✋ **Mover** | Toca una imagen, emoji, texto o nota para moverla. Arrastra el círculo azul de la esquina para cambiar su tamaño. La ✕ roja o la tecla **Supr** la quita. |
+| ✏️ **Lápiz** | Dibujo libre. El grosor se cambia con la barra deslizante. |
+| ╱ ▭ ○ → | Línea, rectángulo, círculo y flecha: arrastra para dibujarlos. **Relleno** pinta rectángulos y círculos por dentro. |
+| **T** **Texto** | Haz clic en la pizarra y escribe. Para editarlo después, doble clic sobre el texto. Elige la letra en el menú de al lado. |
+| 📌 **Nota adhesiva** | Una notita de color: escribe dentro y muévela desde su borde superior. |
+| 😀 **Emoji** | Elige uno y aparece en la pizarra; arrástralo donde quieras y cámbiale el tamaño. |
+| 🖼️ **Imagen** | Pega un **enlace** o **sube un archivo** de tu equipo. También puedes pegar una imagen con **Ctrl + V** o arrastrarla sobre la pizarra. |
+| 🧹 **Borrador** | Arrastra para borrar trazos (se ve un círculo del tamaño del borrador). Haz **clic sobre una imagen, emoji, texto o nota** para quitarla. |
+| ↩ ↪ | **Deshacer** y **Rehacer** (Ctrl + Z / Ctrl + Shift + Z). Cubren trazos y objetos. |
+| 🗑 | Limpia toda la pizarra (se puede deshacer). |
+| 💾 | Guarda la pizarra como imagen **PNG**, con el fondo y todos los objetos. |
+| ⛶ | Modo presentación a pantalla completa (Esc para salir). |
+
+**Colores:** elige uno de la paleta o usa el selector del final para un color propio.
+
+**Notas útiles**
+- Mientras no salgas de la página, la pizarra **conserva tu trabajo** aunque cambies de sección y vuelvas.
+- Algunas imágenes de otros sitios web **no se pueden incluir al guardar el PNG** por restricciones del sitio de origen (se ven en pantalla, pero el archivo las omite y la página te avisa). Si necesitas que salgan en el PNG, **descárgalas y súbelas desde tu equipo**.
+- Para volver a dibujar después de mover objetos, elige de nuevo el lápiz o una forma: con **✋ Mover** activo no se dibuja.
 
 ---
 
