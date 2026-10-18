@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// Class Drive — Reglas de Firestore (equivalen a supabase_seguridad.sql):
+// cada profesor solo ve y modifica lo suyo; el personal con consola lee lo de los demás;
+// solo el administrador cambia roles y escribe lo de otros.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Correo verificado de la sesión de Google, en minúsculas ('' si no hay sesión)
+    function mi() {
+      return request.auth != null && request.auth.token.email_verified == true
+        ? request.auth.token.email.lower() : '';
+    }
+    function perfil() {
+      return get(/databases/$(database)/documents/profiles/$(mi())).data;
+    }
+    function tienePerfil() {
+      return mi() != '' && exists(/databases/$(database)/documents/profiles/$(mi()));
+    }
+    function esAdmin() {
+      return mi() == 'franksanlo@gmail.com'
+        || (tienePerfil() && perfil().get('role', 'teacher') in ['admin', 'superadmin']);
+    }
+    // Personal con consola: cualquier rol distinto de profesor o bloqueado
+    function esStaff() {
+      return esAdmin()
+        || (tienePerfil() && !(perfil().get('role', 'teacher') in ['teacher', 'blocked']));
+    }
+
+    // Planeación de cada profesor
+    match /user_data/{id} {
+      allow read: if mi() != '' && (id == mi() || esStaff());
+      allow create, update: if mi() != '' && (id == mi() || esAdmin());
+      allow delete: if esAdmin();
+    }
+
+    // Perfiles: ver el propio (el personal ve todos); crear solo el propio como profesor;
+    // solo el administrador cambia roles
+    match /profiles/{id} {
+      allow read: if mi() != '' && (id == mi() || esStaff());
+      allow create: if esAdmin()
+        || (id == mi() && request.resource.data.get('role', 'teacher') == 'teacher');
+      allow update: if esAdmin()
+        || (id == mi() && request.resource.data.get('role', 'teacher') == resource.data.get('role', 'teacher'));
+      allow delete: if esAdmin();
+    }
+
+    // Respaldos: cada profesor los suyos; el personal puede verlos; el admin crea y borra los de cualquiera
+    match /respaldos/{id} {
+      allow read: if mi() != '' && (resource.data.user_email.lower() == mi() || esStaff());
+      allow create: if mi() != '' && (request.resource.data.user_email.lower() == mi() || esAdmin());
+      allow delete: if mi() != '' && (resource.data.user_email.lower() == mi() || esAdmin());
+    }
+
+    // Configuración general: la lee cualquiera; solo el administrador la cambia
+    match /plataforma/{id} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+
+    // Portal de estudiantes: lectura pública; cada profesor escribe SOLO el suyo
+    match /aula_publica/{id} {
+      allow read: if true;
+      allow create, update, delete: if mi() != '' && (id == mi() || esAdmin());
+    }
+
+    // Resultados de actividades: solo se pueden crear
+    match /resultados/{id} {
+      allow create: if true;
+    }
+  }
+}
