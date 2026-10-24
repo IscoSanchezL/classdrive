@@ -64,9 +64,10 @@ service cloud.firestore {
       allow create, update, delete: if mi() != '' && (id == mi() || esAdmin());
     }
 
-    // Resultados de actividades: solo se pueden crear
+    // Resultados de actividades: solo se pueden crear, con sesión verificada y un documento de tamaño acotado
+    // (antes cualquiera, sin iniciar sesión, podía crear documentos sin límite)
     match /resultados/{id} {
-      allow create: if true;
+      allow create: if mi() != '' && request.resource.data.keys().size() <= 30;
     }
   }
 }
