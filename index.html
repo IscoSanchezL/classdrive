@@ -1738,7 +1738,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
         <div class="sb-foot-row">
           <button class="sb-fb" onclick="exportData()">⬇ Exportar</button>
           <button class="sb-fb" onclick="document.getElementById('imp-input').click()">⬆ Importar</button>
-          <input type="file" id="imp-input" accept=".json" style="display:none" onchange="importData(event)">
+          <input type="file" id="imp-input" accept=".json,application/json,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="importData(event)">
           <button class="sb-fb" id="admin-cp-btn" onclick="openColorPicker()">🎨</button>
         </div>
         <div class="sb-foot-row">
@@ -4337,7 +4337,9 @@ function handleLF(e){const f=e.target.files[0];if(!f)return;const r=new FileRead
 
 /* ── EXPORT/IMPORT ── */
 function exportData(){const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='classdrive-backup-'+ds(new Date())+'.json';a.click();URL.revokeObjectURL(a.href);}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.grades)throw new Error();state=d;saveState();expandedGrades={};renderSidebar();showWelcome();showToast('Datos importados ✓');}catch(err){showToast('Archivo inválido');}};r.readAsText(f);e.target.value='';}
+function importData(e){const f=e.target.files[0];if(!f)return;
+  if(/\.xlsx?$/i.test(f.name)||/spreadsheet|ms-excel/i.test(f.type)){e.target.value='';openImportModal();importXlsx({target:{files:[f],value:''}});return;}
+  const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.grades)throw new Error();state=d;saveState();expandedGrades={};renderSidebar();showWelcome();showToast('Datos importados ✓');}catch(err){showToast('Archivo inválido');}};r.readAsText(f);e.target.value='';}
 
 /* ── HELPERS ── */
 function expandFirstGrade(){const gid=Object.keys(state.grades||{})[0];if(!gid){showToast('Sin grados');return;}expandedGrades[gid]=true;state.currentGrade=gid;renderSidebar();showToast('Selecciona un grupo del sidebar 👈');}
@@ -5487,7 +5489,7 @@ function openImportModal(){
   openModal('📥 Importar planeación',`
     <div class="im-opt"><div class="im-t">Archivo completo, todos los grados</div>
       <div class="cx-muted">En Google Sheets: Archivo → Descargar → Microsoft Excel (.xlsx). Cada pestaña (1°, 2°, 3°…) se carga en su grado.</div>
-      <label class="im-file"><input type="file" accept=".xlsx,.xls" onchange="importXlsx(event)">📂 Elegir archivo .xlsx</label></div>
+      <label class="im-file"><input type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" onchange="importXlsx(event)">📂 Elegir archivo .xlsx</label></div>
     <div class="im-opt"><div class="im-t">Copiar y pegar un grado</div>
       <div class="cx-muted">Selecciona las filas en tu hoja (puedes incluir la fila de títulos), cópialas y pégalas en el recuadro. Los enlaces se conservan.</div>
       <div style="display:flex;gap:8px;align-items:center;margin:8px 0"><span class="cx-muted">Grado:</span><select id="im-grade" class="cx-inp" style="width:auto">${gradeOpts}</select></div>
