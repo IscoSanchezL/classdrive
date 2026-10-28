@@ -1433,6 +1433,11 @@ table.pl th.pl-c,table.pl td.pl-c{text-align:center;width:46px}
 .pl-c.next .pl-ck span::after{content:"▶";color:var(--gc);font-size:9px}
 .pl-per td{background:color-mix(in srgb,var(--pc) 14%,var(--s2))!important;font-weight:800;font-size:13px;padding:8px 12px!important;color:var(--tp)}
 .pl-per small{font-weight:600;color:var(--ts);margin-left:10px}
+.pl-per{cursor:pointer;user-select:none}.pl-per:hover td{filter:brightness(1.12)}
+.pl-per-ar{display:inline-block;width:16px;color:var(--pc);font-size:12px}
+.pl-per-h{float:right;font-size:11px;font-weight:700;color:var(--ts);border:1px solid var(--br);border-radius:999px;padding:1px 9px}
+.pl-per.folded td{opacity:.85}
+tr.pl-row[hidden]{display:none}
 .pl-per-b{display:inline-block;background:var(--pc);color:#0b1020;border-radius:8px;padding:2px 9px;margin-right:8px;font-weight:900}
 .pl-r a{display:block;color:var(--acl);font-weight:700;text-decoration:underline;text-underline-offset:2px;margin:2px 0;word-break:break-word}
 .pl-r span{display:block;color:var(--ts);margin:2px 0}
@@ -5225,11 +5230,17 @@ function renderGradePlan(){
       <span class="pl-sec-bar"><i style="width:${ls.length?Math.round(done/ls.length*100):0}%"></i></span>
       <span class="pl-sec-t">${nx?'Próxima: '+escH(nx.title||'Sin tema'):(ls.length?'Planeación completa':'Sin clases aún')}</span>
       <span class="pl-sec-c">${done}/${ls.length}</span></button>`;}).join('');
-  let body='';let prev=null;const cols=10+grps.length;
+  let body='';let prev=null;let pi=-1;let fold=false;const cols=10+grps.length;
+  // Períodos plegables: los períodos anteriores al actual se muestran cerrados (el actual es el primero con clases pendientes en algún grupo)
+  const pers=[];ls.forEach(l=>{const p=l.period||'';if(p&&!pers.includes(p))pers.push(p);});
+  const curIdx=grps.length?pers.findIndex(p=>ls.some(l=>(l.period||'')===p&&grps.some(x=>!l.done?.[x.id]))):-1;
+  const fp=plFoldPrefs(g.id,curIdx>=0?pers[curIdx]:'');
   ls.forEach(l=>{
-    if((l.period||'')!==prev){prev=l.period||'';if(prev){const cnt=ls.filter(x=>(x.period||'')===prev).length;
-      body+=`<tr class="pl-per" style="--pc:${periodColor(prev)}"><td colspan="${cols}"><span class="pl-per-b">${escH(prev)}</span>${escH(periodLabel(prev))}<small>${plural(cnt,'clase')}</small></td></tr>`;}}
-    body+=planRow(l,grps,nextBy);
+    if((l.period||'')!==prev){prev=l.period||'';if(prev){pi=pers.indexOf(prev);const pl=ls.filter(x=>(x.period||'')===prev);const cnt=pl.length;
+      fold=prev in fp?!!fp[prev]:(curIdx>0&&pi<curIdx);
+      const allDone=grps.length&&pl.every(x=>grps.every(gr=>x.done?.[gr.id]));
+      body+=`<tr class="pl-per${fold?' folded':''}" data-pi="${pi}" style="--pc:${periodColor(prev)}" onclick="plTogglePer('${g.id}',${pi},this)" title="Clic para ${fold?'mostrar':'ocultar'} las clases de este período"><td colspan="${cols}"><span class="pl-per-ar">${fold?'▸':'▾'}</span><span class="pl-per-b">${escH(prev)}</span>${escH(periodLabel(prev))}<small>${plural(cnt,'clase')}${allDone?' · ✓ completado':''}${pi===curIdx?' · período actual':''}</small><span class="pl-per-h">${fold?'Mostrar':'Ocultar'}</span></td></tr>`;}else{pi=-1;fold=false;}}
+    body+=planRow(l,grps,nextBy).replace('<tr ',`<tr data-pi="${pi}"${fold?' hidden':''} `);
   });
   v.innerHTML=`<div class="pl-banner"><div class="pl-banner-m" aria-hidden="true">${t.m}</div>
       <div style="flex:1;min-width:0"><div class="pl-banner-k">Planeación Tecnología · IB PYP</div><h1 class="pl-banner-h">Grado ${g.number}°</h1></div>
@@ -5246,6 +5257,17 @@ function renderGradePlan(){
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="cx-btn primary" onclick="openImportModal()">📥 Importar mi planeación</button><button class="cx-btn" onclick="addLessonRow()">Escribir la primera clase</button></div></div>`}`;
   const w=v.querySelector('.pl-wrap');if(w){w.scrollLeft=sx;w.scrollTop=sy;}
 }
+// Preferencias de plegado por grado; se reinician cuando cambia el período actual (así al pasar a P3 se pliegan P1 y P2)
+function plFoldPrefs(gid,cur){try{const o=JSON.parse(localStorage.getItem('cd-pl-fold-'+gid)||'{}');return o&&o.cur===cur&&o.p?o.p:{};}catch(e){return{};}}
+function plCurPer(g){const grps=sortedGroups(g),ls=lessonsOf(g);if(!grps.length)return'';const pers=[];ls.forEach(l=>{const p=l.period||'';if(p&&!pers.includes(p))pers.push(p);});
+  return pers.find(p=>ls.some(l=>(l.period||'')===p&&grps.some(x=>!l.done?.[x.id])))||'';}
+function plTogglePer(gid,pi,tr){const g=state.grades?.[gid];if(!g)return;const pers=[];lessonsOf(g).forEach(l=>{const p=l.period||'';if(p&&!pers.includes(p))pers.push(p);});
+  const per=pers[pi];if(per==null)return;const fold=!tr.classList.contains('folded');
+  const cur=plCurPer(g);const fp=plFoldPrefs(gid,cur);fp[per]=fold;try{localStorage.setItem('cd-pl-fold-'+gid,JSON.stringify({cur,p:fp}));}catch(e){}
+  tr.classList.toggle('folded',fold);const ar=tr.querySelector('.pl-per-ar');if(ar)ar.textContent=fold?'▸':'▾';
+  const h=tr.querySelector('.pl-per-h');if(h)h.textContent=fold?'Mostrar':'Ocultar';
+  tr.title='Clic para '+(fold?'mostrar':'ocultar')+' las clases de este período';
+  tr.closest('tbody').querySelectorAll(`tr.pl-row[data-pi="${pi}"]`).forEach(r=>{r.hidden=fold;});}
 function ce(l,f,ph){return`<div class="pl-ce" contenteditable="true" spellcheck="false" data-id="${l.id}" data-f="${f}" data-ph="${escA(ph||'')}">${escH(l[f]||'')}</div>`;}
 function planRow(l,grps,nextBy){
   const ti=themeInfo(l.theme);
