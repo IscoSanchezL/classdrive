@@ -1110,3 +1110,12 @@ I18N.add({
  "📌 Hoy · tus salones y clases planeadas": "📌 Today · your classes and planned lessons",
  "⏭ {0} · Día {1}:": "⏭ {0} · Day {1}:"
 });
+
+/* Láser global */
+I18N.add({
+ "Puntero láser (L) — señala en pantalla al presentar": "Laser pointer (L) — point at things on screen while presenting",
+ "Puntero láser": "Laser pointer",
+ "L — Puntero láser": "L — Laser pointer",
+ "Puntero láser (Alt+L en cualquier pantalla)": "Laser pointer (Alt+L on any screen)",
+ "Puntero láser activo — mueve el cursor para señalar. Esc o 🔴 para apagarlo": "Laser pointer on — move the cursor to point. Esc or 🔴 turns it off"
+});
