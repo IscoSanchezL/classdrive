@@ -1119,3 +1119,7 @@ I18N.add({
  "Puntero láser (Alt+L en cualquier pantalla)": "Laser pointer (Alt+L on any screen)",
  "Puntero láser activo — mueve el cursor para señalar. Esc o 🔴 para apagarlo": "Laser pointer on — move the cursor to point. Esc or 🔴 turns it off"
 });
+
+I18N.add({
+ "Puntero láser activo — mueve el cursor para señalar. Sobre presentaciones, mantén Shift para hacer clic. Esc o 🔴 para apagarlo": "Laser pointer on — move the cursor to point. Over presentations, hold Shift to click. Esc or 🔴 turns it off"
+});
