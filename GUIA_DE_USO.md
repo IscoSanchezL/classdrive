@@ -92,7 +92,8 @@ Después de esto, **Inicio** y **Calendario** muestran tus sesiones con su hora.
 - **☀️ / 🌙** (arriba a la derecha) — tema claro u oscuro.
 - **🔍 Buscar** (o **Ctrl + K**) — encuentra clases y recursos en todo lo tuyo.
 - **⏱ Cronómetro** — botón flotante abajo a la derecha, para controlar el tiempo en clase.
-- **🕒 Horario** — tu horario de clases de los 6 días, con las horas de 1°–3° y 4°–6°. La columna del día de hoy se resalta sola (según el ciclo de Calendario → ⚙ Ciclo y horario). Toca una casilla para cambiar su texto o color; **↺ Restablecer** vuelve al horario original.
+- **🕒 Mi día (en el Inicio)** — lo que te toca hoy hora por hora, con el tema de cada clase planeada, y un vistazo al día siguiente.
+- **🕒 Horario** — tu horario de clases de los 6 días, con las horas de 1°–3° y 4°–6°. La columna del día de hoy se resalta sola (según el ciclo de Calendario → ⚙ Ciclo y horario). Arriba eliges **«Hoy es Día N»** y el ciclo se ajusta solo (la columna de hoy se resalta). Toca una casilla para cambiar su texto o color; **↺ Restablecer** vuelve al horario original.
 - **🎨 Pizarra** — pizarra interactiva para la clase (ver la sección 7b).
 - **🗑 Papelera** — recupera lo que borraste por error.
 - **⬇ Exportar / ⬆ Importar** — baja o sube un archivo con tu planeación.

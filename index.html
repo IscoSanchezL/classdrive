@@ -7189,8 +7189,8 @@ function homeDay(iso,title){
   const empty=c?(Object.values(schedCfg().grid).some(d=>Object.values(d||{}).some(Boolean))?'No tienes clases en tu horario.':'Configura tu horario en 📅 Calendario → ⚙ Ciclo y horario para ver aquí tus sesiones.'):'Sin clases (fin de semana o festivo).';
   return`<div class="hm-box"><div class="hm-h">${title} · ${escH(dayLbl(iso))} ${cycBadge(iso)}</div>${items.length?`<div class="hm-l">${items.join('')}</div>`:`<div class="hm-info">${empty}</div>`}</div>`;}
 function homeRender(){
-  const today=todayIso();let h=homeDay(today,'📌 Hoy');
-  if(!homeItems(today).length){let k=today;for(let i=0;i<14;i++){k=isoDay(addDays(new Date(k+'T12:00:00'),1));if(cycleDay(k)&&homeItems(k).length){h+=homeDay(k,'⏭ Próximo día con clases');break;}}}
+  const today=todayIso();let h=hzMyDay();if(homeItems(today).length)h+=homeDay(today,'📌 Hoy · tus salones y clases planeadas');
+  if(false){let k=today;for(let i=0;i<14;i++){k=isoDay(addDays(new Date(k+'T12:00:00'),1));if(cycleDay(k)&&homeItems(k).length){h+=homeDay(k,'⏭ Próximo día con clases');break;}}}
   const late=homeLate();
   if(late.length){h+=`<div class="hm-box late"><div class="hm-h">⚠ Clases atrasadas <small>${plural(late.length,'clase')} con fecha pasada sin marcar</small></div>`+
     late.slice(0,6).map(e=>{const t=gTheme(e.g);return`<div class="hm-late-row"><div class="hm-late-t" onclick="cgOpenLesson('${escA(e.g.id)}','${escA(e.l.id)}')"><b>${t.m} ${e.g.number}° · Clase ${e.l.n} · ${escH(e.l.title||'Sin tema')}</b><span>Estaba para ${escH(dayLbl(e.d))}</span></div>
@@ -7529,7 +7529,7 @@ function renderHorario(){
     return`<tr>${left(r[0],r[1],r[2],r[3])}${left(r[4],r[5],r[6],r[7])}${cells}</tr>`;}).join('');
   p.innerHTML=`<div class="hz-wrap">
     <div class="hz-head"><div><div class="hz-title">🕒 Horario</div>
-      <div class="cx-muted">${today?`Hoy es <b>Día ${today}</b> del ciclo (columna resaltada).`:'Hoy no hay clases.'} Toca una casilla para editarla.</div></div>
+      <div class="cx-muted">${today?'La columna resaltada es el día de hoy.':'Hoy no hay clases.'} Toca una casilla para editarla.</div><div style="margin-top:8px">${hzDaySel(today)}</div></div>
       <div class="hz-actions"><button class="cx-btn" onclick="openSchedConfig()">⚙ Ciclo y horario</button><button class="cx-btn" onclick="hzReset()">↺ Restablecer</button></div></div>
     <div class="hz-scroll"><table class="hz-table"><thead>
       <tr><th colspan="3" class="hz-g">1ST, 2ND, 3RD</th><th colspan="3" class="hz-g">4TH, 5TH, 6TH</th>${[1,2,3,4,5,6].map(d=>`<th rowspan="2" class="hz-d${d===today?' hz-today':''}">DAY ${d}</th>`).join('')}</tr>
@@ -7550,6 +7550,52 @@ function hzEdit(r,d){
   setTimeout(()=>document.getElementById('hz-t')?.focus(),50);
 }
 function hzPick(k){document.getElementById('hz-c').value=k;document.querySelectorAll('.hz-swb').forEach(b=>b.classList.toggle('on',b.dataset.c===k));}
+
+/* ── Día del ciclo: elegir "hoy es Día N" y "Mi día" en el Inicio ── */
+function hzSetToday(n){
+  n=parseInt(n);if(!n)return;
+  const cfg=schedCfg(),t=todayIso();
+  if(!schedIsSchool(t,cfg)){showToast('Hoy no es un día de clases');return;}
+  const anchors=cfg.anchors.filter(a=>a.d!==t);anchors.push({d:t,n});
+  state.sched={...(state.sched||{}),anchors,len:cfg.len,skip:cfg.skip,times:cfg.times,grid:cfg.grid};
+  saveState();
+  if(document.getElementById('hz-panel')?.classList.contains('show'))renderHorario();
+  const w=document.getElementById('welcome'),d=document.getElementById('wlc-dashboard');if(w&&w.style.display!=='none'&&d)d.innerHTML=homeRender();
+  showToast('Hoy es Día '+n+' ✓');
+}
+function hzDaySel(today,cls){
+  const len=schedCfg().len||6;
+  return`<label class="hz-sel ${cls||''}">Hoy es <select onchange="hzSetToday(this.value)">${today?'':'<option value="">—</option>'}${Array.from({length:len},(_,i)=>`<option value="${i+1}"${i+1===today?' selected':''}>Día ${i+1}</option>`).join('')}</select></label>`;
+}
+function hzMin(str){const m=String(str).replace(/\s/g,'').match(/(\d+):(\d+)-(\d+):(\d+)/);if(!m)return null;const f=h=>h<7?h+12:h;return[f(+m[1])*60+ +m[2],f(+m[3])*60+ +m[4]];}
+function hzFmt(mn){return Math.floor(mn/60)+':'+String(mn%60).padStart(2,'0');}
+function hzDayItems(c){
+  const out=[];if(!c)return out;
+  HZ_ROWS.forEach((r,i)=>{if(typeof r[8]==='string')return;const cell=hzCell(i,c-1);if(!cell.t)return;
+    const g=(cell.t.match(/[1-6]/)||['1'])[0],set=+g<=3?0:4,tm=hzMin(r[set]);
+    out.push({t:cell.t,c:cell.c,start:tm?tm[0]:0,end:tm?tm[1]:0,per:r[set+1]});});
+  return out.sort((a,b)=>a.start-b.start);
+}
+function hzSection(txt){
+  const k=String(txt).trim().toUpperCase();let f=null;
+  schedSecs().forEach(s=>{const name=String(s.x.name).replace(/^\s*\d+\s*°?\s*/,'').trim();if((s.g.number+name).toUpperCase()===k)f=s;});
+  return f;
+}
+function hzMyDay(){
+  const today=todayIso(),c=cycleDay(today),now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  const items=hzDayItems(c);
+  const rows=items.map(it=>{
+    const sec=hzSection(it.t),cur=nm>=it.start&&nm<it.end,past=nm>=it.end;
+    let les='';
+    if(sec){const r=schedLesson(sec.g,sec.x,today),l=r?.l;les=l?`<span class="md-les" onclick="cgOpenLesson('${escA(sec.g.id)}','${escA(l.id)}')">${r.kind==='next'?'<i>Siguiente:</i> ':''}${l.n}. ${escH(l.title||'Sin tema')}</span>`:`<span class="cx-muted">Sin clase planeada</span>`;}
+    return`<div class="md-row${cur?' now':''}${past?' past':''}"><span class="md-time">${hzFmt(it.start)}–${hzFmt(it.end)}</span><span class="md-tag" style="${it.c?`background:${escA(it.c)};color:#111`:''}">${escH(it.t)}</span>${les}${cur?'<span class="md-now">ahora</span>':''}</div>`;}).join('');
+  let k=today,nx=0;for(let i=0;i<10&&!nx;i++){k=isoDay(addDays(new Date(k+'T12:00:00'),1));nx=cycleDay(k);}
+  const tom=nx?hzDayItems(nx).map(x=>x.t):[];
+  return`<div class="hm-box md-box"><div class="hm-h">🕒 Mi día · ${escH(dayLbl(today))} ${cycBadge(today)} ${hzDaySel(c,'md-sel')}</div>
+    ${c?(rows||'<div class="hm-info">No tienes clases en tu horario hoy.</div>'):'<div class="hm-info">Hoy no hay clases (fin de semana o festivo).</div>'}
+    ${nx?`<div class="md-next"><b>⏭ ${escH(dayLbl(k))} · Día ${nx}:</b> ${tom.length?tom.map(escH).join(' · '):'sin clases en tu horario'}</div>`:''}
+    <div class="md-foot"><button class="cx-mini" onclick="openHorario()">Ver el horario completo</button></div></div>`;
+}
 function hzReset(){
   if(!confirm('¿Restablecer el horario al original? Se pierden tus cambios en las casillas.'))return;
   delete state.horario;saveState();renderHorario();showToast('Horario restablecido ✓');
@@ -7582,6 +7628,19 @@ function hzReset(){
 .hz-swb{width:30px;height:30px;border-radius:8px;border:2px solid var(--br);cursor:pointer;padding:0;color:#333;font-weight:800}
 .hz-swb.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
 .hz-none{background:#fff}
+.hz-sel{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ts)}
+.hz-sel select{background:var(--s3);color:var(--tp);border:1px solid var(--br);border-radius:8px;padding:4px 8px;font:inherit}
+.md-sel{margin-left:8px;font-size:11px}
+.md-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:7px 4px;border-top:1px solid var(--br)}
+.md-row.past{opacity:.5}
+.md-row.now{background:rgba(53,184,216,.12);border-radius:8px;border-top-color:transparent}
+.md-time{min-width:92px;font-variant-numeric:tabular-nums;color:var(--ts);font-size:12.5px;font-weight:700}
+.md-tag{padding:3px 10px;border-radius:8px;background:var(--s4);font-weight:800;font-size:13px}
+.md-les{cursor:pointer;color:var(--tp);font-size:12.5px;text-decoration:underline dotted}
+.md-now{margin-left:auto;font-size:11px;font-weight:800;color:#06222d;background:#35b8d8;border-radius:999px;padding:2px 9px}
+.md-next{margin-top:10px;padding-top:8px;border-top:1px solid var(--br);font-size:12.5px;color:var(--ts)}
+.md-foot{margin-top:8px;text-align:right}
+
 </style>
 <script>
 /* ══════════ RECORDATORIO DE COPIA DE SEGURIDAD (Consola) ══════════

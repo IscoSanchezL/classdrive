@@ -1095,3 +1095,18 @@ I18N.add({
  "✏️ Casilla — Día {0}": "✏️ Cell — Day {0}",
  "🕒 Horario": "🕒 Schedule"
 });
+
+/* Mi día */
+I18N.add({
+ "🕒 Mi día · {0}": "🕒 My day · {0}",
+ "Mi día": "My day",
+ "Ver el horario completo": "See the full schedule",
+ "ahora": "now",
+ "No tienes clases en tu horario hoy.": "You have no classes in your schedule today.",
+ "sin clases en tu horario": "no classes in your schedule",
+ "La columna resaltada es el día de hoy.": "The highlighted column is today.",
+ "Hoy no es un día de clases": "Today is not a school day",
+ "Hoy es Día {0} ✓": "Today is Day {0} ✓",
+ "📌 Hoy · tus salones y clases planeadas": "📌 Today · your classes and planned lessons",
+ "⏭ {0} · Día {1}:": "⏭ {0} · Day {1}:"
+});
