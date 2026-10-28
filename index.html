@@ -7667,11 +7667,14 @@ function lzMove(e){
   if(!LZ.raf)LZ.raf=requestAnimationFrame(lzDraw);
 }
 function lzSize(){if(!LZ.cv)return;LZ.dpr=Math.min(devicePixelRatio||1,2);LZ.cv.width=Math.round(innerWidth*LZ.dpr);LZ.cv.height=Math.round(innerHeight*LZ.dpr);}
+function lzPlace(){if(!LZ.cv)return;const host=document.fullscreenElement||document.body;if(LZ.cv.parentElement!==host)host.appendChild(LZ.cv);lzSize();}   /* en pantalla completa solo se ve lo que está dentro del elemento a pantalla completa */
+document.addEventListener('fullscreenchange',()=>{lzPlace();});
 function toggleLaser(force){
   const on=force===undefined?!LZ.on:!!force;
-  if(on&&!LZ.cv){const cv=document.createElement('canvas');cv.id='laser-overlay';document.body.appendChild(cv);LZ.cv=cv;LZ.c=cv.getContext('2d');lzSize();
+  if(on&&!LZ.cv){const cv=document.createElement('canvas');cv.id='laser-overlay';document.body.appendChild(cv);LZ.cv=cv;LZ.c=cv.getContext('2d');lzPlace();
     addEventListener('resize',lzSize);document.addEventListener('pointermove',lzMove,true);document.addEventListener('pointerdown',lzMove,true);
     document.addEventListener('pointerleave',()=>{LZ.pos=null;});}
+  if(on)lzPlace();
   LZ.on=on;document.body.classList.toggle('laser-on',on);document.getElementById('laser-btn')?.classList.toggle('active',on);
   if(!on){LZ.pos=null;LZ.pts=[];if(LZ.c)LZ.c.clearRect(0,0,LZ.cv.width,LZ.cv.height);}
   else showToast('Puntero láser activo — mueve el cursor para señalar. Esc o 🔴 para apagarlo');
