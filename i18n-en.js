@@ -1075,3 +1075,23 @@ I18N.add({
  "Arrastra para dibujar un rombo (útil en diagramas de flujo).": "Drag to draw a diamond (useful in flow charts).",
  "Arrastra para dibujar una estrella.": "Drag to draw a star."
 });
+
+/* Horario */
+I18N.add({
+ "Horario": "Schedule",
+ "Tu horario de clases de los 6 días": "Your 6-day class schedule",
+ "Hoy es": "Today is",
+ "del ciclo (columna resaltada).": "of the cycle (highlighted column).",
+ "Hoy no hay clases.": "There are no classes today.",
+ "Toca una casilla para editarla.": "Tap a cell to edit it.",
+ "↺ Restablecer": "↺ Reset",
+ "Texto (por ejemplo 2B, Supervisión 4, Reunión)": "Text (for example 2B, Supervision 4, Meeting)",
+ "Sin color": "No color",
+ "Pausa Activa": "Active break",
+ "Pausa Activa ": "Active break",
+ "Supervisión {0}": "Supervision {0}",
+ "¿Restablecer el horario al original? Se pierden tus cambios en las casillas.": "Reset the schedule to the original? Your cell changes will be lost.",
+ "Horario restablecido ✓": "Schedule reset ✓",
+ "✏️ Casilla — Día {0}": "✏️ Cell — Day {0}",
+ "🕒 Horario": "🕒 Schedule"
+});

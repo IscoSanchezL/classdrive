@@ -1732,7 +1732,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
         <div class="sb-sec-lbl">Principal</div>
         <div class="sb-item active" onclick="showWelcome()"><span class="sb-item-icon">🏠</span>Inicio</div>
         <div class="sb-item" id="cg-nav" onclick="openCalendarGeneral()"><span class="sb-item-icon">📅</span>Calendario</div>
-        <div class="sb-item" id="ai-nav" onclick="openAiPanel()"><span class="sb-item-icon">🤖</span>Asistente IA</div>
+        <div class="sb-item" id="hz-nav" onclick="openHorario()"><span class="sb-item-icon">🕒</span>Horario</div>
         <div class="sb-item" id="wb-nav" onclick="openWhiteboard()"><span class="sb-item-icon">🎨</span>Pizarra</div>
         <div class="sb-item" id="admin-nav" style="display:none" onclick="openAdminPanel()"><span class="sb-item-icon">⚡</span>Admin</div>
         <div class="sb-item" onclick="openSettings()"><span class="sb-item-icon">⚙️</span>Ajustes</div>
@@ -1780,7 +1780,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
           <div class="feat-grid">
             <div class="feat-card" onclick="openFirstGroup('activities')"><div class="feat-icon">📋</div><div class="feat-title">Actividades</div><div class="feat-desc">Crea tareas, materiales y cuestionarios</div></div>
             <div class="feat-card" onclick="openFirstGroup('classes')"><div class="feat-icon">📖</div><div class="feat-title">Clases</div><div class="feat-desc">Planea y organiza con recursos embebidos</div></div>
-            <div class="feat-card" onclick="openAiPanel()"><div class="feat-icon">🤖</div><div class="feat-title">Asistente IA</div><div class="feat-desc">Planea clases con inteligencia artificial</div></div>
+            <div class="feat-card" onclick="openHorario()"><div class="feat-icon">🕒</div><div class="feat-title">Horario</div><div class="feat-desc">Tu horario de clases de los 6 días</div></div>
             <div class="feat-card" onclick="openWhiteboard()"><div class="feat-icon">🎨</div><div class="feat-title">Pizarra Virtual</div><div class="feat-desc">Canvas colaborativo para tus clases</div></div>
             <div class="feat-card" onclick="openFirstGroup('calendar')"><div class="feat-icon">📅</div><div class="feat-title">Calendario</div><div class="feat-desc">Vista semanal y diaria de tus clases</div></div>
             <div class="feat-card" onclick="expandFirstGrade()"><div class="feat-icon">👥</div><div class="feat-title">Grupos</div><div class="feat-desc">Organiza con código de acceso por grupo</div></div>
@@ -1820,6 +1820,7 @@ table.cdp-mx{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5p
         <div id="admin-panel"></div>
         <!-- CALENDARIO GENERAL -->
         <div id="cg-panel"></div>
+        <div id="hz-panel"></div>
       </div>
     </div>
   </div>
@@ -7481,6 +7482,107 @@ openSettings=function(){_openSettingsHc();
     <div style="font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Estado del sistema</div>
     <button type="button" class="cx-btn" onclick="cdHealthCheck()">🩺 Verificar que todo funciona</button><div id="cd-hc" style="margin-top:10px"></div></div>`);};
 </script>
+<script>
+/* ══════════ HORARIO (tabla semanal de 6 días, editable) ══════════
+   Muestra el horario de clases del colegio con las horas de 1°–3° y 4°–6° y las casillas de cada Día 1…6.
+   Las casillas se pueden editar (clic) y los cambios se guardan en state.horario (nube). El día de hoy se resalta
+   según el ciclo configurado en Calendario → ⚙ Ciclo y horario. */
+const HZ_COLORS=['#ffff00','#e8d0dc','#d9a6f5','#c8f5e0','#c5eec0','#8fcfc8','#5ff0d0','#bde8fa','#fbe3cf','#c5ee50','#7b9ee8','#d9cfea','#f5a0e8','#c9a0f5','#b9a0f8','#fbd0a8','#f5f5a8','#ffd6d6'];
+const HZ_ROWS=[
+  ['7:30 - 7:50','MM','20 min','p','7:30 - 7:50','MM','20 min','p','MORNING MEETING'],
+  ['7:50-7:55','Pausa Activa','5 min','a','7:50-7:55','Pausa Activa','5 min','a',null],
+  ['7:55-8:50','I P','55 min','p','7:55-8:50','I','55 min','p',[['1ST GRADE MEETING','#ffff00'],['2ND GRADE MEETING','#ffff00'],['3RD GRADE MEETING','#ffff00'],['2B','#e8d0dc'],['5TH GRADE MEETING','#ffff00'],['3B','#d9a6f5']]],
+  ['8:50-9:15','SNACK/ RECESS','25 min','b','8:50-8:55','Pausa Activa','5 min','a',[]],
+  ['9:20-10:15','II P','55 min','p','8:55 - 9:50','II','55 min','p',[0,0,['1B','#c8f5e0'],['1A','#c5eec0'],['1B','#c8f5e0'],['4A','#8fcfc8']]],
+  ['10:15-10:20','Pausa Activa','5 MIN','a','9:50-10:15','SNACK/ RECESS','25 min','b',[['Supervisión 4','#5ff0d0']]],
+  ['10:20 -11:15','III P','55 min','p','10:20-11:15','III','55 min','p',[0,['1C','#bde8fa'],0,['5A','#fbe3cf']]],
+  ['11:15-11:20','Pausa Activa','5 min','a','11:15-11:20','Pausa Activa','5 min','a',null],
+  ['11:20-12:15','IV P','55 min','p','11:20-12:15','IV','55 min','p',[['5B','#c5ee50'],['6A','#7b9ee8'],['1C','#bde8fa'],0,['1A','#c5eec0']]],
+  ['12:15-12:55','LUNCH','40 min','b','12:15-12:20','Pausa Activa','5 MIN','a',[0,0,0,0,0,['Supervisión 2','#5ff0d0']]],
+  ['1: 00-1:55','V','55 min','p','12:20-1:15','V','55 min','p',[['2C','#d9cfea'],['6B','#f5a0e8'],['Subbing 4°-6°','#c9a0f5'],['3A','#b9a0f8'],['4B','#fbd0a8'],['2C','#d9cfea']]],
+  ['1:55-2:00','Pausa Activa','5 min','a','1:15-1:55','LUNCH','40 min','b',[]],
+  ['2:00-2:50','VI','50 MIN','p','2:00-2:50','VI','55 MIN','p',[0,['Subbing 1°-3°','#c9a0f5'],['2B','#e8d0dc'],['2A','#f5f5a8'],0,['2A','#f5f5a8']]]
+];
+const _hideAllHz=hideAll;
+hideAll=function(){_hideAllHz();const p=document.getElementById('hz-panel');if(p){p.classList.remove('show');p.style.display='none';}};
+function hzCell(r,d){
+  const ov=state.horario?.cells?.[r+':'+d];if(ov)return{t:ov.t||'',c:ov.c||''};
+  const row=HZ_ROWS[r][8],v=Array.isArray(row)?row[d]:null;
+  return v?{t:v[0],c:v[1]}:{t:'',c:''};
+}
+function openHorario(){
+  hideAll();const p=document.getElementById('hz-panel');if(!p)return;
+  p.style.display='block';p.classList.add('show');
+  document.getElementById('breadcrumb').innerHTML=`<span onclick="showWelcome()" style="cursor:pointer">Class Drive</span><span class="bc-s">›</span><span class="bc-a">🕒 Horario</span>`;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById('hz-nav')?.classList.add('active');
+  renderHorario();
+}
+function renderHorario(){
+  const p=document.getElementById('hz-panel');if(!p)return;
+  const today=cycleDay(todayIso());
+  const left=(t,pe,m,k)=>`<td class="hz-t">${escH(t)}</td><td class="hz-p hz-k-${k}">${escH(pe)}</td><td class="hz-m hz-k-${k}">${escH(m)}</td>`;
+  const body=HZ_ROWS.map((r,i)=>{
+    let cells='';
+    if(typeof r[8]==='string')cells=`<td class="hz-mm" colspan="6">${escH(r[8])}</td>`;
+    else for(let d=0;d<6;d++){const c=hzCell(i,d);
+      cells+=`<td class="hz-c${d+1===today?' hz-today':''}${c.t?' hz-has':''}" ${c.c?`style="background:${escA(c.c)}"`:''} onclick="hzEdit(${i},${d})" title="Editar">${escH(c.t)}</td>`;}
+    return`<tr>${left(r[0],r[1],r[2],r[3])}${left(r[4],r[5],r[6],r[7])}${cells}</tr>`;}).join('');
+  p.innerHTML=`<div class="hz-wrap">
+    <div class="hz-head"><div><div class="hz-title">🕒 Horario</div>
+      <div class="cx-muted">${today?`Hoy es <b>Día ${today}</b> del ciclo (columna resaltada).`:'Hoy no hay clases.'} Toca una casilla para editarla.</div></div>
+      <div class="hz-actions"><button class="cx-btn" onclick="openSchedConfig()">⚙ Ciclo y horario</button><button class="cx-btn" onclick="hzReset()">↺ Restablecer</button></div></div>
+    <div class="hz-scroll"><table class="hz-table"><thead>
+      <tr><th colspan="3" class="hz-g">1ST, 2ND, 3RD</th><th colspan="3" class="hz-g">4TH, 5TH, 6TH</th>${[1,2,3,4,5,6].map(d=>`<th rowspan="2" class="hz-d${d===today?' hz-today':''}">DAY ${d}</th>`).join('')}</tr>
+      <tr><th>HOUR</th><th>PERIOD</th><th></th><th>HOUR</th><th>PERIOD</th><th></th></tr></thead><tbody>${body}</tbody></table></div></div>`;
+}
+function hzEdit(r,d){
+  const c=hzCell(r,d);
+  openModal('✏️ Casilla — Día '+(d+1),`
+    <div class="form-group"><label>Texto (por ejemplo 2B, Supervisión 4, Reunión)</label><input id="hz-t" value="${escA(c.t)}" maxlength="40" autocomplete="off"></div>
+    <div class="form-group"><label>Color</label><div class="hz-sw">${HZ_COLORS.map(k=>`<button type="button" class="hz-swb${k===c.c?' on':''}" style="background:${k}" data-c="${k}" onclick="hzPick('${k}')" aria-label="Color ${k}"></button>`).join('')}<button type="button" class="hz-swb hz-none${!c.c?' on':''}" data-c="" onclick="hzPick('')" title="Sin color">∅</button></div><input type="hidden" id="hz-c" value="${escA(c.c)}"></div>`,
+  ()=>{
+    const t=document.getElementById('hz-t').value.trim(),col=document.getElementById('hz-c').value;
+    state.horario=state.horario||{cells:{}};state.horario.cells=state.horario.cells||{};
+    state.horario.cells[r+':'+d]={t,c:t?col:''};
+    saveState();closeModal();renderHorario();
+  });
+  setModalBtn('Guardar');
+  setTimeout(()=>document.getElementById('hz-t')?.focus(),50);
+}
+function hzPick(k){document.getElementById('hz-c').value=k;document.querySelectorAll('.hz-swb').forEach(b=>b.classList.toggle('on',b.dataset.c===k));}
+function hzReset(){
+  if(!confirm('¿Restablecer el horario al original? Se pierden tus cambios en las casillas.'))return;
+  delete state.horario;saveState();renderHorario();showToast('Horario restablecido ✓');
+}
+</script>
+<style id="hz-style">
+#hz-panel{display:none;padding:24px;overflow-y:auto}
+#hz-panel.show{display:block}
+.hz-wrap{max-width:1250px;margin:0 auto}
+.hz-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.hz-title{font:800 22px var(--font-d);color:var(--tp);margin-bottom:4px}
+.hz-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hz-scroll{overflow-x:auto;border-radius:var(--r3);border:1px solid var(--br)}
+.hz-table{border-collapse:collapse;width:100%;min-width:980px;font-size:12.5px;color:#111;background:#fff}
+.hz-table th,.hz-table td{border:1px solid #1f2d3d;padding:6px 5px;text-align:center;vertical-align:middle;line-height:1.2}
+.hz-table thead th{background:#1f3d7a;color:#fff;font-weight:800;letter-spacing:.3px}
+.hz-table thead th.hz-g{background:#fff;color:#1f3d7a}
+.hz-table thead th.hz-d{width:9%}
+.hz-t{background:#d9ead3;color:#1f3d7a;font-weight:700;white-space:nowrap}
+.hz-p{font-weight:800;background:#fff}
+.hz-m{background:#fff;font-weight:600;white-space:nowrap}
+.hz-k-b{background:#fde9c4}
+.hz-mm{font-weight:800;letter-spacing:.5px;background:#fff}
+.hz-c{height:34px;font-weight:800;cursor:pointer;background:#fff;transition:filter .12s}
+.hz-c:hover{filter:brightness(.93);outline:2px solid #35b8d8;outline-offset:-2px}
+.hz-table thead th.hz-today{background:#35b8d8;color:#06202a}
+.hz-c.hz-today:not(.hz-has){background:#e6f6fb}
+.hz-c.hz-today{box-shadow:inset 0 0 0 2px #35b8d8}
+.hz-sw{display:flex;flex-wrap:wrap;gap:6px}
+.hz-swb{width:30px;height:30px;border-radius:8px;border:2px solid var(--br);cursor:pointer;padding:0;color:#333;font-weight:800}
+.hz-swb.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.hz-none{background:#fff}
+</style>
 <script>
 /* ══════════ RECORDATORIO DE COPIA DE SEGURIDAD (Consola) ══════════
    Avisa cuántos días llevas sin DESCARGAR una copia general (el archivo que guardas en tu Drive).
