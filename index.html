@@ -5531,7 +5531,9 @@ function parsePlanRows(rows,g){
     rows[hi].forEach((c,i)=>{const h=normTxt(c.text);const sk=secKey(c.text);
       const grp=grps.find(x=>secKey(x.name)===sk);
       if(grp){(map.secs=map.secs||{})[i]=grp.id;return;}
-      if(h==='#'||h==='no'||h==='n°'||h==='nro')map.n=i;
+      if(h==='id origen')map.prevN=i;
+      else if(h==='tema origen')map.prevT=i;
+      else if(h==='#'||h==='no'||h==='n°'||h==='nro')map.n=i;
       else if(h.startsWith('periodo'))map.period=i;
       else if(h.startsWith('tema'))map.title=i;
       else if(h.startsWith('descrip'))map.desc=i;
@@ -5559,7 +5561,8 @@ function parsePlanRows(rows,g){
     const done={};Object.entries(map.secs||{}).forEach(([i,gid])=>{if(r[i]&&boolCell(r[i]))done[gid]=true;});
     const themeRaw=(get(r,'theme')?.text||'').replace(/^[\p{Extended_Pictographic}\s]+/u,'').trim();
     out.push({n:parseInt(get(r,'n')?.text)||0,period:(get(r,'period')?.text||'').trim(),title,desc:(get(r,'desc')?.text||'').trim(),
-      objective:(get(r,'objective')?.text||'').trim(),theme:themeInfo(themeRaw)?.k||themeRaw,standard:(get(r,'standard')?.text||'').trim(),links,done});
+      objective:(get(r,'objective')?.text||'').trim(),theme:themeInfo(themeRaw)?.k||themeRaw,standard:(get(r,'standard')?.text||'').trim(),links,done,
+      prevN:map.prevN!=null?(parseInt(get(r,'prevN')?.text)||0):null,prevT:map.prevT!=null?(get(r,'prevT')?.text||'').trim():null});
   });
   return out;
 }
@@ -5601,15 +5604,25 @@ function previewImport(res){
 }
 function applyImport(){
   const res=window._imp||[];let nNew=0,nUpd=0;
+  try{localBackup('Antes de importar planeación');
+    if(sb&&window.currentUser?.email){const snap=JSON.parse(JSON.stringify(state));
+      sb.from('respaldos').insert({user_email:window.currentUser.email,state:snap,lessons:stateLessons(snap),label:'Antes de importar planeación'}).then(()=>{},()=>{});}}catch(e){}
   res.forEach(({g,rows})=>{
     const ls=lessonsOf(g);const byN={},byT={};ls.forEach(l=>{if(l.n)byN[l.n]=l;byT[normTxt(l.title)]=l;});
+    // Modo reordenar: el archivo trae "ID ORIGEN" / "TEMA ORIGEN" → se empareja con la clase original
+    // (así sus ✓, notas y enlaces siguen con la misma actividad) y se le asigna el número nuevo.
+    const reorder=rows.some(r=>r.prevT!=null);const used=new Set();
+    const findPrev=r=>{const c=ls.filter(l=>!used.has(l.id));const pt=normTxt(r.prevT||r.title);
+      return c.find(l=>r.prevN&&l.n===r.prevN&&normTxt(l.title)===pt)||c.find(l=>normTxt(l.title)===pt)||c.find(l=>normTxt(l.title)===normTxt(r.title))||null;};
     rows.forEach(r=>{
       let canva='';const links=r.links.filter(k=>{if(!canva&&/canva\.com\/design\//i.test(k.url||'')){canva=k.url;return false;}return true;});
-      const ex=(r.n&&byN[r.n])||byT[normTxt(r.title)];
-      if(ex){Object.assign(ex,{period:r.period||ex.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme||ex.theme,standard:r.standard,links});
+      const ex=reorder?findPrev(r):((r.n&&byN[r.n])||byT[normTxt(r.title)]);
+      if(ex){used.add(ex.id);if(reorder&&r.n)ex.n=r.n;
+        Object.assign(ex,{period:r.period||ex.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme||ex.theme,standard:r.standard,links});
         if(canva&&!ex.canvaUrl)ex.canvaUrl=canva;ex.done={...ex.done,...r.done};nUpd++;}
-      else{newLesson(g,{n:r.n||0,period:r.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme,standard:r.standard,links,canvaUrl:canva,done:r.done});nNew++;}
+      else{const nl=newLesson(g,{n:r.n||0,period:r.period,title:r.title,desc:r.desc,objective:r.objective,theme:r.theme,standard:r.standard,links,canvaUrl:canva,done:r.done});used.add(nl.id);nNew++;}
     });
+    if(reorder){const top=Math.max(0,...rows.map(r=>r.n||0));ls.filter(l=>!used.has(l.id)).forEach((l,i)=>{l.n=top+i+1;});}
     const all=lessonsOf(g);all.forEach((l,i)=>{if(!l.n)l.n=i+1;});
   });
   window._imp=null;clearTimeout(saveTimer);saveToDB();closeModal();
